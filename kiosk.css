@@ -73,7 +73,7 @@
 }
 
 /* Bausteine ------------------------------------------------------------------
-   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, später RSS)
+   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, Events)
    und für Inhalte aus dem Editor. Jeder Baustein hat eine Klasse tp-…; wo er im
    Editor als Blockstil wählbar ist (functions.php), gilt auch is-style-tp-….
    Vorlagen zum Einfügen: block-patterns/.
@@ -85,8 +85,15 @@
    tp-card           Karte: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
                      (tp-card__title, tp-card__meta, tp-card__text) | tp-card__action
                      Varianten: tp-card--highlight (Feld orange), tp-card--muted
+                     tp-card__aside--date = Feld mit Tag (tp-card__date) und Uhrzeit
+                     tp-card__live = „Jetzt“ mit Pulspunkt unten im Feld
+                     tp-card__action--guide = Raum-Button mit Wegweiser (Raumplan)
    tp-more           Fuß-Link mit Pfeil; tp-more__note = Zusatz, tp-more--alert mit
-                     tp-more__alert = dunkle Variante mit Hinweis */
+                     tp-more__alert = dunkle Variante mit Hinweis
+   tp-status         Statuszeile unter einer Liste (Stand der Daten), --error = Fehler
+   tp-sheet          Detailansicht als Bottom-Sheet (<dialog>), Optik wie das
+                     Raum-Panel im Raumplan: __header (__kicker, __title, __meta),
+                     __body (__media, __text, __action), __footer (__qr, __close) */
 
 /* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
    er nicht, seine Kinder verhalten sich wie direkte Kinder. */
@@ -247,6 +254,42 @@
 	font-size: var(--tp-headline-s);
 	color: var(--tp-color-muted);
 }
+/* Feld mit Tag über der Uhrzeit (Listen über mehrere Tage) */
+.tp-card__date {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+/* "Jetzt": sitzt unten im orangen Feld (tp-card--highlight), Punkt pulsiert */
+.tp-card:has(.tp-card__live) .tp-card__aside {
+	padding-bottom: calc(var(--tp-space-s) + 1.75em);
+}
+.tp-card__live {
+	position: absolute;
+	left: var(--tp-gutter);
+	bottom: var(--tp-space-s);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	font-family: var(--tp-font-text);
+	font-size: max(var(--tp-headline-s) * 0.84, 0.75rem);
+	font-weight: 900;
+	letter-spacing: 0.2em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--tp-color-on-primary-large);
+}
+.tp-card__live::before {
+	content: "";
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: currentColor;
+	animation: tp-pulse 2s infinite;
+}
 .tp-card__body {
 	display: flex;
 	flex-direction: column;
@@ -274,8 +317,10 @@
 .tp-card__meta {
 	color: var(--tp-color-muted);
 }
-/* Aktion rechts: dunkler Button (z. B. Weg zum Raum) oder reiner Text */
-:is(.tp-card, .is-style-tp-card) .tp-card__action {
+/* Aktion rechts: dunkler Button (z. B. Weg zum Raum) oder reiner Text.
+   Derselbe Button steht als tp-sheet__action in der Detailansicht. */
+:is(.tp-card, .is-style-tp-card) .tp-card__action,
+.tp-sheet__action {
 	grid-column: 3;
 	align-self: center;
 	display: inline-flex;
@@ -294,13 +339,29 @@
 	background: var(--tp-color-band);
 	border-radius: var(--tp-radius);
 }
-:is(.tp-card, .is-style-tp-card) .tp-card__action:active {
+:is(.tp-card, .is-style-tp-card) .tp-card__action:active,
+.tp-sheet__action:active {
 	background: var(--tp-color-ink-active);
 }
 :is(.tp-card, .is-style-tp-card) .tp-card__action--text {
 	padding: 0;
 	color: var(--tp-color-ink);
 	background: none;
+}
+/* Raum-Button: führt zum Routenplaner (#/guide/<Raum>), gleich breit in allen Zeilen */
+:is(.tp-card__action, .tp-sheet__action).tp-card__action--guide,
+.tp-sheet__action--guide {
+	width: 6.5em;
+	font-variant-numeric: tabular-nums;
+}
+:is(.tp-card__action--guide, .tp-sheet__action--guide)::before { /* Wegweiser-Icon (Material Icons "directions", Apache 2.0) */
+	content: "";
+	flex: none;
+	width: 1.1em;
+	height: 1.1em;
+	background: var(--tp-color-primary);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 /* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button) */
@@ -386,11 +447,160 @@
 	100% { box-shadow: 0 0 0 0 transparent; }
 }
 @media (prefers-reduced-motion: reduce) {
-	.tp-more__alert::before { animation: none; }
+	.tp-more__alert::before,
+	.tp-card__live::before { animation: none; }
+}
+
+/* Statuszeile (Stand der Daten) */
+.tp-status {
+	margin: var(--tp-space-m) calc(2 * var(--tp-gutter)) 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	color: var(--tp-color-muted);
+}
+.tp-status--error {
+	color: var(--tp-color-danger);
+}
+
+/* Detailansicht: Bottom-Sheet als <dialog>, Optik wie das Raum-Panel im Raumplan
+   (Kopf, scrollender Inhalt, Knöpfe am unteren Rand). Öffnen/Schließen macht die
+   Komponente (showModal, Tippen auf den Hintergrund, Esc). */
+.tp-sheet {
+	position: fixed;
+	inset: auto 0 0;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--tp-color-ink);
+	background: transparent;
+	overflow: visible;
+}
+.tp-sheet::backdrop {
+	background: color-mix(in srgb, var(--tp-color-ink) 55%, transparent);
+}
+.tp-sheet__panel {
+	display: flex;
+	flex-direction: column;
+	max-height: 85vh;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius) var(--tp-radius) 0 0;
+	box-shadow: 0 -6px 24px rgb(0 0 0 / 0.18);
+	overflow: hidden;
+}
+/* Kopf wie tp-band: dunkel, Unterzeile (Datum) über dem Titel */
+.tp-sheet__header {
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter)) calc(var(--tp-space-m) + var(--tp-slant));
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--tp-slant)), 0 100%);
+}
+.tp-sheet__kicker {
+	order: -1;
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.2em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-on-band-accent);
+}
+.tp-sheet__title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.15;
+	text-transform: none; /* lange Titel bleiben lesbar */
+	color: inherit;
+	overflow-wrap: anywhere;
+}
+.tp-sheet__meta {
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+}
+.tp-sheet__body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-m);
+	min-height: 0;
+	padding: var(--tp-space-s) calc(2 * var(--tp-gutter)) var(--tp-space-m);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.tp-sheet__media {
+	display: block;
+	width: 100%;
+	max-height: 30vh;
+	object-fit: cover;
+}
+.tp-sheet__text {
+	margin: 0;
+	line-height: 1.4;
+	white-space: pre-line; /* Absätze aus dem Text */
+}
+.tp-sheet .tp-sheet__action {
+	align-self: flex-start;
+	margin: 0;
+}
+.tp-sheet__footer {
+	flex: none;
+	display: flex;
+	align-items: flex-end;
+	gap: var(--tp-space-m);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter));
+	border-top: 1px solid var(--tp-color-line);
+}
+.tp-sheet__qr {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-m);
+	margin: 0;
+}
+.tp-sheet__qr svg {
+	flex: none;
+	width: 200px;
+	height: 200px;
+}
+.tp-sheet__qr-caption {
+	max-width: 12em;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+	color: var(--tp-color-muted);
+}
+.tp-sheet__close {
+	min-height: var(--tp-touch-target);
+	margin-left: auto;
+	padding: 0 var(--tp-space-l);
+	border: 0;
+	border-radius: var(--tp-radius);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-font-size-min);
+	font-weight: 700;
+	text-transform: var(--tp-headline-transform);
+	color: var(--tp-color-ink);
+	background: var(--tp-color-ground);
+	cursor: pointer;
+}
+.tp-sheet__close:active {
+	background: color-mix(in srgb, var(--tp-color-ink) 15%, var(--tp-color-ground));
 }
 
 /* Fokus sichtbar (Tastatur/Servicebetrieb) */
 :is(.tp-card, .is-style-tp-card) .tp-card__action:focus-visible,
+.tp-sheet__action:focus-visible,
+.tp-sheet__close:focus-visible,
 .tp-more:focus-visible,
 .wp-block-button.is-style-tp-more .wp-block-button__link:focus-visible {
 	outline: var(--tp-border-width) solid var(--tp-color-primary);

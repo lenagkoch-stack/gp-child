@@ -59,6 +59,7 @@ Im Editor stehen die Folien untereinander; am Terminal wechseln sie. Den Aufbau 
 - **Folie hinzufügen:** in der Listenansicht die Gruppe „Rotation“ wählen und den neuen Block *in* sie einfügen (z. B. Vorlage „Kiosk: Box mit Karten“ für eigene Hinweise, oder eine Gruppe „Kiosk: Box“ mit einem Shortcode-Block). Nur direkte Kinder der Rotation werden zu Folien.
 - **Reihenfolge ändern / entfernen:** Box in der Listenansicht verschieben bzw. löschen.
 - **Buttons:** Text direkt bearbeiten, Ziel über das Link-Symbol der Werkzeugleiste.
+- **Idle-Rückkehr:** Auf jeder Seite außer dem Sperrbildschirm erscheint nach `--tp-idle-timeout` (Standard `90s`) ohne Berührung der Hinweis „Gleich zurück zum Startbildschirm“ mit Countdown `--tp-idle-warning` (Standard `15s`); danach geht es zur Startseite, „Hier bleiben“ bricht ab. `--tp-idle-timeout: 0` schaltet es aus (Variablen in `kiosk.css`, Skript `kiosk-idle.js`).
 - **Schriftgröße, Standzeit, Pause nach Berührung:** Variablen `--tp-lock-scale`, `--tp-rotation-interval` und `--tp-rotation-pause` in `kiosk.css` (nicht im Editor).
 
 Die Vorlagen liefern nur die Bausteine. Eigene Boxen (z. B. Hinweise) setzt man daraus zusammen; zusätzliche Blöcke in einer Karte, etwa ein Bild, landen in der Inhaltsspalte.

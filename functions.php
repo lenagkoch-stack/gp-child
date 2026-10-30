@@ -31,6 +31,15 @@ add_action( 'wp_enqueue_scripts', function() {
         true
     );
 
+    // Idle-Rückkehr: nach Inaktivität Hinweis, dann zurück zum Sperrbildschirm (nicht auf diesem selbst)
+    wp_enqueue_script(
+        'gp-child-kiosk-idle',
+        get_stylesheet_directory_uri() . '/kiosk-idle.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
 });
 
 /*

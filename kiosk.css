@@ -603,6 +603,15 @@
 	background: color-mix(in srgb, var(--tp-color-ink) 15%, var(--tp-color-ground));
 }
 
+/* Idle-Hinweis (kiosk-idle.js): normales tp-sheet; die Zeiten stehen hier, 0 = Funktion aus */
+:root {
+	--tp-idle-timeout: 90s; /* Inaktivität bis zum Hinweis */
+	--tp-idle-warning: 15s; /* Countdown im Hinweis bis zurück zum Sperrbildschirm */
+}
+.tp-idle__countdown {
+	font-weight: 700;
+}
+
 /* Fokus sichtbar (Tastatur/Servicebetrieb) */
 :is(.tp-card, .is-style-tp-card) .tp-card__action:focus-visible,
 .tp-sheet__action:focus-visible,

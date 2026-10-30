@@ -1,5 +1,105 @@
 /*
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.0
+Version: 1.6
 */
+
+/* ==========================================================================
+   Seitenlayout des Terminals (1080 x 1920 px, Hochformat).
+   Schriften, Variablen und Bausteine (tp-box, tp-card, …): kiosk.css
+   ========================================================================== */
+
+/* Terminal ----------------------------------------------------------------- */
+:root {
+  --terminal-height: 1920px;
+  --terminal-width: 1080px;
+}
+
+/* Feste Bildschirmgröße. Lange Seiten (z. B. /stundenplan/) scrollen senkrecht,
+   ohne Gummiband-Effekt und ohne "Ziehen zum Aktualisieren". Unten bleibt Platz
+   für die globale Navigationsleiste, damit der letzte Eintrag nicht dahinter liegt;
+   Seiten, die genau passen (Startseite, Raumplan), scrollen nicht. */
+html, body {
+  width: var(--terminal-width);
+  height: var(--terminal-height);
+  margin: 0;
+}
+html {
+  overflow: hidden;
+}
+body {
+  box-sizing: border-box;
+  padding-bottom: var(--tp-nav-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+}
+
+/* Kopf- und Fußzeile von WordPress (Seitentitel, Logo, "Built with …") ausblenden */
+.site-header,
+.site-footer {
+  display: none;
+}
+
+/* Inhalt über die volle Breite, ohne die Abstände von GeneratePress */
+.site-content,
+.grid-container,
+.inside-article {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Raumplan (floorplan-widget) ---------------------------------------------
+   Das Aussehen liest das Widget aus den --tp-* Variablen in kiosk.css, siehe
+   floorplan-widget/README.md, Abschnitt "Theming". Hier steht nur die Höhe:
+   Am Terminal bleibt unten Platz für die globale Navigationsleiste. */
+floorplan-widget {
+  height: calc(100vh - var(--tp-nav-height));
+}
+floorplan-widget[mode="mobile"] {
+  height: 100%; /* füllt den Container des Shortcodes (height="100dvh") */
+}
+
+/* Handy-Seiten (Raumplan mit mode="mobile", z. B. /checkin/ nach dem Scan des
+   Tür-QR-Codes): nicht auf das Terminalformat festlegen. Das Widget füllt den
+   ganzen Bildschirm; WordPress-Titel, Fußzeile und Abstände entfallen. */
+html:has(floorplan-widget[mode="mobile"]),
+html:has(floorplan-widget[mode="mobile"]) body {
+  width: auto;
+  height: 100%;
+}
+html:has(floorplan-widget[mode="mobile"]) body {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+body:has(floorplan-widget[mode="mobile"]) :is(.entry-header, .site-footer) {
+  display: none;
+}
+body:has(floorplan-widget[mode="mobile"]) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
+}
+
+/* Stundenplan ([kiosk_stundenplan]) ---------------------------------------
+   Das Aussehen kommt aus den Bausteinen in kiosk.css (tp-band, tp-card, …).
+   Seite, die nur aus dem Stundenplan besteht: WordPress-Titel weglassen,
+   das Kopfband ist die Überschrift. */
+.inside-article:has(> .entry-content > .oe:only-child) > .entry-header {
+  display: none;
+}
+
+/* Sperrbildschirm (Gruppe "Kiosk: Sperrbildschirm", kiosk.css) ---------------
+   Füllt genau den Bildschirm: kein Scrollen, keine Navigationsleiste, kein
+   WordPress-Titel und keine Abstände um den Inhalt. */
+html:has(:is(.tp-lock, .is-style-tp-lock)) body {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+body:has(:is(.tp-lock, .is-style-tp-lock)) .entry-header {
+  display: none;
+}
+body:has(:is(.tp-lock, .is-style-tp-lock)) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,837 @@
+/* Kiosk-Design-System -----------------------------------------------------------
+   Schriften, gemeinsame Variablen (--tp-*) und Bausteine des Terminals.
+   Wird im Frontend und im Editor geladen (functions.php). Seitenlayout: style.css.
+   Stil: lucas-cranach-campus.de. Präfix: tp- */
+
+/* Schriften --------------------------------------------------------------- */
+@font-face { font-family: "Montserrat"; font-weight: 400; font-style: normal; font-display: swap;
+	src: url("fonts/montserrat-v15-latin-regular.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-weight: 700; font-style: normal; font-display: swap;
+	src: url("fonts/montserrat-v15-latin-700.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 300; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-300.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 400; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-regular.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 700; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-700.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 900; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-900.woff2") format("woff2"); }
+
+/* Design-Tokens ---------------------------------------------------------------
+   Gemeinsamer Satz für das ganze Terminal: Theme, Plugin hsc-kiosk und Raumplan
+   (floorplan-widget) lesen diese Variablen direkt. Der Raumplan hat für jede einen
+   eigenen Standardwert. */
+:root {
+	--tp-color-primary: #ff582e;
+	--tp-color-primary-active: #e64f29;   /* gedrückt */
+	/* Schrift auf Orange, zweistufig:
+	   - large: große, fette Schrift (ab 24 px bzw. 19 px fett: Buttons, Zeitfeld "Jetzt",
+	     aktive Etage). Hell geht nur hier, Weiß auf Orange hat 3,1:1.
+	   - normal: jede Größe (Zähler, Hinweise); dunkel, 6:1. */
+	--tp-color-on-primary-large: var(--tp-color-paper); /* hell; dunkel: var(--tp-color-ink) */
+	--tp-color-on-primary: var(--tp-color-ink);
+	--tp-color-danger: #dc3545;     /* Fehlermeldungen */
+
+	/* Flächen im Stil von lucas-cranach-campus.de (Stundenplan, Box) */
+	--tp-color-ink: #151e28;        /* dunkle Bänder und Buttons */
+	--tp-color-ink-active: #2c353e; /* gedrückt */
+	--tp-color-ground: #eceeef;     /* Grund unter den Karten */
+	--tp-color-paper: #ffffff;      /* Karten */
+	--tp-color-muted: #5b636b;      /* Nebentext, 6:1 auf Weiß */
+	--tp-color-line: color-mix(in srgb, var(--tp-color-ink) 20%, transparent); /* Rahmen, Trennlinien */
+	--tp-color-band: var(--tp-color-ink);              /* Kopfbänder, Bedienleiste, Raum-Button */
+	--tp-color-on-band: var(--tp-color-paper);
+	--tp-color-on-band-accent: var(--tp-color-primary); /* Etage, Datum, Hinweise im Band; 5,3:1 */
+	--tp-slant: 24px;               /* Höhe der Diagonalen an Bändern, 0 = gerade */
+	--tp-gutter: 24px;              /* Innenabstand der Bänder und Karten */
+	--tp-headline-transform: uppercase; /* Überschriften und große Buttons in Versalien */
+	--tp-pill-radius: 0;            /* Status-Schilder und Filter eckig */
+
+	--tp-font-headline: "Montserrat", sans-serif;
+	--tp-font-text: "Nunito", sans-serif;
+
+	/* Schriftgrößen (Display 1080 x 1920 px).
+	   Referenz Lesbarkeit aus Entfernung: ganzer Raum 170 px, Raummitte 80 px.
+	   Bedientext nach EN 301 549: 38 px für Elemente ab 1,05 m Höhe, an der
+	   Unterkante (0,92 m) 42 px; eingestellt sind derzeit 30 px. */
+	--tp-font-size-min: 30px;      /* Bedientext */
+	--tp-headline-md: 40px;        /* Überschriften (Kopfband) */
+	--tp-headline-s: 24px;         /* nur für nicht nötigen Text */
+
+	--tp-space-s: 12px;
+	--tp-space-m: 24px;
+	--tp-space-l: 48px;
+
+	--tp-radius: 0;          /* eckig wie lucas-cranach-campus.de */
+	--tp-border-width: 3px;
+	--tp-touch-target: 64px; /* DIN 18040-1: mind. 48 – 60 px */
+
+	/* Startseite: 3 gleich hohe Blöcke + Navigationsleiste unten */
+	--tp-nav-height: 160px;  /* Annahme, an die echte Leiste anpassen */
+	--tp-block-gap: 24px;
+	--tp-block-height: calc((1920px - var(--tp-nav-height) - 4 * var(--tp-block-gap)) / 3); /* = 554 px */
+}
+
+/* Bausteine ------------------------------------------------------------------
+   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, Events)
+   und für Inhalte aus dem Editor. Jeder Baustein hat eine Klasse tp-…; wo er im
+   Editor als Blockstil wählbar ist (functions.php), gilt auch is-style-tp-….
+   Vorlagen zum Einfügen: block-patterns/.
+
+   tp-box            Rahmen mit fester Höhe (ein Drittel der Startseite)
+   tp-band           Kopfband; tp-band__kicker = Unterzeile darüber (Datum)
+   tp-cards          Kartenliste; in tp-box bzw. mit tp-cards--fit nur ganze Karten
+                     tp-cards__heading = Zwischenüberschrift, tp-cards__empty = leer
+   tp-card           Karte: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
+                     (tp-card__title, tp-card__meta, tp-card__text) | tp-card__action
+                     Varianten: tp-card--highlight (Feld orange), tp-card--muted
+                     tp-card__aside--date = Feld mit Tag (tp-card__date) und Uhrzeit
+                     tp-card__live = „Jetzt“ mit Pulspunkt unten im Feld
+                     tp-card__action--guide = Raum-Button mit Wegweiser (Raumplan)
+   tp-more           Fuß-Link mit Pfeil; tp-more__note = Zusatz, tp-more--alert mit
+                     tp-more__alert = dunkle Variante mit Hinweis
+   tp-status         Statuszeile unter einer Liste (Stand der Daten), --error = Fehler
+   tp-sheet          Detailansicht als Bottom-Sheet (<dialog>), Optik wie das
+                     Raum-Panel im Raumplan: __header (__kicker, __title, __meta),
+                     __body (__media, __text, __action), __footer (__qr, __close)
+   tp-lock           Sperrbildschirm: ganze Bildschirmhöhe, Schrift um --tp-lock-scale größer,
+                     Rotation oben, Buttons (tp-cta) unten
+   tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
+                     ausgeblendete (hidden) überspringt sie; nach einer Berührung und bei
+                     offener Detailansicht pausiert sie (--tp-rotation-pause); kiosk-rotation.js
+   tp-cta            großer dunkler Button mit Pfeil (Sperrbildschirm) */
+
+/* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
+   er nicht, seine Kinder verhalten sich wie direkte Kinder. */
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container {
+	display: contents;
+}
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > *,
+:is(.tp-box, .is-style-tp-box, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > * {
+	max-width: none;
+	margin: 0;
+}
+
+/* Box */
+.tp-box,
+.is-style-tp-box {
+	display: flex;
+	flex-direction: column;
+	height: var(--tp-block-height);
+	padding: 0;
+	background: var(--tp-color-ground);
+	overflow: hidden;
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band, .tp-more, .wp-block-buttons) {
+	flex: none;
+}
+:is(.tp-box, .is-style-tp-box) .wp-block-buttons {
+	margin-top: auto; /* Fuß-Link bleibt unten, auch bei wenig Inhalt */
+}
+
+/* Kopfband; die Unterzeile (Datum) steht über der Überschrift (column-reverse) */
+.tp-band,
+.is-style-tp-band {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-start;
+	gap: var(--tp-space-s);
+	margin: 0;
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter)) calc(var(--tp-space-m) + var(--tp-slant));
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.05;
+	text-transform: var(--tp-headline-transform);
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--tp-slant)), 0 100%);
+}
+.tp-band__kicker {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.3em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-on-band-accent); /* 5,3:1 auf dem Band */
+}
+
+/* Kartenliste */
+.tp-cards,
+.is-style-tp-cards {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	margin: var(--tp-space-s) var(--tp-gutter);
+	padding: 0;
+	list-style: none;
+}
+/* Nur ganze Karten: Was nicht mehr in die Höhe passt, bricht per column wrap in eine
+   zweite Spalte um, die rechts außerhalb abgeschnitten wird. Komponenten des Plugins
+   zählen diese Karten für ihren Fuß-Link. */
+:is(.tp-box, .is-style-tp-box) :is(.tp-cards, .is-style-tp-cards),
+.tp-cards--fit {
+	flex: 1 1 auto;
+	flex-flow: column wrap;
+	column-gap: var(--tp-gutter);
+	min-height: 0;
+	overflow: hidden;
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-card, .is-style-tp-card),
+.tp-cards--fit > :is(.tp-card, .is-style-tp-card) {
+	flex: none;
+	width: 100%;
+}
+.tp-cards__heading {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	margin: var(--tp-space-m) calc(2 * var(--tp-gutter)) 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.2em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-ink);
+}
+.tp-cards__heading::before {
+	content: "";
+	flex: none;
+	width: 1.5em;
+	height: 3px;
+	background: var(--tp-color-primary);
+}
+.tp-cards__empty {
+	margin: var(--tp-space-s) var(--tp-gutter);
+	padding: var(--tp-space-l) var(--tp-gutter);
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	color: var(--tp-color-muted);
+	background: var(--tp-color-paper);
+}
+
+/* Karte: Feld | Inhalt | Aktion. Weitere Blöcke aus dem Editor (z. B. ein Bild)
+   landen in der Inhaltsspalte. */
+.tp-card,
+.is-style-tp-card {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: stretch;
+	min-height: 4.5em;
+	margin: 0;
+	padding: 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	color: var(--tp-color-ink);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+	box-shadow: 0 0.5rem 1rem rgba(21, 30, 40, 0.08);
+	overflow: hidden;
+}
+:is(.tp-card, .is-style-tp-card) > :not(.wp-block-group__inner-container),
+:is(.tp-card, .is-style-tp-card) > .wp-block-group__inner-container > * {
+	grid-column: 2;
+}
+/* Zeit- bzw. Datumsfeld mit leicht schräger Kante; "20:00–20:30" bricht nach dem Strich um */
+:is(.tp-card, .is-style-tp-card) .tp-card__aside {
+	grid-column: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-sizing: border-box;
+	width: calc(6 * var(--tp-font-size-min));
+	margin: 0;
+	padding: var(--tp-space-s) var(--tp-gutter);
+	font-family: var(--tp-font-headline);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.15;
+	background: var(--tp-color-ground);
+	clip-path: polygon(0 0, 100% 0, calc(100% - 0.66em) 100%, 0 100%);
+}
+.tp-card--highlight .tp-card__aside {
+	color: var(--tp-color-on-primary-large);
+	background: var(--tp-color-primary);
+}
+.tp-card--muted .tp-card__aside {
+	font-size: var(--tp-headline-s);
+	color: var(--tp-color-muted);
+}
+/* Feld mit Tag über der Uhrzeit (Listen über mehrere Tage) */
+.tp-card__date {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+/* "Jetzt": sitzt unten im orangen Feld (tp-card--highlight), Punkt pulsiert */
+.tp-card:has(.tp-card__live) .tp-card__aside {
+	padding-bottom: calc(var(--tp-space-s) + 1.75em);
+}
+.tp-card__live {
+	position: absolute;
+	left: var(--tp-gutter);
+	bottom: var(--tp-space-s);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	font-family: var(--tp-font-text);
+	font-size: max(var(--tp-headline-s) * 0.84, 0.75rem);
+	font-weight: 900;
+	letter-spacing: 0.2em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--tp-color-on-primary-large);
+}
+.tp-card__live::before {
+	content: "";
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: currentColor;
+	animation: tp-pulse 2s infinite;
+}
+.tp-card__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 6px;
+	min-width: 0;
+	margin: 0;
+	padding: var(--tp-space-s) var(--tp-gutter);
+}
+.tp-card__title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: 1em;
+	font-weight: 700;
+	line-height: 1.2;
+	text-transform: none;
+	color: var(--tp-color-ink);
+	overflow-wrap: anywhere;
+}
+.tp-card__meta,
+.tp-card__text {
+	margin: 0;
+	line-height: 1.2;
+}
+.tp-card__meta {
+	color: var(--tp-color-muted);
+}
+/* Aktion rechts: dunkler Button (z. B. Weg zum Raum) oder reiner Text.
+   Derselbe Button steht als tp-sheet__action in der Detailansicht. */
+:is(.tp-card, .is-style-tp-card) .tp-card__action,
+.tp-sheet__action {
+	grid-column: 3;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	min-height: 2.66em;
+	margin: 0 var(--tp-gutter) 0 0;
+	padding: 0 var(--tp-space-m);
+	font-family: var(--tp-font-headline);
+	font-weight: 700;
+	white-space: nowrap;
+	text-decoration: none;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	border-radius: var(--tp-radius);
+}
+:is(.tp-card, .is-style-tp-card) .tp-card__action:active,
+.tp-sheet__action:active {
+	background: var(--tp-color-ink-active);
+}
+:is(.tp-card, .is-style-tp-card) .tp-card__action--text {
+	padding: 0;
+	color: var(--tp-color-ink);
+	background: none;
+}
+/* Raum-Button: führt zum Routenplaner (#/guide/<Raum>), gleich breit in allen Zeilen */
+:is(.tp-card__action, .tp-sheet__action).tp-card__action--guide,
+.tp-sheet__action--guide {
+	width: 6.5em;
+	font-variant-numeric: tabular-nums;
+}
+:is(.tp-card__action--guide, .tp-sheet__action--guide)::before { /* Wegweiser-Icon (Material Icons "directions", Apache 2.0) */
+	content: "";
+	flex: none;
+	width: 1.1em;
+	height: 1.1em;
+	background: var(--tp-color-primary);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button) */
+.tp-more,
+.wp-block-button.is-style-tp-more .wp-block-button__link {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding: calc(var(--tp-space-s) + var(--tp-slant)) calc(2 * var(--tp-gutter)) var(--tp-space-m);
+	border: 0;
+	border-radius: 0;
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-font-size-min);
+	font-weight: 700;
+	line-height: 1.2;
+	text-align: left;
+	text-transform: var(--tp-headline-transform);
+	text-decoration: none;
+	color: var(--tp-color-on-primary-large);
+	background: var(--tp-color-primary);
+	clip-path: polygon(0 var(--tp-slant), 100% 0, 100% 100%, 0 100%);
+}
+:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):is(:hover, :focus, :active) {
+	color: var(--tp-color-on-primary-large);
+	background: var(--tp-color-primary-active);
+}
+.tp-more::after,
+.wp-block-button.is-style-tp-more .wp-block-button__link::after { /* Pfeil (Material Icons "arrow_forward", Apache 2.0) */
+	content: "";
+	flex: none;
+	width: 1.4em;
+	height: 1.4em;
+	margin-left: auto;
+	background: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.wp-block-buttons:has(> .is-style-tp-more),
+.wp-block-button.is-style-tp-more {
+	width: 100%;
+	margin: 0;
+}
+/* Zusatz ("· 3 weitere heute"): Grundtext statt Versalien */
+.tp-more__note {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	text-transform: none;
+}
+.tp-more__note::before,
+.tp-more--alert .tp-more__label::before {
+	content: "· ";
+}
+/* Dunkle Variante mit Hinweis, Punkt pulsiert */
+.tp-more--alert,
+.tp-more--alert:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.tp-more--alert:active {
+	background: var(--tp-color-ink-active);
+}
+.tp-more__alert {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	color: var(--tp-color-on-band-accent);
+}
+.tp-more__alert::before {
+	content: "";
+	flex: none;
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: currentColor;
+	animation: tp-pulse 2s infinite;
+}
+@keyframes tp-pulse {
+	0%   { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 70%, transparent); }
+	70%  { box-shadow: 0 0 0 10px transparent; }
+	100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.tp-more__alert::before,
+	.tp-card__live::before { animation: none; }
+}
+
+/* Statuszeile (Stand der Daten) */
+.tp-status {
+	margin: var(--tp-space-m) calc(2 * var(--tp-gutter)) 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	color: var(--tp-color-muted);
+}
+.tp-status--error {
+	color: var(--tp-color-danger);
+}
+
+/* Detailansicht: Bottom-Sheet als <dialog>, Optik wie das Raum-Panel im Raumplan
+   (Kopf, scrollender Inhalt, Knöpfe am unteren Rand). Öffnen/Schließen macht die
+   Komponente (showModal, Tippen auf den Hintergrund, Esc). */
+.tp-sheet {
+	position: fixed;
+	inset: auto 0 0;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--tp-color-ink);
+	background: transparent;
+	overflow: visible;
+}
+.tp-sheet::backdrop {
+	background: color-mix(in srgb, var(--tp-color-ink) 55%, transparent);
+}
+.tp-sheet__panel {
+	display: flex;
+	flex-direction: column;
+	max-height: 85vh;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius) var(--tp-radius) 0 0;
+	box-shadow: 0 -6px 24px rgb(0 0 0 / 0.18);
+	overflow: hidden;
+}
+/* Kopf wie tp-band: dunkel, Unterzeile (Datum) über dem Titel */
+.tp-sheet__header {
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter)) calc(var(--tp-space-m) + var(--tp-slant));
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--tp-slant)), 0 100%);
+}
+.tp-sheet__kicker {
+	order: -1;
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: 0.2em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-on-band-accent);
+}
+.tp-sheet__title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.15;
+	text-transform: none; /* lange Titel bleiben lesbar */
+	color: inherit;
+	overflow-wrap: anywhere;
+}
+.tp-sheet__meta {
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+}
+.tp-sheet__body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-m);
+	min-height: 0;
+	padding: var(--tp-space-s) calc(2 * var(--tp-gutter)) var(--tp-space-m);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.tp-sheet__media {
+	display: block;
+	width: 100%;
+	max-height: 30vh;
+	object-fit: cover;
+}
+.tp-sheet__text {
+	margin: 0;
+	line-height: 1.4;
+	white-space: pre-line; /* Absätze aus dem Text */
+}
+.tp-sheet .tp-sheet__action {
+	align-self: flex-start;
+	margin: 0;
+}
+.tp-sheet__footer {
+	flex: none;
+	display: flex;
+	align-items: flex-end;
+	gap: var(--tp-space-m);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter));
+	border-top: 1px solid var(--tp-color-line);
+}
+.tp-sheet__qr {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-m);
+	margin: 0;
+}
+.tp-sheet__qr svg {
+	flex: none;
+	width: 200px;
+	height: 200px;
+}
+.tp-sheet__qr-caption {
+	max-width: 12em;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+	color: var(--tp-color-muted);
+}
+.tp-sheet__close {
+	min-height: var(--tp-touch-target);
+	margin-left: auto;
+	padding: 0 var(--tp-space-l);
+	border: 0;
+	border-radius: var(--tp-radius);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-font-size-min);
+	font-weight: 700;
+	text-transform: var(--tp-headline-transform);
+	color: var(--tp-color-ink);
+	background: var(--tp-color-ground);
+	cursor: pointer;
+}
+.tp-sheet__close:active {
+	background: color-mix(in srgb, var(--tp-color-ink) 15%, var(--tp-color-ground));
+}
+
+/* Idle-Hinweis (kiosk-idle.js): normales tp-sheet; die Zeiten stehen hier, 0 = Funktion aus */
+:root {
+	--tp-idle-timeout: 90s; /* Inaktivität bis zum Hinweis */
+	--tp-idle-warning: 15s; /* Countdown im Hinweis bis zurück zum Sperrbildschirm */
+}
+.tp-idle__countdown {
+	font-weight: 700;
+}
+
+/* Fokus sichtbar (Tastatur/Servicebetrieb) */
+:is(.tp-card, .is-style-tp-card) .tp-card__action:focus-visible,
+.tp-sheet__action:focus-visible,
+.tp-sheet__close:focus-visible,
+.tp-more:focus-visible,
+.wp-block-button.is-style-tp-more .wp-block-button__link:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}
+
+/* Sperrbildschirm --------------------------------------------------------------
+   Startseite des Terminals: rotierende Infos, aus der Ferne lesbar, darunter zwei
+   Buttons zu den Startseiten. Passt genau auf den Bildschirm, nichts scrollt
+   (Seitenlayout: style.css). Die Schrift wächst um --tp-lock-scale; Abstände wachsen
+   halb so stark mit. Die Grundwerte stehen hier noch einmal, weil sich Variablen aus
+   :root nicht skalieren lassen. */
+:root {
+	--tp-lock-scale: 2;
+	--tp-rotation-interval: 12s; /* Standzeit je Folie */
+	--tp-rotation-pause: 30s;    /* Pause nach der letzten Berührung bzw. offenen Detailansicht */
+}
+/* Die Skala wird überall dort neu eingerechnet, wo sie sich ändern kann: im Rahmen und in
+   den Bedienteilen darin. Fuß-Links und Buttons bedient man aus der Nähe, sie bleiben so
+   groß wie auf den Startseiten (Skala 1). */
+:is(.tp-lock, .is-style-tp-lock),
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-font-size-min: calc(30px * var(--tp-lock-scale));
+	--tp-headline-md: calc(40px * var(--tp-lock-scale));
+	--tp-headline-s: calc(24px * var(--tp-lock-scale));
+	--tp-gutter: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-s: calc(12px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-m: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-lock-scale: 1;
+}
+.tp-lock,
+.is-style-tp-lock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-block-gap);
+	box-sizing: border-box;
+	height: var(--terminal-height, 1920px);
+	margin: 0;
+	padding: 0 0 var(--tp-block-gap);
+	overflow: hidden;
+	background: var(--tp-color-ground);
+}
+
+/* Rotation: alle Folien liegen übereinander in einer Zelle; nur die aktive ist zu
+   sehen. Die übrigen bleiben im Layout (visibility statt display: none), damit die
+   Komponenten auch verdeckt nur ganze Karten zeigen und richtig zählen. */
+.tp-rotation,
+.is-style-tp-rotation {
+	position: relative;
+	display: grid;
+	grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > :not(.wp-block-group__inner-container, .tp-rotation__dots),
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > * {
+	grid-area: 1 / 1;
+	min-height: 0;
+	margin: 0;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > :first-child:not(.wp-block-group__inner-container),
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > .wp-block-group__inner-container > :first-child {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.6s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+	:is(.tp-rotation, .is-style-tp-rotation) * {
+		transition: none !important;
+	}
+}
+/* Eine Box als Folie füllt die ganze Rotation statt ein Drittel der Startseite */
+:is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
+	height: 100%;
+}
+/* Position in der Rotation, oben rechts im Kopfband der Folie (unten steht der Fuß-Link) */
+.tp-rotation__dots {
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
+	top: var(--tp-space-m);
+	right: var(--tp-gutter);
+	display: flex;
+	justify-content: center;
+	gap: var(--tp-space-s);
+}
+.tp-rotation__dot {
+	width: var(--tp-space-s);
+	height: var(--tp-space-s);
+	background: color-mix(in srgb, var(--tp-color-on-band) 35%, transparent);
+	transition: background 0.6s ease;
+}
+.tp-rotation__dot.is-active {
+	background: var(--tp-color-primary);
+}
+
+/* Bei großer Schrift ließe der Raum-Button rechts dem Titel kaum Breite (eine Silbe je
+   Zeile). Daher bekommt der Titel die volle Breite neben dem Zeitfeld, darunter stehen
+   Nebentext und Raum (als kleines Schild) in einer Zeile. Der Inhaltsblock löst sich dazu
+   auf (display: contents), seine Teile liegen direkt im Raster der Karte. Nur Karten mit
+   Raum; die übrigen (Mensa, Events ohne Raum) bleiben wie sie sind. Das Zeitfeld ist
+   etwas schmaler, die Schrift ist ohnehin groß. */
+:is(.tp-lock, .is-style-tp-lock) .tp-card__aside {
+	width: calc(5.25 * var(--tp-font-size-min));
+}
+/* Nebentext so groß wie das Raum-Schild, damit beide in eine Zeile passen */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) :is(.tp-card__meta, .tp-card__text) {
+	font-size: var(--tp-headline-s);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-rows: 1fr auto auto 1fr;
+	column-gap: var(--tp-space-s);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__aside {
+	grid-row: 1 / -1;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__body {
+	display: contents;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__title {
+	grid-column: 2 / -1;
+	grid-row: 2;
+	padding: var(--tp-space-s) var(--tp-gutter) 0 calc(var(--tp-gutter) - var(--tp-space-s));
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) :is(.tp-card__meta, .tp-card__text) {
+	grid-column: 2;
+	grid-row: 3;
+	align-self: center;
+	min-width: 0;
+	padding: 0 0 var(--tp-space-s) calc(var(--tp-gutter) - var(--tp-space-s));
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__action {
+	grid-column: 3;
+	grid-row: 3;
+	align-self: center;
+	width: auto;
+	min-height: 0;
+	margin: 0 var(--tp-gutter) var(--tp-space-s) 0;
+	padding: 0.2em 0.5em;
+	font-size: var(--tp-headline-s);
+}
+/* Ohne Nebentext rückt das Schild unter den Titel nach links */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):not(:has(:is(.tp-card__meta, .tp-card__text))) > .tp-card__action {
+	grid-column: 2;
+	justify-self: start;
+	margin-left: calc(var(--tp-gutter) - var(--tp-space-s));
+}
+
+/* Großer Button (Blockstil "Kiosk: Großer Button"); zwei nebeneinander in einem
+   Buttons-Block teilen sich die Breite */
+.wp-block-buttons:has(> .is-style-tp-cta) {
+	display: flex;
+	flex: none;
+	flex-wrap: nowrap;
+	gap: var(--tp-block-gap);
+	margin: 0;
+	padding: 0 var(--tp-block-gap);
+}
+.wp-block-button.is-style-tp-cta {
+	flex: 1 1 0;
+	min-width: 0;
+	margin: 0;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	min-height: var(--tp-nav-height); /* so hoch wie die Navigationsleiste der übrigen Seiten */
+	margin: 0;
+	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-gutter) var(--tp-space-m);
+	border: 0;
+	border-radius: var(--tp-radius);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.1;
+	text-align: left;
+	text-transform: var(--tp-headline-transform);
+	text-decoration: none;
+	overflow-wrap: anywhere;
+	hyphens: auto;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 var(--tp-slant), 100% 0, 100% 100%, 0 100%);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:active {
+	background: var(--tp-color-ink-active);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link::after { /* Pfeil wie am Fuß-Link */
+	content: "";
+	flex: none;
+	width: 1.2em;
+	height: 1.2em;
+	margin-left: auto;
+	background: var(--tp-color-on-band-accent);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}

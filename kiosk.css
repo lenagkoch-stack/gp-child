@@ -93,15 +93,21 @@
    tp-status         Statuszeile unter einer Liste (Stand der Daten), --error = Fehler
    tp-sheet          Detailansicht als Bottom-Sheet (<dialog>), Optik wie das
                      Raum-Panel im Raumplan: __header (__kicker, __title, __meta),
-                     __body (__media, __text, __action), __footer (__qr, __close) */
+                     __body (__media, __text, __action), __footer (__qr, __close)
+   tp-lock           Sperrbildschirm: ganze Bildschirmhöhe, Schrift um --tp-lock-scale größer,
+                     Rotation oben, Buttons (tp-cta) unten
+   tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
+                     ausgeblendete (hidden) überspringt sie; nach einer Berührung und bei
+                     offener Detailansicht pausiert sie (--tp-rotation-pause); kiosk-rotation.js
+   tp-cta            großer dunkler Button mit Pfeil (Sperrbildschirm) */
 
 /* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
    er nicht, seine Kinder verhalten sich wie direkte Kinder. */
-:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body) > .wp-block-group__inner-container {
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container {
 	display: contents;
 }
-:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body) > .wp-block-group__inner-container > *,
-:is(.tp-box, .is-style-tp-box) > * {
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > *,
+:is(.tp-box, .is-style-tp-box, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > * {
 	max-width: none;
 	margin: 0;
 }
@@ -603,6 +609,220 @@
 .tp-sheet__close:focus-visible,
 .tp-more:focus-visible,
 .wp-block-button.is-style-tp-more .wp-block-button__link:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}
+
+/* Sperrbildschirm --------------------------------------------------------------
+   Startseite des Terminals: rotierende Infos, aus der Ferne lesbar, darunter zwei
+   Buttons zu den Startseiten. Passt genau auf den Bildschirm, nichts scrollt
+   (Seitenlayout: style.css). Die Schrift wächst um --tp-lock-scale; Abstände wachsen
+   halb so stark mit. Die Grundwerte stehen hier noch einmal, weil sich Variablen aus
+   :root nicht skalieren lassen. */
+:root {
+	--tp-lock-scale: 2;
+	--tp-rotation-interval: 12s; /* Standzeit je Folie */
+	--tp-rotation-pause: 30s;    /* Pause nach der letzten Berührung bzw. offenen Detailansicht */
+}
+/* Die Skala wird überall dort neu eingerechnet, wo sie sich ändern kann: im Rahmen und in
+   den Bedienteilen darin. Fuß-Links und Buttons bedient man aus der Nähe, sie bleiben so
+   groß wie auf den Startseiten (Skala 1). */
+:is(.tp-lock, .is-style-tp-lock),
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-font-size-min: calc(30px * var(--tp-lock-scale));
+	--tp-headline-md: calc(40px * var(--tp-lock-scale));
+	--tp-headline-s: calc(24px * var(--tp-lock-scale));
+	--tp-gutter: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-s: calc(12px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-m: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-lock-scale: 1;
+}
+.tp-lock,
+.is-style-tp-lock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-block-gap);
+	box-sizing: border-box;
+	height: var(--terminal-height, 1920px);
+	margin: 0;
+	padding: 0 0 var(--tp-block-gap);
+	overflow: hidden;
+	background: var(--tp-color-ground);
+}
+
+/* Rotation: alle Folien liegen übereinander in einer Zelle; nur die aktive ist zu
+   sehen. Die übrigen bleiben im Layout (visibility statt display: none), damit die
+   Komponenten auch verdeckt nur ganze Karten zeigen und richtig zählen. */
+.tp-rotation,
+.is-style-tp-rotation {
+	position: relative;
+	display: grid;
+	grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > :not(.wp-block-group__inner-container, .tp-rotation__dots),
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > * {
+	grid-area: 1 / 1;
+	min-height: 0;
+	margin: 0;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > :first-child:not(.wp-block-group__inner-container),
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > .wp-block-group__inner-container > :first-child {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.6s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+	:is(.tp-rotation, .is-style-tp-rotation) * {
+		transition: none !important;
+	}
+}
+/* Eine Box als Folie füllt die ganze Rotation statt ein Drittel der Startseite */
+:is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
+	height: 100%;
+}
+/* Position in der Rotation, oben rechts im Kopfband der Folie (unten steht der Fuß-Link) */
+.tp-rotation__dots {
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
+	top: var(--tp-space-m);
+	right: var(--tp-gutter);
+	display: flex;
+	justify-content: center;
+	gap: var(--tp-space-s);
+}
+.tp-rotation__dot {
+	width: var(--tp-space-s);
+	height: var(--tp-space-s);
+	background: color-mix(in srgb, var(--tp-color-on-band) 35%, transparent);
+	transition: background 0.6s ease;
+}
+.tp-rotation__dot.is-active {
+	background: var(--tp-color-primary);
+}
+
+/* Bei großer Schrift ließe der Raum-Button rechts dem Titel kaum Breite (eine Silbe je
+   Zeile). Daher bekommt der Titel die volle Breite neben dem Zeitfeld, darunter stehen
+   Nebentext und Raum (als kleines Schild) in einer Zeile. Der Inhaltsblock löst sich dazu
+   auf (display: contents), seine Teile liegen direkt im Raster der Karte. Nur Karten mit
+   Raum; die übrigen (Mensa, Events ohne Raum) bleiben wie sie sind. Das Zeitfeld ist
+   etwas schmaler, die Schrift ist ohnehin groß. */
+:is(.tp-lock, .is-style-tp-lock) .tp-card__aside {
+	width: calc(5.25 * var(--tp-font-size-min));
+}
+/* Nebentext so groß wie das Raum-Schild, damit beide in eine Zeile passen */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) :is(.tp-card__meta, .tp-card__text) {
+	font-size: var(--tp-headline-s);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-rows: 1fr auto auto 1fr;
+	column-gap: var(--tp-space-s);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__aside {
+	grid-row: 1 / -1;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__body {
+	display: contents;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__title {
+	grid-column: 2 / -1;
+	grid-row: 2;
+	padding: var(--tp-space-s) var(--tp-gutter) 0 calc(var(--tp-gutter) - var(--tp-space-s));
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) :is(.tp-card__meta, .tp-card__text) {
+	grid-column: 2;
+	grid-row: 3;
+	align-self: center;
+	min-width: 0;
+	padding: 0 0 var(--tp-space-s) calc(var(--tp-gutter) - var(--tp-space-s));
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__action {
+	grid-column: 3;
+	grid-row: 3;
+	align-self: center;
+	width: auto;
+	min-height: 0;
+	margin: 0 var(--tp-gutter) var(--tp-space-s) 0;
+	padding: 0.2em 0.5em;
+	font-size: var(--tp-headline-s);
+}
+/* Ohne Nebentext rückt das Schild unter den Titel nach links */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):not(:has(:is(.tp-card__meta, .tp-card__text))) > .tp-card__action {
+	grid-column: 2;
+	justify-self: start;
+	margin-left: calc(var(--tp-gutter) - var(--tp-space-s));
+}
+
+/* Großer Button (Blockstil "Kiosk: Großer Button"); zwei nebeneinander in einem
+   Buttons-Block teilen sich die Breite */
+.wp-block-buttons:has(> .is-style-tp-cta) {
+	display: flex;
+	flex: none;
+	flex-wrap: nowrap;
+	gap: var(--tp-block-gap);
+	margin: 0;
+	padding: 0 var(--tp-block-gap);
+}
+.wp-block-button.is-style-tp-cta {
+	flex: 1 1 0;
+	min-width: 0;
+	margin: 0;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	min-height: var(--tp-nav-height); /* so hoch wie die Navigationsleiste der übrigen Seiten */
+	margin: 0;
+	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-gutter) var(--tp-space-m);
+	border: 0;
+	border-radius: var(--tp-radius);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.1;
+	text-align: left;
+	text-transform: var(--tp-headline-transform);
+	text-decoration: none;
+	overflow-wrap: anywhere;
+	hyphens: auto;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 var(--tp-slant), 100% 0, 100% 100%, 0 100%);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:active {
+	background: var(--tp-color-ink-active);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link::after { /* Pfeil wie am Fuß-Link */
+	content: "";
+	flex: none;
+	width: 1.2em;
+	height: 1.2em;
+	margin-left: auto;
+	background: var(--tp-color-on-band-accent);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:focus-visible {
 	outline: var(--tp-border-width) solid var(--tp-color-primary);
 	outline-offset: 3px;
 }

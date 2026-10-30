@@ -9,3 +9,21 @@
 	flex-wrap: nowrap;
 	overflow: visible;
 }
+
+/* Rotation und Sperrbildschirm: Folien untereinander statt übereinander, alle
+   sichtbar, ohne feste Höhe, damit man jede einzeln bearbeiten kann. */
+.tp-lock,
+.is-style-tp-lock {
+  height: auto;
+  overflow: visible;
+}
+:is(.tp-rotation, .is-style-tp-rotation) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tp-block-gap);
+}
+:is(.tp-rotation, .is-style-tp-rotation) > *,
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > * {
+  opacity: 1;
+  visibility: visible;
+}

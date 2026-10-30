@@ -22,6 +22,15 @@ add_action( 'wp_enqueue_scripts', function() {
         wp_get_theme()->get('Version')
     );
 
+    // Rotation (Blockstil "Kiosk: Rotation"); ohne Rotation auf der Seite tut das Skript nichts
+    wp_enqueue_script(
+        'gp-child-kiosk-rotation',
+        get_stylesheet_directory_uri() . '/kiosk-rotation.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
 });
 
 /*
@@ -44,9 +53,14 @@ add_action( 'init', function() {
             'tp-box'   => 'Kiosk: Box',
             'tp-cards' => 'Kiosk: Kartenliste',
             'tp-card'  => 'Kiosk: Karte',
+            'tp-lock'     => 'Kiosk: Sperrbildschirm',
+            'tp-rotation' => 'Kiosk: Rotation',
         ),
         'core/heading' => array( 'tp-band' => 'Kiosk: Kopfband' ),
-        'core/button'  => array( 'tp-more' => 'Kiosk: Fuß-Link' ),
+        'core/button'  => array(
+            'tp-more' => 'Kiosk: Fuß-Link',
+            'tp-cta'  => 'Kiosk: Großer Button',
+        ),
     );
     foreach ( $styles as $block => $list ) {
         foreach ( $list as $name => $label ) {

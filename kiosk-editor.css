@@ -1,0 +1,11 @@
+/* Nur im Editor: Boxen nicht auf ein Drittel der Startseite begrenzen und keine
+   Karten ausblenden, damit man beim Bearbeiten alles sieht. */
+.tp-box,
+.is-style-tp-box {
+	height: auto;
+	overflow: visible;
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-cards, .is-style-tp-cards) {
+	flex-wrap: nowrap;
+	overflow: visible;
+}

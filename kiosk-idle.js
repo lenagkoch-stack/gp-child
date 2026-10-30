@@ -2,7 +2,8 @@
    <dialog>) "Gleich zurück zum Startbildschirm" mit Countdown (--tp-idle-warning). Tippt jemand
    "Hier bleiben" (oder irgendwo auf die Ansicht, Esc), läuft die Zeit neu an; sonst geht es
    zurück zum Sperrbildschirm (Startseite). Auf dem Sperrbildschirm selbst tut das Skript nichts.
-   --tp-idle-timeout: 0 schaltet die Funktion aus. */
+   --tp-idle-timeout: 0 schaltet die Funktion aus. Am Handy (Check-in-Seite, Ziel des
+   QR-Codes am Terminal) läuft sie nie. */
 (function () {
   "use strict";
 
@@ -17,6 +18,11 @@
   function seconds(property, fallback) {
     const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(property));
     return value >= 0 ? value : fallback;
+  }
+
+  // Handy-Seite: der Raumplan im Modus "mobile" (/checkin/, Ziel der QR-Codes)
+  function isPhone() {
+    return !!document.querySelector('floorplan-widget[mode="mobile"]');
   }
 
   function h(tag, className, text) {
@@ -89,6 +95,7 @@
       else update();
       return;
     }
+    if (isPhone()) return;
     const timeout = seconds("--tp-idle-timeout", DEFAULT_TIMEOUT);
     if (timeout > 0 && Date.now() - lastActivity >= timeout * 1000) {
       warn(seconds("--tp-idle-warning", DEFAULT_WARNING));

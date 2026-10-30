@@ -15,16 +15,29 @@ Version: 1.1
   --terminal-width: 1080px;
 }
 
-/* Feste Bildschirmgröße, kein Scrollen */
+/* Feste Bildschirmgröße. Lange Seiten (z. B. /stundenplan/) scrollen senkrecht,
+   ohne Gummiband-Effekt und ohne "Ziehen zum Aktualisieren". Unten bleibt Platz
+   für die globale Navigationsleiste, damit der letzte Eintrag nicht dahinter liegt;
+   Seiten, die genau passen (Startseite, Raumplan), scrollen nicht. */
 html, body {
   width: var(--terminal-width);
   height: var(--terminal-height);
   margin: 0;
+}
+html {
   overflow: hidden;
 }
+body {
+  box-sizing: border-box;
+  padding-bottom: var(--tp-nav-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+}
 
-/* Kopfzeile von WordPress (Seitentitel, Logo) ausblenden */
-.site-header {
+/* Kopf- und Fußzeile von WordPress (Seitentitel, Logo, "Built with …") ausblenden */
+.site-header,
+.site-footer {
   display: none;
 }
 
@@ -55,6 +68,10 @@ html:has(floorplan-widget[mode="mobile"]),
 html:has(floorplan-widget[mode="mobile"]) body {
   width: auto;
   height: 100%;
+}
+html:has(floorplan-widget[mode="mobile"]) body {
+  padding-bottom: 0;
+  overflow: hidden;
 }
 body:has(floorplan-widget[mode="mobile"]) :is(.entry-header, .site-footer) {
   display: none;

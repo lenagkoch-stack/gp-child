@@ -1,7 +1,7 @@
 <?php
 /**
  * Title: Kiosk: Sperrbildschirm
- * Description: Startseite des Terminals: Mensa, Abfahrten, Stundenplan und Events im Wechsel, in großer Schrift, darunter zwei Buttons zu den Startseiten. Weitere Folien (z. B. eine "Kiosk: Box mit Karten") einfach in die Rotation einfügen.
+ * Description: Startseite des Terminals: Mensa, Abfahrten, Stundenplan und Events im Wechsel, in großer Schrift, darunter je ein Button zu Mensa, Abfahrten, Stundenplan und Events sowie „Neu auf dem Campus“. Weitere Folien (z. B. eine "Kiosk: Box mit Karten") einfach in die Rotation einfügen.
  */
 ?>
 <!-- wp:group {"className":"is-style-tp-lock","layout":{"type":"default"}} -->
@@ -33,7 +33,19 @@
 
 <!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button {"className":"is-style-tp-cta"} -->
-<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/startseite-intern/">Ich kenne mich aus</a></div>
+<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/mensa/">Mensa</a></div>
+<!-- /wp:button -->
+
+<!-- wp:button {"className":"is-style-tp-cta"} -->
+<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/abfahrten/">Abfahrten</a></div>
+<!-- /wp:button -->
+
+<!-- wp:button {"className":"is-style-tp-cta"} -->
+<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/stundenplan/">Stundenplan</a></div>
+<!-- /wp:button -->
+
+<!-- wp:button {"className":"is-style-tp-cta"} -->
+<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/events/">Events</a></div>
 <!-- /wp:button -->
 
 <!-- wp:button {"className":"is-style-tp-cta"} -->

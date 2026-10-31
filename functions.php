@@ -62,10 +62,12 @@ add_action( 'init', function() {
             'tp-box'   => 'Kiosk: Box',
             'tp-cards' => 'Kiosk: Kartenliste',
             'tp-card'  => 'Kiosk: Karte',
+            'tp-home'     => 'Kiosk: Startseite',
             'tp-lock'     => 'Kiosk: Sperrbildschirm',
             'tp-rotation' => 'Kiosk: Rotation',
         ),
-        'core/heading' => array( 'tp-band' => 'Kiosk: Kopfband' ),
+        'core/heading' => array( 'tp-band' => 'Kiosk: Kopf' ),
+        'core/columns' => array( 'tp-columns' => 'Kiosk: Boxen nebeneinander' ),
         'core/button'  => array(
             'tp-more' => 'Kiosk: Fuß-Link',
             'tp-cta'  => 'Kiosk: Großer Button',

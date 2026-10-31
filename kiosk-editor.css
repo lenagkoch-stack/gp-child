@@ -10,8 +10,10 @@
 	overflow: visible;
 }
 
-/* Rotation und Sperrbildschirm: Folien untereinander statt übereinander, alle
+/* Startseite, Rotation und Sperrbildschirm: Boxen bzw. Folien untereinander, alle
    sichtbar, ohne feste Höhe, damit man jede einzeln bearbeiten kann. */
+.tp-home,
+.is-style-tp-home,
 .tp-lock,
 .is-style-tp-lock {
   height: auto;
@@ -26,4 +28,8 @@
 :is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > * {
   opacity: 1;
   visibility: visible;
+}
+:is(.tp-home, .is-style-tp-home) > *,
+:is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > * {
+  flex: none;
 }

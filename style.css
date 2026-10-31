@@ -1,7 +1,7 @@
 /*
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.6
+Version: 1.7
 */
 
 /* ==========================================================================
@@ -87,6 +87,21 @@ body:has(floorplan-widget[mode="mobile"]) :is(.site, .site-main, .inside-article
    das Kopfband ist die Überschrift. */
 .inside-article:has(> .entry-content > .oe:only-child) > .entry-header {
   display: none;
+}
+
+/* Startseite (Gruppe "Kiosk: Startseite", kiosk.css) -------------------------
+   Füllt den Bildschirm über der Navigationsleiste: kein Scrollen, kein
+   WordPress-Titel, keine Abstände um den Inhalt. Unten bleibt --tp-nav-height frei. */
+html:has(:is(.tp-home, .is-style-tp-home)) body {
+  overflow: hidden;
+  background: var(--tp-color-ground);
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-header {
+  display: none;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
 }
 
 /* Sperrbildschirm (Gruppe "Kiosk: Sperrbildschirm", kiosk.css) ---------------

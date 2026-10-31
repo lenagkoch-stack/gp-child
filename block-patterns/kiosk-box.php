@@ -1,12 +1,12 @@
 <?php
 /**
  * Title: Kiosk: Box mit Karten
- * Description: Box im Kiosk-Design mit Kopfband, Kartenliste und Fuß-Link, so hoch wie ein Drittel der Startseite. Zeigt nur ganze Karten; weitere Karten mit der Vorlage "Kiosk: Karte" in die Liste einfügen.
+ * Description: Box im Kiosk-Design mit Kopf (Icon über die Klasse tp-icon--…), Kartenliste und Fuß-Link, so hoch wie ein Drittel der Startseite. Zeigt nur ganze Karten; weitere Karten mit der Vorlage "Kiosk: Karte" in die Liste einfügen.
  */
 ?>
 <!-- wp:group {"className":"is-style-tp-box","layout":{"type":"default"}} -->
-<div class="wp-block-group is-style-tp-box"><!-- wp:heading {"className":"is-style-tp-band"} -->
-<h2 class="wp-block-heading is-style-tp-band">Überschrift der Box</h2>
+<div class="wp-block-group is-style-tp-box"><!-- wp:heading {"className":"is-style-tp-band tp-icon--calendar"} -->
+<h2 class="wp-block-heading is-style-tp-band tp-icon--calendar">Überschrift der Box</h2>
 <!-- /wp:heading -->
 
 <!-- wp:group {"className":"is-style-tp-cards","layout":{"type":"default"}} -->

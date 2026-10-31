@@ -1,7 +1,8 @@
 /* Kiosk-Design-System -----------------------------------------------------------
    Schriften, gemeinsame Variablen (--tp-*) und Bausteine des Terminals.
    Wird im Frontend und im Editor geladen (functions.php). Seitenlayout: style.css.
-   Stil: lucas-cranach-campus.de. Präfix: tp- */
+   Stil: Entwurf „Startseite intern“ (weiße Boxen mit Zeilen, runde Ecken, Dunkelblau/Orange).
+   Präfix: tp- */
 
 /* Schriften --------------------------------------------------------------- */
 @font-face { font-family: "Montserrat"; font-weight: 400; font-style: normal; font-display: swap;
@@ -25,27 +26,30 @@
 	--tp-color-primary: #ff582e;
 	--tp-color-primary-active: #e64f29;   /* gedrückt */
 	/* Schrift auf Orange, zweistufig:
-	   - large: große, fette Schrift (ab 24 px bzw. 19 px fett: Buttons, Zeitfeld "Jetzt",
-	     aktive Etage). Hell geht nur hier, Weiß auf Orange hat 3,1:1.
-	   - normal: jede Größe (Zähler, Hinweise); dunkel, 6:1. */
+	   - large: große, fette Schrift (ab 24 px bzw. 19 px fett: Buttons, aktive Etage).
+	     Hell geht nur hier, Weiß auf Orange hat 3,1:1.
+	   - normal: jede Größe (Zeitfeld „jetzt“, Zähler, Hinweise); dunkel, 6:1. */
 	--tp-color-on-primary-large: var(--tp-color-paper); /* hell; dunkel: var(--tp-color-ink) */
 	--tp-color-on-primary: var(--tp-color-ink);
 	--tp-color-danger: #dc3545;     /* Fehlermeldungen */
 
-	/* Flächen im Stil von lucas-cranach-campus.de (Stundenplan, Box) */
-	--tp-color-ink: #151e28;        /* dunkle Bänder und Buttons */
-	--tp-color-ink-active: #2c353e; /* gedrückt */
-	--tp-color-ground: #eceeef;     /* Grund unter den Karten */
-	--tp-color-paper: #ffffff;      /* Karten */
-	--tp-color-muted: #5b636b;      /* Nebentext, 6:1 auf Weiß */
-	--tp-color-line: color-mix(in srgb, var(--tp-color-ink) 20%, transparent); /* Rahmen, Trennlinien */
-	--tp-color-band: var(--tp-color-ink);              /* Kopfbänder, Bedienleiste, Raum-Button */
-	--tp-color-on-band: var(--tp-color-paper);
-	--tp-color-on-band-accent: var(--tp-color-primary); /* Etage, Datum, Hinweise im Band; 5,3:1 */
-	--tp-slant: 24px;               /* Höhe der Diagonalen an Bändern, 0 = gerade */
-	--tp-gutter: 24px;              /* Innenabstand der Bänder und Karten */
-	--tp-headline-transform: uppercase; /* Überschriften und große Buttons in Versalien */
-	--tp-pill-radius: 0;            /* Status-Schilder und Filter eckig */
+	/* Flächen */
+	--tp-color-ink: #14243a;        /* Schrift */
+	--tp-color-ink-active: #2b4769; /* dunkle Buttons gedrückt */
+	--tp-color-ground: #eceef0;     /* Grund unter den Boxen */
+	--tp-color-paper: #ffffff;      /* Boxen */
+	--tp-color-muted: #56606c;      /* Nebentext, 6:1 auf Weiß */
+	--tp-color-line: color-mix(in srgb, var(--tp-color-ink) 14%, transparent); /* Trennlinien */
+	--tp-color-tint: #e6eef8;       /* helle Buttons (Fuß-Link) */
+	--tp-color-aside: #edf1f6;      /* Zeitfeld */
+	--tp-color-band: #1c3553;       /* dunkle Bänder und Buttons (Routenplaner, Kopf der Halbbreiten-Boxen) */
+	--tp-color-on-band: var(--tp-color-paper);         /* 12:1 */
+	--tp-color-on-band-accent: var(--tp-color-primary); /* Hinweise im Band; 4:1, nur große bzw. fette Schrift */
+
+	--tp-slant: 0px;                /* Höhe der Diagonalen an Bändern, 0 = gerade (Raumplan liest sie auch) */
+	--tp-gutter: 24px;              /* Innenabstand von Sheet und Raumplan-Panel */
+	--tp-headline-transform: none;  /* Überschriften und große Buttons: none oder uppercase */
+	--tp-pill-radius: 6px;          /* Status-Schilder und Filter */
 
 	--tp-font-headline: "Montserrat", sans-serif;
 	--tp-font-text: "Nunito", sans-serif;
@@ -55,45 +59,76 @@
 	   Bedientext nach EN 301 549: 38 px für Elemente ab 1,05 m Höhe, an der
 	   Unterkante (0,92 m) 42 px; eingestellt sind derzeit 30 px. */
 	--tp-font-size-min: 30px;      /* Bedientext */
-	--tp-headline-md: 40px;        /* Überschriften (Kopfband) */
+	--tp-headline-md: 40px;        /* Überschriften (Kopf einer Box) */
 	--tp-headline-s: 24px;         /* nur für nicht nötigen Text */
+	--tp-label-size: 20px;         /* Spaltenköpfe, Kicker */
+	--tp-kicker-spacing: 0.15em;   /* Laufweite der Kicker in Versalien */
 
 	--tp-space-s: 12px;
 	--tp-space-m: 24px;
 	--tp-space-l: 48px;
 
-	--tp-radius: 0;          /* eckig wie lucas-cranach-campus.de */
+	--tp-radius: 8px;        /* Boxen, Sheet */
+	--tp-radius-s: 6px;      /* Buttons, Zeitfeld */
 	--tp-border-width: 3px;
 	--tp-touch-target: 64px; /* DIN 18040-1: mind. 48 – 60 px */
+	--tp-icon-size: 1.1em;   /* Icons in Köpfen und Buttons */
 
-	/* Startseite: 3 gleich hohe Blöcke + Navigationsleiste unten */
-	--tp-nav-height: 160px;  /* Annahme, an die echte Leiste anpassen */
+	/* Box und Zeilen */
+	--tp-box-padding: 28px;  /* Innenabstand der Boxen links/rechts/unten */
+	--tp-row-padding: 10px;  /* Abstand über und unter einer Zeile (Karte) */
+	--tp-card-gap: 24px;     /* Abstand zwischen den Spalten einer Karte */
+	/* Spaltenbreiten der Karten mit Spaltenkopf (Stundenplan, Events) in Vielfachen der Bedienschrift;
+	   ausgerechnet an der Liste (tp-cards), damit sie mit --tp-home-scale / --tp-lock-scale wachsen */
+	--tp-card-aside-factor: 4.4;
+	--tp-card-room-factor: 3.6;
+	--tp-card-action-factor: 8.6;
+	--tp-card-action-size: 0.8em; /* Schrift im Routenplaner-Button, relativ zur Karte */
+	--tp-cta-font-size: var(--tp-font-size-min); /* große Buttons am Sperrbildschirm */
+
+	/* Seiten */
+	--tp-page-gutter: 32px;  /* Abstand der Boxen zum Bildschirmrand (Startseite) */
+	--tp-nav-height: 160px;  /* Platz für die Navigationsleiste unten; Annahme, an die echte Leiste anpassen */
 	--tp-block-gap: 24px;
 	--tp-block-height: calc((1920px - var(--tp-nav-height) - 4 * var(--tp-block-gap)) / 3); /* = 554 px */
+
+	/* Icons (Tabler Icons, MIT), als Maske: die Farbe kommt aus background */
+	--tp-icon-route: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z'/%3E%3Cpath d='M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5'/%3E%3C/svg%3E");
+	--tp-icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E");
+	--tp-icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z'/%3E%3Cpath d='M16 3v4'/%3E%3Cpath d='M8 3v4'/%3E%3Cpath d='M4 11h16'/%3E%3C/svg%3E");
+	--tp-icon-school: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 9l-10 -4l-10 4l10 4l10 -4v6'/%3E%3Cpath d='M6 10.6v5.4a6 3 0 0 0 12 0v-5.4'/%3E%3C/svg%3E");
+	--tp-icon-kitchen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3'/%3E%3C/svg%3E");
+	--tp-icon-message: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9h8'/%3E%3Cpath d='M8 13h6'/%3E%3Cpath d='M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z'/%3E%3C/svg%3E");
+	--tp-icon-bus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M16 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M4 17h-2v-11a1 1 0 0 1 1 -1h14a5 7 0 0 1 5 7v5h-2m-4 0h-8'/%3E%3Cpath d='M16 5l1.5 7l4.5 0'/%3E%3Cpath d='M2 10l15 0'/%3E%3Cpath d='M7 5l0 5'/%3E%3Cpath d='M12 5l0 5'/%3E%3C/svg%3E");
 }
 
 /* Bausteine ------------------------------------------------------------------
-   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, Events)
+   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, Events, Mensa)
    und für Inhalte aus dem Editor. Jeder Baustein hat eine Klasse tp-…; wo er im
    Editor als Blockstil wählbar ist (functions.php), gilt auch is-style-tp-….
    Vorlagen zum Einfügen: block-patterns/.
 
-   tp-box            Rahmen mit fester Höhe (ein Drittel der Startseite)
-   tp-band           Kopfband; tp-band__kicker = Unterzeile darüber (Datum)
-   tp-cards          Kartenliste; in tp-box bzw. mit tp-cards--fit nur ganze Karten
-                     tp-cards__heading = Zwischenüberschrift, tp-cards__empty = leer
-   tp-card           Karte: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
-                     (tp-card__title, tp-card__meta, tp-card__text) | tp-card__action
+   tp-box            weiße Box mit fester Höhe (ein Drittel der Startseite)
+   tp-band           Kopf einer Box: Icon + Titel, tp-band__kicker = Zusatz rechts (Datum);
+                     hell (Standard) oder dunkel (tp-band--dark, in tp-columns automatisch)
+   tp-icon--…        Icon für Kopf oder Button: route, arrow, calendar, school, kitchen, message, bus
+   tp-cards          Liste von Zeilen (Karten); in tp-box bzw. mit tp-cards--fit nur ganze Karten
+                     tp-cards__heading = Zwischenüberschrift, tp-cards__empty = leer,
+                     tp-cards__columns = Spaltenkopf über einer Liste mit tp-cards--columns
+   tp-card           Zeile: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
+                     (tp-card__title, tp-card__meta, tp-card__text) | tp-card__room | tp-card__action
                      Varianten: tp-card--highlight (Feld orange), tp-card--muted
-                     tp-card__aside--date = Feld mit Tag (tp-card__date) und Uhrzeit
-                     tp-card__live = „Jetzt“ mit Pulspunkt unten im Feld
-                     tp-card__action--guide = Raum-Button mit Wegweiser (Raumplan)
+                     im Feld: tp-card__live („jetzt“, oben), tp-card__date (Tag), tp-card__until („bis …“)
+                     tp-card__action--guide = Button „Routenplaner“ (Text in tp-card__action-label)
    tp-more           Fuß-Link mit Pfeil; tp-more__note = Zusatz, tp-more--alert mit
                      tp-more__alert = dunkle Variante mit Hinweis
    tp-status         Statuszeile unter einer Liste (Stand der Daten), --error = Fehler
    tp-sheet          Detailansicht als Bottom-Sheet (<dialog>), Optik wie das
                      Raum-Panel im Raumplan: __header (__kicker, __title, __meta),
                      __body (__media, __text, __action), __footer (__qr, __close)
+   tp-columns        Spalten-Block: Boxen nebeneinander in einer weißen Fläche, Köpfe dunkel
+   tp-home           Startseite: Boxen teilen sich die Bildschirmhöhe über der Navigationsleiste,
+                     Schrift um --tp-home-scale größer
    tp-lock           Sperrbildschirm: ganze Bildschirmhöhe, Schrift um --tp-lock-scale größer,
                      Rotation oben, Buttons (tp-cta) unten
    tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
@@ -103,23 +138,34 @@
 
 /* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
    er nicht, seine Kinder verhalten sich wie direkte Kinder. */
-:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container {
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container {
 	display: contents;
 }
-:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > *,
-:is(.tp-box, .is-style-tp-box, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > * {
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > *,
+:is(.tp-box, .is-style-tp-box, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > * {
 	max-width: none;
 	margin: 0;
 }
+
+/* Icons -------------------------------------------------------------------- */
+.tp-icon--route    { --tp-icon: var(--tp-icon-route); }
+.tp-icon--arrow    { --tp-icon: var(--tp-icon-arrow); }
+.tp-icon--calendar { --tp-icon: var(--tp-icon-calendar); }
+.tp-icon--school   { --tp-icon: var(--tp-icon-school); }
+.tp-icon--kitchen  { --tp-icon: var(--tp-icon-kitchen); }
+.tp-icon--message  { --tp-icon: var(--tp-icon-message); }
+.tp-icon--bus      { --tp-icon: var(--tp-icon-bus); }
 
 /* Box */
 .tp-box,
 .is-style-tp-box {
 	display: flex;
 	flex-direction: column;
+	box-sizing: border-box;
 	height: var(--tp-block-height);
 	padding: 0;
-	background: var(--tp-color-ground);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
 	overflow: hidden;
 }
 :is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band, .tp-more, .wp-block-buttons) {
@@ -129,43 +175,73 @@
 	margin-top: auto; /* Fuß-Link bleibt unten, auch bei wenig Inhalt */
 }
 
-/* Kopfband; die Unterzeile (Datum) steht über der Überschrift (column-reverse) */
+/* Kopf einer Box: Icon, Titel, Zusatz rechts. Hell (Standard) oder dunkel; die Farben kommen
+   aus --tp-band-bg / --tp-band-fg, damit ein Container (tp-columns) sie umstellen kann. */
 .tp-band,
 .is-style-tp-band {
 	display: flex;
-	flex-direction: column-reverse;
-	align-items: flex-start;
-	gap: var(--tp-space-s);
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--tp-space-s) var(--tp-space-m);
 	margin: 0;
-	padding: var(--tp-space-m) calc(2 * var(--tp-gutter)) calc(var(--tp-space-m) + var(--tp-slant));
+	padding: var(--tp-space-m) var(--tp-box-padding) var(--tp-space-s);
 	font-family: var(--tp-font-headline);
 	font-size: var(--tp-headline-md);
 	font-weight: 700;
-	line-height: 1.05;
+	line-height: 1.1;
 	text-transform: var(--tp-headline-transform);
-	color: var(--tp-color-on-band);
-	background: var(--tp-color-band);
-	clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--tp-slant)), 0 100%);
+	color: var(--tp-band-fg, var(--tp-color-ink));
+	background: var(--tp-band-bg, transparent);
+}
+.tp-band--dark,
+:is(.tp-band, .is-style-tp-band).tp-band--dark {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	padding-bottom: var(--tp-space-m);
+}
+/* Icon nur mit einer Klasse tp-icon--… (Editor: „Zusätzliche CSS-Klassen“, Komponenten im Markup) */
+:is(.tp-band, .is-style-tp-band)[class*="tp-icon--"]::before {
+	content: "";
+	flex: none;
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--tp-icon) center / contain no-repeat;
+	mask: var(--tp-icon) center / contain no-repeat;
 }
 .tp-band__kicker {
+	margin-left: auto;
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-headline-s);
-	font-weight: 900;
-	letter-spacing: 0.3em;
+	font-weight: 400;
 	line-height: 1.2;
-	text-transform: uppercase;
-	color: var(--tp-color-on-band-accent); /* 5,3:1 auf dem Band */
+	text-transform: none;
+	color: var(--tp-band-kicker, var(--tp-color-muted));
 }
 
-/* Kartenliste */
+/* Spaltenbreiten der Karten, aus der Bedienschrift an dieser Stelle */
+:is(.tp-cards, .is-style-tp-cards, .tp-cards__columns, .tp-card, .is-style-tp-card) {
+	--tp-card-aside-width: calc(var(--tp-card-aside-factor) * var(--tp-font-size-min));
+	--tp-card-room-width: calc(var(--tp-card-room-factor) * var(--tp-font-size-min));
+	--tp-card-action-width: calc(var(--tp-card-action-factor) * var(--tp-font-size-min));
+}
+
+/* Kartenliste: Zeilen mit Trennlinie in einer weißen Fläche */
 .tp-cards,
 .is-style-tp-cards {
 	display: flex;
 	flex-direction: column;
-	gap: var(--tp-space-s);
 	margin: var(--tp-space-s) var(--tp-gutter);
-	padding: 0;
+	padding: 0 var(--tp-box-padding);
 	list-style: none;
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+/* In der Box ist die Box selbst die Fläche */
+:is(.tp-box, .is-style-tp-box) :is(.tp-cards, .is-style-tp-cards) {
+	margin: 0;
+	border-radius: 0;
 }
 /* Nur ganze Karten: Was nicht mehr in die Höhe passt, bricht per column wrap in eine
    zweite Spalte um, die rechts außerhalb abgeschnitten wird. Komponenten des Plugins
@@ -174,7 +250,7 @@
 .tp-cards--fit {
 	flex: 1 1 auto;
 	flex-flow: column wrap;
-	column-gap: var(--tp-gutter);
+	column-gap: calc(2 * var(--tp-box-padding));
 	min-height: 0;
 	overflow: hidden;
 }
@@ -187,114 +263,129 @@
 	display: flex;
 	align-items: center;
 	gap: var(--tp-space-s);
-	margin: var(--tp-space-m) calc(2 * var(--tp-gutter)) 0;
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) 0;
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-headline-s);
 	font-weight: 900;
-	letter-spacing: 0.2em;
+	letter-spacing: var(--tp-kicker-spacing);
 	line-height: 1.2;
 	text-transform: uppercase;
-	color: var(--tp-color-ink);
-}
-.tp-cards__heading::before {
-	content: "";
-	flex: none;
-	width: 1.5em;
-	height: 3px;
-	background: var(--tp-color-primary);
+	color: var(--tp-color-band);
 }
 .tp-cards__empty {
 	margin: var(--tp-space-s) var(--tp-gutter);
-	padding: var(--tp-space-l) var(--tp-gutter);
+	padding: var(--tp-space-l) var(--tp-box-padding);
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-font-size-min);
 	color: var(--tp-color-muted);
 	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+:is(.tp-box, .is-style-tp-box) .tp-cards__empty {
+	margin: 0;
 }
 
-/* Karte: Feld | Inhalt | Aktion. Weitere Blöcke aus dem Editor (z. B. ein Bild)
-   landen in der Inhaltsspalte. */
+/* Spaltenkopf über einer Liste mit festen Spalten (tp-cards--columns): gleiche Spalten wie die Karten */
+.tp-cards__columns {
+	--tp-card-columns: calc(var(--tp-card-aside-width) + var(--tp-card-gap)) minmax(0, 1fr) calc(var(--tp-card-room-width) + var(--tp-card-gap)) calc(var(--tp-card-action-width) + var(--tp-card-gap));
+	display: grid;
+	grid-template-columns: var(--tp-card-columns);
+	margin: var(--tp-space-s) var(--tp-gutter) 0;
+	padding: 0 var(--tp-box-padding);
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-label-size);
+	line-height: 1.2;
+	color: var(--tp-color-muted);
+}
+:is(.tp-box, .is-style-tp-box) .tp-cards__columns {
+	margin: 0;
+}
+.tp-cards__columns > :nth-child(1) {
+	padding-right: var(--tp-card-gap);
+	text-align: center;
+}
+.tp-cards__columns > :nth-child(n+3) {
+	padding-left: var(--tp-card-gap);
+	text-align: center;
+}
+
+/* Karte (Zeile): Feld | Inhalt | Raum | Aktion. Weitere Blöcke aus dem Editor (z. B. ein Bild)
+   landen in der Inhaltsspalte. Leere Spalten fallen weg; die Abstände hängen deshalb an den
+   Teilen selbst, nicht am Raster. */
 .tp-card,
 .is-style-tp-card {
 	position: relative;
 	display: grid;
-	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
 	align-items: stretch;
-	min-height: 4.5em;
+	min-height: 3em;
 	margin: 0;
-	padding: 0;
+	padding: var(--tp-row-padding) 0;
+	hyphens: auto; /* lange Wörter (Gerichte, Titel) trennen statt abschneiden */
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-font-size-min);
 	color: var(--tp-color-ink);
-	background: var(--tp-color-paper);
-	border-radius: var(--tp-radius);
-	box-shadow: 0 0.5rem 1rem rgba(21, 30, 40, 0.08);
-	overflow: hidden;
+	background: transparent;
+	border-bottom: 1px solid var(--tp-color-line);
+}
+.tp-cards--columns > :is(.tp-card, .is-style-tp-card) {
+	grid-template-columns: calc(var(--tp-card-aside-width) + var(--tp-card-gap)) minmax(0, 1fr) calc(var(--tp-card-room-width) + var(--tp-card-gap)) calc(var(--tp-card-action-width) + var(--tp-card-gap));
 }
 :is(.tp-card, .is-style-tp-card) > :not(.wp-block-group__inner-container),
 :is(.tp-card, .is-style-tp-card) > .wp-block-group__inner-container > * {
 	grid-column: 2;
 }
-/* Zeit- bzw. Datumsfeld mit leicht schräger Kante; "20:00–20:30" bricht nach dem Strich um */
+/* Zeit- bzw. Datumsfeld: „jetzt“ oben, Uhrzeit groß, „bis …“ darunter */
 :is(.tp-card, .is-style-tp-card) .tp-card__aside {
 	grid-column: 1;
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	width: calc(6 * var(--tp-font-size-min));
-	margin: 0;
-	padding: var(--tp-space-s) var(--tp-gutter);
+	width: var(--tp-card-aside-width);
+	margin: 0 var(--tp-card-gap) 0 0;
+	padding: var(--tp-space-s) var(--tp-space-s);
 	font-family: var(--tp-font-headline);
 	font-weight: 700;
 	font-variant-numeric: tabular-nums;
-	line-height: 1.15;
-	background: var(--tp-color-ground);
-	clip-path: polygon(0 0, 100% 0, calc(100% - 0.66em) 100%, 0 100%);
+	line-height: 1.1;
+	text-align: center;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-aside);
+	border-radius: var(--tp-radius-s);
 }
 .tp-card--highlight .tp-card__aside {
-	color: var(--tp-color-on-primary-large);
+	color: var(--tp-color-on-primary);
 	background: var(--tp-color-primary);
 }
 .tp-card--muted .tp-card__aside {
 	font-size: var(--tp-headline-s);
 	color: var(--tp-color-muted);
 }
-/* Feld mit Tag über der Uhrzeit (Listen über mehrere Tage) */
+/* Tag über der Uhrzeit (Listen über mehrere Tage) */
 .tp-card__date {
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-headline-s);
 	font-weight: 900;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
 	white-space: nowrap;
 }
-/* "Jetzt": sitzt unten im orangen Feld (tp-card--highlight), Punkt pulsiert */
-.tp-card:has(.tp-card__live) .tp-card__aside {
-	padding-bottom: calc(var(--tp-space-s) + 1.75em);
-}
-.tp-card__live {
-	position: absolute;
-	left: var(--tp-gutter);
-	bottom: var(--tp-space-s);
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5em;
+/* „bis 11:00“ */
+.tp-card__until {
+	margin-top: 4px;
 	font-family: var(--tp-font-text);
-	font-size: max(var(--tp-headline-s) * 0.84, 0.75rem);
-	font-weight: 900;
-	letter-spacing: 0.2em;
-	line-height: 1;
-	text-transform: uppercase;
-	color: var(--tp-color-on-primary-large);
+	font-size: var(--tp-headline-s);
+	font-weight: 400;
+	white-space: nowrap;
 }
-.tp-card__live::before {
-	content: "";
-	width: 0.6em;
-	height: 0.6em;
-	border-radius: 50%;
-	background: currentColor;
-	animation: tp-pulse 2s infinite;
+/* „jetzt“: oben im orangen Feld (tp-card--highlight) */
+.tp-card__live {
+	order: -1;
+	margin-bottom: 2px;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	line-height: 1.1;
 }
 .tp-card__body {
 	display: flex;
@@ -303,7 +394,7 @@
 	gap: 6px;
 	min-width: 0;
 	margin: 0;
-	padding: var(--tp-space-s) var(--tp-gutter);
+	padding: 4px 0; /* den Abstand zur Trennlinie hält die Karte (--tp-row-padding) */
 }
 .tp-card__title {
 	margin: 0;
@@ -318,70 +409,83 @@
 .tp-card__meta,
 .tp-card__text {
 	margin: 0;
-	line-height: 1.2;
-}
-.tp-card__meta {
+	font-size: var(--tp-headline-s);
+	line-height: 1.25;
 	color: var(--tp-color-muted);
 }
-/* Aktion rechts: dunkler Button (z. B. Weg zum Raum) oder reiner Text.
-   Derselbe Button steht als tp-sheet__action in der Detailansicht. */
+/* Raum: eigene Spalte, groß und fett */
+:is(.tp-card, .is-style-tp-card) .tp-card__room {
+	grid-column: 3;
+	align-self: center;
+	box-sizing: border-box;
+	min-width: var(--tp-card-room-width);
+	margin: 0 0 0 var(--tp-card-gap);
+	font-family: var(--tp-font-headline);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+	white-space: nowrap;
+	color: var(--tp-color-ink);
+}
+/* Aktion rechts: dunkler Button (z. B. Routenplaner). Derselbe Button steht als
+   tp-sheet__action in der Detailansicht. */
 :is(.tp-card, .is-style-tp-card) .tp-card__action,
 .tp-sheet__action {
-	grid-column: 3;
+	grid-column: 4;
 	align-self: center;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: var(--tp-space-s);
 	box-sizing: border-box;
-	min-height: 2.66em;
-	margin: 0 var(--tp-gutter) 0 0;
+	min-height: var(--tp-touch-target);
+	margin: 0 0 0 var(--tp-card-gap);
 	padding: 0 var(--tp-space-m);
 	font-family: var(--tp-font-headline);
+	font-size: var(--tp-card-action-size);
 	font-weight: 700;
 	white-space: nowrap;
 	text-decoration: none;
 	color: var(--tp-color-on-band);
 	background: var(--tp-color-band);
-	border-radius: var(--tp-radius);
+	border-radius: var(--tp-radius-s);
+}
+.tp-cards--columns :is(.tp-card, .is-style-tp-card) .tp-card__action {
+	width: var(--tp-card-action-width);
+}
+:is(.tp-card, .is-style-tp-card) .tp-card__action:is(:hover, :focus),
+.tp-sheet__action:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
 }
 :is(.tp-card, .is-style-tp-card) .tp-card__action:active,
 .tp-sheet__action:active {
 	background: var(--tp-color-ink-active);
 }
-:is(.tp-card, .is-style-tp-card) .tp-card__action--text {
-	padding: 0;
-	color: var(--tp-color-ink);
-	background: none;
-}
-/* Raum-Button: führt zum Routenplaner (#/guide/<Raum>), gleich breit in allen Zeilen */
-:is(.tp-card__action, .tp-sheet__action).tp-card__action--guide,
-.tp-sheet__action--guide {
-	width: 6.5em;
-	font-variant-numeric: tabular-nums;
-}
-:is(.tp-card__action--guide, .tp-sheet__action--guide)::before { /* Wegweiser-Icon (Material Icons "directions", Apache 2.0) */
+/* Routenplaner: Icon vor dem Text */
+:is(.tp-card__action--guide, .tp-sheet__action--guide)::before {
 	content: "";
 	flex: none;
-	width: 1.1em;
-	height: 1.1em;
-	background: var(--tp-color-primary);
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5-3.5 3.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--tp-icon-route) center / contain no-repeat;
+	mask: var(--tp-icon-route) center / contain no-repeat;
 }
 
-/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button) */
+/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button): heller Button links unten */
 .tp-more,
 .wp-block-button.is-style-tp-more .wp-block-button__link {
-	display: flex;
+	display: inline-flex;
+	align-self: flex-start;
 	align-items: center;
-	gap: var(--tp-space-s);
+	flex-wrap: wrap;
+	gap: 0 var(--tp-space-s);
 	box-sizing: border-box;
-	width: 100%;
-	margin: 0;
-	padding: calc(var(--tp-space-s) + var(--tp-slant)) calc(2 * var(--tp-gutter)) var(--tp-space-m);
+	min-height: var(--tp-touch-target);
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) var(--tp-box-padding);
+	padding: var(--tp-space-s) var(--tp-space-m);
 	border: 0;
-	border-radius: 0;
+	border-radius: var(--tp-radius-s);
 	font-family: var(--tp-font-headline);
 	font-size: var(--tp-font-size-min);
 	font-weight: 700;
@@ -389,24 +493,28 @@
 	text-align: left;
 	text-transform: var(--tp-headline-transform);
 	text-decoration: none;
-	color: var(--tp-color-on-primary-large);
-	background: var(--tp-color-primary);
-	clip-path: polygon(0 var(--tp-slant), 100% 0, 100% 100%, 0 100%);
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
 }
-:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):is(:hover, :focus, :active) {
-	color: var(--tp-color-on-primary-large);
-	background: var(--tp-color-primary-active);
+:is(.tp-box, .is-style-tp-box) :is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link) {
+	margin: var(--tp-space-s) var(--tp-box-padding) var(--tp-box-padding);
+}
+:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):is(:hover, :focus) {
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+}
+:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):active {
+	background: color-mix(in srgb, var(--tp-color-band) 15%, var(--tp-color-tint));
 }
 .tp-more::after,
-.wp-block-button.is-style-tp-more .wp-block-button__link::after { /* Pfeil (Material Icons "arrow_forward", Apache 2.0) */
+.wp-block-button.is-style-tp-more .wp-block-button__link::after {
 	content: "";
 	flex: none;
-	width: 1.4em;
-	height: 1.4em;
-	margin-left: auto;
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
 	background: currentColor;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	-webkit-mask: var(--tp-icon-arrow) center / contain no-repeat;
+	mask: var(--tp-icon-arrow) center / contain no-repeat;
 }
 .wp-block-buttons:has(> .is-style-tp-more),
 .wp-block-button.is-style-tp-more {
@@ -417,6 +525,7 @@
 .tp-more__note {
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-headline-s);
+	font-weight: 400;
 	text-transform: none;
 }
 .tp-more__note::before,
@@ -453,19 +562,51 @@
 	100% { box-shadow: 0 0 0 0 transparent; }
 }
 @media (prefers-reduced-motion: reduce) {
-	.tp-more__alert::before,
-	.tp-card__live::before { animation: none; }
+	.tp-more__alert::before { animation: none; }
 }
 
 /* Statuszeile (Stand der Daten) */
 .tp-status {
-	margin: var(--tp-space-m) calc(2 * var(--tp-gutter)) 0;
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) 0;
 	font-family: var(--tp-font-text);
 	font-size: var(--tp-headline-s);
 	color: var(--tp-color-muted);
 }
 .tp-status--error {
 	color: var(--tp-color-danger);
+}
+
+/* Boxen nebeneinander (Blockstil "Kiosk: Boxen nebeneinander" für einen Spalten-Block):
+   eine weiße Fläche, Spalten durch eine Linie getrennt, Köpfe dunkel */
+.wp-block-columns.is-style-tp-columns {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	align-items: stretch;
+	gap: 0;
+	margin: 0;
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+	overflow: hidden;
+}
+.is-style-tp-columns > .wp-block-column {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+}
+.is-style-tp-columns > .wp-block-column + .wp-block-column {
+	border-left: 2px solid var(--tp-color-line);
+}
+.is-style-tp-columns > .wp-block-column > * {
+	margin: 0;
+}
+.is-style-tp-columns :is(.tp-box, .is-style-tp-box) {
+	flex: 1 1 auto;
+	border-radius: 0;
+}
+.is-style-tp-columns :is(.tp-band, .is-style-tp-band) {
+	padding-bottom: var(--tp-space-m);
 }
 
 /* Detailansicht: Bottom-Sheet als <dialog>, Optik wie das Raum-Panel im Raumplan
@@ -499,7 +640,7 @@
 	box-shadow: 0 -6px 24px rgb(0 0 0 / 0.18);
 	overflow: hidden;
 }
-/* Kopf wie tp-band: dunkel, Unterzeile (Datum) über dem Titel */
+/* Kopf wie ein dunkles tp-band: Unterzeile (Datum) über dem Titel */
 .tp-sheet__header {
 	flex: none;
 	display: flex;
@@ -515,7 +656,7 @@
 	margin: 0;
 	font-size: var(--tp-headline-s);
 	font-weight: 900;
-	letter-spacing: 0.2em;
+	letter-spacing: var(--tp-kicker-spacing);
 	line-height: 1.2;
 	text-transform: uppercase;
 	color: var(--tp-color-on-band-accent);
@@ -541,7 +682,7 @@
 	flex-direction: column;
 	gap: var(--tp-space-m);
 	min-height: 0;
-	padding: var(--tp-space-s) calc(2 * var(--tp-gutter)) var(--tp-space-m);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter));
 	overflow-y: auto;
 	overscroll-behavior: contain;
 }
@@ -550,6 +691,7 @@
 	width: 100%;
 	max-height: 30vh;
 	object-fit: cover;
+	border-radius: var(--tp-radius-s);
 }
 .tp-sheet__text {
 	margin: 0;
@@ -559,6 +701,7 @@
 .tp-sheet .tp-sheet__action {
 	align-self: flex-start;
 	margin: 0;
+	font-size: inherit;
 }
 .tp-sheet__footer {
 	flex: none;
@@ -590,17 +733,21 @@
 	margin-left: auto;
 	padding: 0 var(--tp-space-l);
 	border: 0;
-	border-radius: var(--tp-radius);
+	border-radius: var(--tp-radius-s);
 	font-family: var(--tp-font-headline);
 	font-size: var(--tp-font-size-min);
 	font-weight: 700;
 	text-transform: var(--tp-headline-transform);
-	color: var(--tp-color-ink);
-	background: var(--tp-color-ground);
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
 	cursor: pointer;
 }
+.tp-sheet__close:is(:hover, :focus) {
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+}
 .tp-sheet__close:active {
-	background: color-mix(in srgb, var(--tp-color-ink) 15%, var(--tp-color-ground));
+	background: color-mix(in srgb, var(--tp-color-band) 15%, var(--tp-color-tint));
 }
 
 /* Idle-Hinweis (kiosk-idle.js): normales tp-sheet; die Zeiten stehen hier, 0 = Funktion aus */
@@ -622,9 +769,49 @@
 	outline-offset: 3px;
 }
 
+/* Startseite -------------------------------------------------------------------
+   Gruppe "Kiosk: Startseite": die Boxen teilen sich die Bildschirmhöhe über der
+   Navigationsleiste (--tp-nav-height bleibt frei), nichts scrollt (style.css). Jedes
+   direkte Kind wächst mit --tp-home-grow (Standard 1). Die Schrift wächst um
+   --tp-home-scale, Abstände halb so stark. */
+:root {
+	--tp-home-scale: 1.1;
+}
+.tp-home,
+.is-style-tp-home {
+	--tp-font-size-min: calc(30px * var(--tp-home-scale));
+	--tp-headline-md: calc(40px * var(--tp-home-scale));
+	--tp-headline-s: calc(24px * var(--tp-home-scale));
+	--tp-label-size: calc(20px * var(--tp-home-scale));
+	--tp-box-padding: calc(28px * (1 + var(--tp-home-scale)) / 2);
+	--tp-space-s: calc(12px * (1 + var(--tp-home-scale)) / 2);
+	--tp-space-m: calc(24px * (1 + var(--tp-home-scale)) / 2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-block-gap);
+	box-sizing: border-box;
+	height: calc(var(--terminal-height, 1920px) - var(--tp-nav-height));
+	margin: 0;
+	padding: var(--tp-block-gap) var(--tp-page-gutter);
+	overflow: hidden;
+	background: var(--tp-color-ground);
+}
+:is(.tp-home, .is-style-tp-home) > :not(.wp-block-group__inner-container),
+:is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > * {
+	flex: var(--tp-home-grow, 1) 1 0;
+	min-height: 0;
+}
+:is(.tp-home, .is-style-tp-home) :is(.tp-box, .is-style-tp-box) {
+	height: auto;
+}
+:is(.tp-home, .is-style-tp-home) > [hidden],
+:is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > [hidden] {
+	display: none;
+}
+
 /* Sperrbildschirm --------------------------------------------------------------
-   Startseite des Terminals: rotierende Infos, aus der Ferne lesbar, darunter zwei
-   Buttons zu den Startseiten. Passt genau auf den Bildschirm, nichts scrollt
+   Startseite des Terminals: rotierende Infos, aus der Ferne lesbar, darunter
+   Buttons zu den Seiten. Passt genau auf den Bildschirm, nichts scrollt
    (Seitenlayout: style.css). Die Schrift wächst um --tp-lock-scale; Abstände wachsen
    halb so stark mit. Die Grundwerte stehen hier noch einmal, weil sich Variablen aus
    :root nicht skalieren lassen. */
@@ -642,6 +829,7 @@
 	--tp-headline-md: calc(40px * var(--tp-lock-scale));
 	--tp-headline-s: calc(24px * var(--tp-lock-scale));
 	--tp-gutter: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-box-padding: calc(28px * (1 + var(--tp-lock-scale)) / 2);
 	--tp-space-s: calc(12px * (1 + var(--tp-lock-scale)) / 2);
 	--tp-space-m: calc(24px * (1 + var(--tp-lock-scale)) / 2);
 }
@@ -656,7 +844,7 @@
 	box-sizing: border-box;
 	height: var(--terminal-height, 1920px);
 	margin: 0;
-	padding: 0 0 var(--tp-block-gap);
+	padding: var(--tp-block-gap) var(--tp-page-gutter);
 	overflow: hidden;
 	background: var(--tp-color-ground);
 }
@@ -700,13 +888,13 @@
 :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
 	height: 100%;
 }
-/* Position in der Rotation, oben rechts im Kopfband der Folie (unten steht der Fuß-Link) */
+/* Position in der Rotation, oben rechts im Kopf der Folie (unten steht der Fuß-Link) */
 .tp-rotation__dots {
 	position: absolute;
 	z-index: 1;
 	pointer-events: none;
-	top: var(--tp-space-m);
-	right: var(--tp-gutter);
+	top: calc(var(--tp-space-m) / 2 - var(--tp-space-s) / 2);
+	right: var(--tp-box-padding);
 	display: flex;
 	justify-content: center;
 	gap: var(--tp-space-s);
@@ -714,78 +902,94 @@
 .tp-rotation__dot {
 	width: var(--tp-space-s);
 	height: var(--tp-space-s);
-	background: color-mix(in srgb, var(--tp-color-on-band) 35%, transparent);
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--tp-band-fg, var(--tp-color-ink)) 25%, transparent);
 	transition: background 0.6s ease;
 }
 .tp-rotation__dot.is-active {
 	background: var(--tp-color-primary);
 }
+/* Die Punkte stehen ganz oben rechts im Innenabstand des Kopfs; das Icon ist etwas kleiner,
+   damit Icon und Titel bei großer Schrift in eine Zeile passen */
+:is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) {
+	--tp-icon-size: 0.8em;
+}
 
-/* Bei großer Schrift ließe der Raum-Button rechts dem Titel kaum Breite (eine Silbe je
+/* Bei großer Schrift ließen Raum und Routenplaner rechts dem Titel kaum Breite (eine Silbe je
    Zeile). Daher bekommt der Titel die volle Breite neben dem Zeitfeld, darunter stehen
-   Nebentext und Raum (als kleines Schild) in einer Zeile. Der Inhaltsblock löst sich dazu
-   auf (display: contents), seine Teile liegen direkt im Raster der Karte. Nur Karten mit
-   Raum; die übrigen (Mensa, Events ohne Raum) bleiben wie sie sind. Das Zeitfeld ist
-   etwas schmaler, die Schrift ist ohnehin groß. */
-:is(.tp-lock, .is-style-tp-lock) .tp-card__aside {
-	width: calc(5.25 * var(--tp-font-size-min));
+   Nebentext, Raum und der Routenplaner (nur Icon) in einer Zeile. Der Inhaltsblock löst sich
+   dazu auf (display: contents), seine Teile liegen direkt im Raster der Karte. Nur Karten mit
+   Raum; die übrigen (Mensa, Events ohne Raum) bleiben wie sie sind. Ohne Spaltenkopf. */
+:is(.tp-lock, .is-style-tp-lock) .tp-cards__columns {
+	display: none;
 }
-/* Nebentext so groß wie das Raum-Schild, damit beide in eine Zeile passen */
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) :is(.tp-card__meta, .tp-card__text) {
-	font-size: var(--tp-headline-s);
+:is(.tp-lock, .is-style-tp-lock) .tp-cards--columns > :is(.tp-card, .is-style-tp-card) {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) {
-	grid-template-columns: auto minmax(0, 1fr) auto;
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
 	grid-template-rows: 1fr auto auto 1fr;
-	column-gap: var(--tp-space-s);
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__aside {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__aside {
 	grid-row: 1 / -1;
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__body {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__body {
 	display: contents;
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) .tp-card__title {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__title {
 	grid-column: 2 / -1;
 	grid-row: 2;
-	padding: var(--tp-space-s) var(--tp-gutter) 0 calc(var(--tp-gutter) - var(--tp-space-s));
+	padding-top: var(--tp-space-s);
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> .tp-card__action) :is(.tp-card__meta, .tp-card__text) {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) :is(.tp-card__meta, .tp-card__text) {
 	grid-column: 2;
 	grid-row: 3;
 	align-self: center;
 	min-width: 0;
-	padding: 0 0 var(--tp-space-s) calc(var(--tp-gutter) - var(--tp-space-s));
+	padding-bottom: var(--tp-space-s);
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__action {
-	grid-column: 3;
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__room {
 	grid-row: 3;
-	align-self: center;
-	width: auto;
-	min-height: 0;
-	margin: 0 var(--tp-gutter) var(--tp-space-s) 0;
-	padding: 0.2em 0.5em;
+	min-width: 0;
+	padding-bottom: var(--tp-space-s);
 	font-size: var(--tp-headline-s);
 }
-/* Ohne Nebentext rückt das Schild unter den Titel nach links */
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):not(:has(:is(.tp-card__meta, .tp-card__text))) > .tp-card__action {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__action {
+	grid-row: 3;
+	width: auto;
+	min-height: 0;
+	margin-bottom: var(--tp-space-s);
+	padding: 0.35em;
+	font-size: var(--tp-headline-s);
+}
+/* Routenplaner nur als Icon; der Text bleibt für Screenreader */
+:is(.tp-lock, .is-style-tp-lock) .tp-card__action-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+/* Ohne Nebentext rückt der Raum unter den Titel nach links */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):not(:has(:is(.tp-card__meta, .tp-card__text))) > .tp-card__room {
 	grid-column: 2;
 	justify-self: start;
-	margin-left: calc(var(--tp-gutter) - var(--tp-space-s));
+	margin-left: 0;
 }
 
-/* Großer Button (Blockstil "Kiosk: Großer Button"); zwei nebeneinander in einem
-   Buttons-Block teilen sich die Breite */
+/* Großer Button (Blockstil "Kiosk: Großer Button"); mehrere in einem
+   Buttons-Block teilen sich die Breite und brechen bei Bedarf um */
 .wp-block-buttons:has(> .is-style-tp-cta) {
 	display: flex;
 	flex: none;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	gap: var(--tp-block-gap);
 	margin: 0;
-	padding: 0 var(--tp-block-gap);
+	padding: 0;
 }
 .wp-block-button.is-style-tp-cta {
-	flex: 1 1 0;
+	flex: 1 1 28%;
 	min-width: 0;
 	margin: 0;
 }
@@ -798,17 +1002,17 @@
 	height: 100%;
 	min-height: var(--tp-nav-height); /* so hoch wie die Navigationsleiste der übrigen Seiten */
 	margin: 0;
-	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-gutter) var(--tp-space-m);
+	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-space-m) var(--tp-space-m);
 	border: 0;
 	border-radius: var(--tp-radius);
 	font-family: var(--tp-font-headline);
-	font-size: var(--tp-headline-md);
+	font-size: var(--tp-cta-font-size);
 	font-weight: 700;
 	line-height: 1.1;
 	text-align: left;
 	text-transform: var(--tp-headline-transform);
 	text-decoration: none;
-	overflow-wrap: anywhere;
+	overflow-wrap: break-word;
 	hyphens: auto;
 	color: var(--tp-color-on-band);
 	background: var(--tp-color-band);
@@ -828,8 +1032,8 @@
 	height: 1.2em;
 	margin-left: auto;
 	background: var(--tp-color-on-band-accent);
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	-webkit-mask: var(--tp-icon-arrow) center / contain no-repeat;
+	mask: var(--tp-icon-arrow) center / contain no-repeat;
 }
 .wp-block-button.is-style-tp-cta .wp-block-button__link:focus-visible {
 	outline: var(--tp-border-width) solid var(--tp-color-primary);

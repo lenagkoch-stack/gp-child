@@ -319,6 +319,14 @@
 :is(.tp-box, .is-style-tp-box) .tp-cards__columns {
 	margin: 0;
 }
+/* Beschriftung mittig zwischen Kopf und erster Karte: oben und unten der halbe Zeilenabstand; die
+   erste Karte verzichtet dafür auf ihren oberen Abstand (die Gesamthöhe bleibt gleich) */
+:is(.tp-box, .is-style-tp-box) .tp-cards__columns {
+	padding-block: calc(var(--tp-row-padding) / 2);
+}
+.tp-cards__columns + :is(.tp-cards, .is-style-tp-cards) > :is(.tp-card, .is-style-tp-card):first-child {
+	padding-top: 0;
+}
 .tp-cards__columns > :nth-child(1) {
 	padding-right: var(--tp-card-gap);
 	text-align: center;
@@ -873,11 +881,6 @@
 .tp-home--dark-head :is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band) {
 	padding-block: calc((var(--tp-space-s) + var(--tp-space-m)) / 2);
 }
-/* Spaltenbeschriftung („Uhrzeit · Veranstaltung …“) mit Abstand unter dem dunklen Kopf */
-.tp-home--dark-head :is(.tp-box, .is-style-tp-box) .tp-cards__columns {
-	padding-top: var(--tp-space-s);
-}
-
 /* tp-home--link-head: der Fuß-Link („37 weitere →“) steht rechts im Kopf der Box statt unten, die ganze Kopfzeile ist die Tippfläche;
    nur Text und Pfeil, ohne Button-Fläche; der Text „Alle …“ entfällt nur, wenn ein Zähler („37 weitere“) da ist (bleibt für Screenreader); bei den Vorlesungen steht dort immer „n weitere heute“ (n = alle nach der ersten). Die Liste bekommt die ganze Box. */
 .tp-home--link-head :is(.tp-box, .is-style-tp-box) {

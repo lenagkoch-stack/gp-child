@@ -93,7 +93,7 @@ body,
 .entry-content > :is(.km, .ke, .oe, .ka) {
   --tp-gutter: 0px;
 }
-.entry-content > :is(.tp-header, .is-style-tp-header) ~ :is(.km, .ke, .oe, .ka) > :is(.km-section, .ke-section) > :is(.km-heading, .ke-heading) {
+.entry-content > :is(.tp-header, .is-style-tp-header) ~ :is(.km, .ke, .oe, .ka) > :is(.km-section, .ke-section, .ka-section) > :is(.km-heading, .ke-heading, .ka-heading) {
   display: none;
 }
 

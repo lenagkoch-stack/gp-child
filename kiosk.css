@@ -87,7 +87,7 @@
 	--tp-cta-font-size: var(--tp-font-size-min); /* große Buttons am Sperrbildschirm */
 
 	/* Seiten */
-	--tp-page-gutter: 32px;  /* Abstand der Boxen zum Bildschirmrand (Startseite) */
+	--tp-page-gutter: 48px;  /* Abstand der Boxen zum Bildschirmrand (alle Seiten) */
 	--tp-nav-height: 160px;  /* Platz für die Navigationsleiste unten; Annahme, an die echte Leiste anpassen */
 	--tp-block-gap: 24px;
 	--tp-block-height: calc((1920px - var(--tp-nav-height) - 4 * var(--tp-block-gap)) / 3); /* = 554 px */
@@ -129,6 +129,7 @@
    tp-columns        Spalten-Block: Boxen nebeneinander in einer weißen Fläche, Köpfe dunkel
    tp-home           Startseite: Boxen teilen sich die Bildschirmhöhe über der Navigationsleiste,
                      Schrift um --tp-home-scale größer
+   tp-header         Seitenkopf: Logos links/rechts, Kicker, Titel, Untertitel; ohne Box
    tp-lock           Sperrbildschirm: ganze Bildschirmhöhe, Schrift um --tp-lock-scale größer,
                      Rotation oben, Buttons (tp-cta) unten
    tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
@@ -807,6 +808,77 @@
 :is(.tp-home, .is-style-tp-home) > [hidden],
 :is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > [hidden] {
 	display: none;
+}
+
+/* Seitenkopf -------------------------------------------------------------------
+   Gruppe "Kiosk: Seitenkopf" (Vorlage kiosk-kopf.php): Logos links/rechts, darunter
+   Kicker, Titel und Untertitel direkt auf dem Grund, ohne Box. In tp-home und
+   tp-lock behält er seine Höhe, die Boxen teilen sich den Rest. */
+:root {
+	--tp-header-logo-height: 64px;
+	--tp-header-title-size: 72px;
+}
+.tp-header,
+.is-style-tp-header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	padding: 0;
+	background: transparent;
+}
+:is(.tp-header, .is-style-tp-header) > .wp-block-group__inner-container {
+	display: contents;
+}
+:is(.tp-header, .is-style-tp-header) > *,
+:is(.tp-header, .is-style-tp-header) > .wp-block-group__inner-container > * {
+	max-width: none;
+	margin: 0;
+}
+:is(.tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock) > :is(.tp-header, .is-style-tp-header),
+:is(.tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock) > .wp-block-group__inner-container > :is(.tp-header, .is-style-tp-header) {
+	flex: 0 0 auto;
+}
+.tp-header__logos {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: var(--tp-space-m); /* margin würde von der Regel für Kinder des Kopfes überschrieben */
+}
+.tp-header__logos > .wp-block-group__inner-container {
+	display: contents;
+}
+.tp-header__logos .wp-block-image {
+	margin: 0;
+}
+.tp-header__logo img {
+	display: block;
+	width: auto;
+	height: var(--tp-header-logo-height);
+}
+.tp-header__logo--lcc img {
+	height: calc(var(--tp-header-logo-height) * 0.9);
+}
+.tp-header__kicker {
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-s);
+	font-weight: 700;
+	letter-spacing: var(--tp-kicker-spacing);
+	text-transform: uppercase;
+	line-height: 1.2;
+	color: var(--tp-color-band);
+}
+.tp-header__title {
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-header-title-size);
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--tp-color-ink);
+}
+.tp-header__subtitle {
+	font-size: var(--tp-font-size-min);
+	line-height: 1.3;
+	color: var(--tp-color-muted);
 }
 
 /* Sperrbildschirm --------------------------------------------------------------

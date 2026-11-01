@@ -35,19 +35,84 @@ body {
   overscroll-behavior: none;
 }
 
+/* Grund der ganzen Seite: GeneratePress färbt Body, Inhaltsbereich und Artikel selbst
+   (weiß bzw. Customizer-Farbe); hier immer --tp-color-ground */
+html,
+body,
+:root body .site,
+:root body .site-content,
+:root body .content-area,
+:root body .site-main,
+:root body .inside-article,
+:root body .entry-content {
+  background: var(--tp-color-ground);
+}
+
 /* Kopf- und Fußzeile von WordPress (Seitentitel, Logo, "Built with …") ausblenden */
 .site-header,
 .site-footer {
   display: none;
 }
 
+/* Seitentitel von WordPress (Beitragskopf mit h1.entry-title) ausblenden: jede Seite
+   beginnt mit dem Seitenkopf (Vorlage "Kiosk: Seitenkopf"). */
+.entry-header,
+.page-header {
+	display: none;
+}
+
 /* Inhalt über die volle Breite, ohne die Abstände von GeneratePress */
-.site-content,
-.grid-container,
-.inside-article {
+/* (":root body" davor: GeneratePress setzt bei "separate-containers" Rand, Padding und Farbe mit höherer Spezifität) */
+:root body .site-content,
+:root body .grid-container,
+:root body .site-main,
+:root body .inside-article {
   max-width: 100%;
   padding: 0;
   margin: 0;
+}
+
+/* Seitenränder: jede Seite hält links/rechts --tp-page-gutter Abstand zum Bildschirmrand
+   und --tp-block-gap zwischen den Blöcken. Startseite, Sperrbildschirm und Handy-Seiten
+   setzen unten ihr eigenes Padding (spezifischer) und bleiben unberührt. */
+:root body .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tp-block-gap);
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--tp-block-gap) var(--tp-page-gutter);
+}
+.entry-content > * {
+  max-width: none;
+  margin: 0;
+}
+/* Komponenten des Plugins (hsc-kiosk) auf Seiten: Der Seitenrand kommt von .entry-content,
+   ihr eigener Einzug (--tp-gutter) entfällt, damit sie mit dem Seitenkopf fluchten. Ihr
+   Kopfband wiederholt den Seitentitel und entfällt, wenn ein Seitenkopf darüber steht. */
+.entry-content > :is(.km, .ke, .oe, .ka) {
+  --tp-gutter: 0px;
+}
+.entry-content > :is(.tp-header, .is-style-tp-header) ~ :is(.km, .ke, .oe, .ka) > :is(.km-section, .ke-section) > :is(.km-heading, .ke-heading) {
+  display: none;
+}
+
+/* Die Köpfe der übrigen Abschnitte (Vorlesungen, Kommende Termine, Abfahrten) sitzen ohne
+   eigenen Einzug auf dem Seitenrand */
+.entry-content > :is(.km, .ke, .oe, .ka) :is(.tp-band, .is-style-tp-band):not(.tp-band--dark) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Mensa: der Button „Weg zur Mensa“ gilt für die ganze Seite und steht deshalb oben, bündig
+   mit dem Seitenkopf und mit demselben Abstand zu den Tagen wie die Blöcke untereinander. */
+.entry-content > .km .km-guide {
+  margin: 0 0 var(--tp-block-gap);
+}
+
+/* Der Raumplan füllt den Bildschirm bis an den Rand */
+.entry-content > floorplan-widget:not([mode="mobile"]) {
+  margin-inline: calc(-1 * var(--tp-page-gutter));
 }
 
 /* Raumplan (floorplan-widget) ---------------------------------------------
@@ -102,6 +167,26 @@ body:has(:is(.tp-home, .is-style-tp-home)) .entry-header {
 body:has(:is(.tp-home, .is-style-tp-home)) :is(.site, .site-main, .inside-article, .entry-content) {
   margin: 0;
   padding: 0;
+}
+
+/* Seitenkopf über der Startseite: der Kopf steht vor der Gruppe (nicht darin). Der Inhalt
+   bleibt so hoch wie der Bildschirm über der Navigationsleiste; die Startseite nimmt den
+   Platz unter dem Kopf. */
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: calc(var(--terminal-height) - var(--tp-nav-height));
+  overflow: hidden;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content > :is(.tp-header, .is-style-tp-header) {
+  flex: 0 0 auto;
+  padding: var(--tp-block-gap) var(--tp-page-gutter) 0;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content > :is(.tp-home, .is-style-tp-home) {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
 }
 
 /* Sperrbildschirm (Gruppe "Kiosk: Sperrbildschirm", kiosk.css) ---------------

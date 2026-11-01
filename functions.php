@@ -65,6 +65,7 @@ add_action( 'init', function() {
             'tp-home'     => 'Kiosk: Startseite',
             'tp-lock'     => 'Kiosk: Sperrbildschirm',
             'tp-rotation' => 'Kiosk: Rotation',
+            'tp-header'   => 'Kiosk: Seitenkopf',
         ),
         'core/heading' => array( 'tp-band' => 'Kiosk: Kopf' ),
         'core/columns' => array( 'tp-columns' => 'Kiosk: Boxen nebeneinander' ),

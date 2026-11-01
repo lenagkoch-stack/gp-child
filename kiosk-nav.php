@@ -4,6 +4,8 @@
  * (Startseite der Website) und den Handy-Seiten. Aussehen: .tp-nav in kiosk.css.
  * Die Ziele stehen nur hier in der Liste; Reihenfolge = Reihenfolge in der Leiste (4 pro Reihe).
  * "\u{00AD}" ist ein weicher Trennstrich, damit lange Wörter umbrechen können.
+ * Vierter Eintrag: englische Beschriftung (data-en); der Umschalter (hsc-kiosk: kiosk-lang.js)
+ * tauscht sie gegen den deutschen Text. Gleiches Muster für andere feste Texte im Theme.
  */
 
 // Ziel von "Start": die Startseite der Studierenden (nicht der Sperrbildschirm)
@@ -11,14 +13,14 @@ const GP_CHILD_KIOSK_START = '/start/';
 
 function gp_child_kiosk_nav_items() {
     return array(
-        array( '/stundenplan/',    'Vorlesungen',                    'school' ),
-        array( '/events/',         'Events',                           'calendar' ),
-        array( '/mensa/',          'Mensa',                          'kitchen' ),
-        array( '/abfahrten/',      'ÖPNV',                           'bus' ),
-        array( '/raumplan/',       'Raumfinder',                     'map' ),
-        array( '/hinweise/',       'Hinweise',                       'message' ),
-        array( '/ansprechpartner/', "Ansprech\u{00AD}partner",       'users' ),
-        array( '/fehler-melden/',  'Fehler melden',                  'alert' ),
+        array( '/stundenplan/',    'Vorlesungen',                    'school',   'Lectures' ),
+        array( '/events/',         'Events',                           'calendar', 'Events' ),
+        array( '/mensa/',          'Mensa',                          'kitchen',  'Canteen' ),
+        array( '/abfahrten/',      'ÖPNV',                           'bus',      'Transit' ),
+        array( '/raumplan/',       'Raumfinder',                     'map',      'Room finder' ),
+        array( '/hinweise/',       'Hinweise',                       'message',  'Notices' ),
+        array( '/ansprechpartner/', "Ansprech\u{00AD}partner",       'users',    'Contacts' ),
+        array( '/fehler-melden/',  'Fehler melden',                  'alert',    'Report a problem' ),
     );
 }
 
@@ -45,10 +47,10 @@ add_action( 'wp_footer', function() {
         </div>
     </div>
     <div class="tp-nav__targets">
-        <?php foreach ( gp_child_kiosk_nav_items() as list( $href, $label, $icon ) ) : ?>
+        <?php foreach ( gp_child_kiosk_nav_items() as list( $href, $label, $icon, $label_en ) ) : ?>
             <a class="tp-nav__target" href="<?php echo esc_url( $href ); ?>"<?php echo untrailingslashit( $href ) === $current ? ' aria-current="page"' : ''; ?>>
                 <span class="tp-nav__icon tp-icon--<?php echo esc_attr( $icon ); ?>" aria-hidden="true"></span>
-                <span><?php echo esc_html( $label ); ?></span>
+                <span data-en="<?php echo esc_attr( $label_en ); ?>"><?php echo esc_html( $label ); ?></span>
             </a>
         <?php endforeach; ?>
     </div>

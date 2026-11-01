@@ -37,7 +37,29 @@
   let dialog = null;
   let countdown = null;
 
+  // Sprache der Hinweise: die Wahl am Umschalter (hsc-kiosk: kiosk-lang.js), sonst Deutsch
+  const TEXTS = {
+    de: { kicker: "Inaktivität", title: "Gleich zurück zum Startbildschirm", stay: "Hier bleiben", second: "Sekunde", seconds: "Sekunden", back: (n, unit) => `Es geht zurück in ${n} ${unit}.` },
+    en: { kicker: "Inactivity", title: "Returning to the start screen soon", stay: "Stay here", second: "second", seconds: "seconds", back: (n, unit) => `Returning in ${n} ${unit}.` },
+  };
+
+  function texts() {
+    let lang = null;
+    try {
+      lang = sessionStorage.getItem("kiosk-lang");
+    } catch {
+      // ohne Speicher gilt Deutsch
+    }
+    return TEXTS[lang] || TEXTS.de;
+  }
+
   function leave() {
+    // Zurück zum Sperrbildschirm: die nächste Person beginnt wieder auf Deutsch
+    try {
+      sessionStorage.removeItem("kiosk-lang");
+    } catch {
+      // nichts zu verwerfen
+    }
     for (const d of document.querySelectorAll("dialog[open]")) d.close();
     location.href = "/";
   }
@@ -47,6 +69,7 @@
   }
 
   function build() {
+    const t = texts();
     dialog = h("dialog", "tp-sheet tp-idle");
     dialog.setAttribute("aria-labelledby", "tp-idle-title");
     // Tippen irgendwo auf die Ansicht heißt: ich bin noch da
@@ -55,8 +78,8 @@
 
     const panel = h("div", "tp-sheet__panel");
     const header = h("header", "tp-sheet__header");
-    header.append(h("p", "tp-sheet__kicker", "Inaktivität"));
-    const title = h("h2", "tp-sheet__title", "Gleich zurück zum Startbildschirm");
+    header.append(h("p", "tp-sheet__kicker", t.kicker));
+    const title = h("h2", "tp-sheet__title", t.title);
     title.id = "tp-idle-title";
     header.append(title);
     panel.append(header);
@@ -67,7 +90,7 @@
     panel.append(body);
 
     const footer = h("footer", "tp-sheet__footer");
-    const close = h("button", "tp-sheet__close", "Hier bleiben");
+    const close = h("button", "tp-sheet__close", t.stay);
     close.type = "button";
     footer.append(close);
     panel.append(footer);
@@ -77,7 +100,9 @@
   }
 
   function warn(warning) {
-    if (!dialog) build();
+    // Neu bauen, falls zwischendurch die Sprache gewechselt wurde
+    dialog?.remove();
+    build();
     deadline = Date.now() + warning * 1000;
     update();
     dialog.showModal();
@@ -86,7 +111,8 @@
 
   function update() {
     const rest = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-    countdown.textContent = `Es geht zurück in ${rest} ${rest === 1 ? "Sekunde" : "Sekunden"}.`;
+    const t = texts();
+    countdown.textContent = t.back(rest, rest === 1 ? t.second : t.seconds);
   }
 
   function tick() {

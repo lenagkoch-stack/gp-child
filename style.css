@@ -110,18 +110,22 @@ body,
   margin: 0 0 var(--tp-block-gap);
 }
 
-/* Der Raumplan füllt den Bildschirm bis an den Rand */
-.entry-content > floorplan-widget:not([mode="mobile"]) {
-  margin-inline: calc(-1 * var(--tp-page-gutter));
+/* Der Raumplan füllt den Platz unter dem Seitenkopf bis zur Navigationsleiste; Karte und
+   Bedienfeld sitzen als Boxen auf dem Grund, mit dem Seitenrand wie die Boxen der anderen Seiten. */
+body:has(floorplan-widget:not([mode="mobile"])) .entry-content {
+  height: calc(var(--terminal-height) - var(--tp-nav-height));
+  overflow: hidden;
+}
+/* Der Shortcode setzt die Höhe am Container (inline); flex-basis 0 geht vor */
+.entry-content > div:has(> floorplan-widget:not([mode="mobile"])) {
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 /* Raumplan (floorplan-widget) ---------------------------------------------
    Das Aussehen liest das Widget aus den --tp-* Variablen in kiosk.css, siehe
-   floorplan-widget/README.md, Abschnitt "Theming". Hier steht nur die Höhe:
-   Am Terminal bleibt unten Platz für die globale Navigationsleiste. */
-floorplan-widget {
-  height: calc(100vh - var(--tp-nav-height));
-}
+   floorplan-widget/README.md, Abschnitt "Theming". Hier steht nur die Höhe (Terminal: Rest der
+   Seite, siehe oben). */
 floorplan-widget[mode="mobile"] {
   height: 100%; /* füllt den Container des Shortcodes (height="100dvh") */
 }
@@ -144,6 +148,47 @@ body:has(floorplan-widget[mode="mobile"]) :is(.entry-header, .site-footer) {
 body:has(floorplan-widget[mode="mobile"]) :is(.site, .site-main, .inside-article, .entry-content) {
   margin: 0;
   padding: 0;
+}
+
+/* Seitenkopf der Handy-Seite wie auf den anderen Seiten (Logos, Kicker, Titel), nur kleiner
+   für das Handy; darunter füllt der Raumplan den Rest des Bildschirms. Das Widget hat am Handy
+   keine eigene Titelleiste. */
+body:has(floorplan-widget[mode="mobile"]) .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100dvh;
+  padding: var(--tp-space-s) var(--tp-space-s) 0;
+  box-sizing: border-box;
+  --tp-header-logo-height: 36px;
+  --tp-font-size-min: 16px;
+}
+body:has(floorplan-widget[mode="mobile"]) .entry-content > :is(.tp-header, .is-style-tp-header) {
+  flex: 0 0 auto;
+  padding: 0 var(--tp-space-s) var(--tp-space-s);
+  gap: 4px;
+}
+body:has(floorplan-widget[mode="mobile"]) .tp-header__logos {
+  padding-bottom: var(--tp-space-s);
+}
+/* Am Handy reichen die Logos; Kicker und Untertitel entfallen, der Titel bleibt für Screenreader */
+body:has(floorplan-widget[mode="mobile"]) :is(.tp-header__kicker, .tp-header__subtitle) {
+  display: none;
+}
+body:has(floorplan-widget[mode="mobile"]) .tp-header__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+body:has(floorplan-widget[mode="mobile"]) .entry-content > div:has(> floorplan-widget[mode="mobile"]) {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--tp-radius) var(--tp-radius) 0 0;
 }
 
 /* Stundenplan ([kiosk_stundenplan]) ---------------------------------------

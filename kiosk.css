@@ -897,12 +897,13 @@
 	inset: 0 0 auto; /* liegt über dem ganzen Kopf: die gesamte Kopfzeile ist die Tippfläche */
 	justify-content: flex-end;
 	flex-wrap: nowrap;
+	column-gap: calc(var(--tp-space-s) / 2); /* Text und Pfeil enger */
 	box-sizing: border-box;
 	width: auto;
 	height: calc(var(--tp-space-m) + var(--tp-space-s) + 1.1 * var(--tp-headline-md)); /* Höhe des Kopfes */
 	min-height: 48px;
 	margin: 0;
-	padding: var(--tp-link-head-pad, calc(var(--tp-space-m) - var(--tp-space-s))) var(--tp-box-padding) 0; /* oben: Titel mittig (heller Kopf hat oben mehr Abstand) */
+	padding: var(--tp-link-head-pad, calc(var(--tp-space-m) - var(--tp-space-s))) calc(var(--tp-box-padding) * 0.55) 0 0; /* oben: Titel mittig (heller Kopf hat oben mehr Abstand); rechts knapper als der Boxrand, damit der Link in schmalen Köpfen (Spalten) nicht an den Titel stößt */
 	border-radius: 0;
 	font-size: var(--tp-headline-s);
 	color: var(--tp-link-head-fg, var(--tp-color-band));

@@ -118,7 +118,7 @@
                      hell (Standard) oder dunkel (tp-band--dark, in tp-columns automatisch)
    tp-icon--…        Icon für Kopf oder Button: route, arrow, calendar, school, kitchen, message, bus, map, users, alert, home
    tp-cards          Liste von Zeilen (Karten); in tp-box bzw. mit tp-cards--fit nur ganze Karten
-                     tp-cards__heading = Zwischenüberschrift, tp-cards__empty = leer,
+                     tp-cards__heading = Zwischenüberschrift (tp-cards__badge = Marke „Heute“), tp-cards__empty = leer,
                      tp-cards__columns = Spaltenkopf über einer Liste mit tp-cards--columns
    tp-card           Zeile: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
                      (tp-card__title, tp-card__meta, tp-card__text) | tp-card__room | tp-card__action
@@ -283,6 +283,13 @@
 	line-height: 1.2;
 	text-transform: uppercase;
 	color: var(--tp-color-band);
+}
+/* „Heute“ als orange Marke vor dem Datum (tp-cards__badge im tp-cards__heading) */
+.tp-cards__badge {
+	padding: 0.15em 0.7em;
+	border-radius: var(--tp-radius-s);
+	color: var(--tp-color-on-primary);
+	background: var(--tp-color-primary);
 }
 .tp-cards__empty {
 	margin: var(--tp-space-s) var(--tp-gutter);

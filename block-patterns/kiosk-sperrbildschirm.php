@@ -41,7 +41,7 @@
 <!-- /wp:button -->
 
 <!-- wp:button {"className":"is-style-tp-cta"} -->
-<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/stundenplan/">Stundenplan</a></div>
+<div class="wp-block-button is-style-tp-cta"><a class="wp-block-button__link wp-element-button" href="/stundenplan/">Vorlesungen</a></div>
 <!-- /wp:button -->
 
 <!-- wp:button {"className":"is-style-tp-cta"} -->

@@ -484,11 +484,11 @@
 	mask: var(--tp-icon-route) center / contain no-repeat;
 }
 
-/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button): heller Button links unten */
+/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button): heller Button über die volle Breite unten */
 .tp-more,
 .wp-block-button.is-style-tp-more .wp-block-button__link {
-	display: inline-flex;
-	align-self: flex-start;
+	display: flex;
+	align-self: stretch;
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 0 var(--tp-space-s);
@@ -522,6 +522,7 @@
 .wp-block-button.is-style-tp-more .wp-block-button__link::after {
 	content: "";
 	flex: none;
+	margin-left: auto; /* Pfeil rechtsbündig, Text links */
 	width: var(--tp-icon-size);
 	height: var(--tp-icon-size);
 	background: currentColor;
@@ -539,8 +540,13 @@
 	font-size: var(--tp-headline-s);
 	font-weight: 400;
 	text-transform: none;
+	margin-left: auto; /* Zusatz rechts, direkt vor dem Pfeil */
 }
-.tp-more__note::before,
+/* Mit Zusatz übernimmt dieser den Restplatz, der Pfeil schließt direkt an */
+.tp-more:has(> .tp-more__note)::after,
+.wp-block-button__link:has(> .tp-more__note)::after {
+	margin-left: 0;
+}
 .tp-more--alert .tp-more__label::before {
 	content: "· ";
 }

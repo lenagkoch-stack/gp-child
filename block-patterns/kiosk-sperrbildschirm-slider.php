@@ -1,7 +1,7 @@
 <?php
 /**
  * Title: Kiosk: Sperrbildschirm – Slider
- * Description: Baustein des Sperrbildschirms: die Rotation mit Mensa, ÖPNV, Vorlesungen und Events, dahinter die eigenen Terminal-Folien ([kiosk_folien]) und je eine Folie pro Hinweis ([kiosk_hinweise folien="1"], Beiträge der Kategorien Wichtig und Info). Die Punkte unter dem Slider zeigt kiosk-rotation.js (Darstellung per ?dots=a|b|c|d).
+ * Description: Baustein des Sperrbildschirms: die Rotation mit Mensa, ÖPNV, Vorlesungen und Events, dahinter die eigenen Terminal-Folien ([kiosk_folien]) und je eine Folie pro Hinweis ([kiosk_hinweise folien="1"], Beiträge der Kategorien Wichtig und Info). Dahinter die Besucher-Folie ([kiosk_besucher]), die während eines Besuchs die Rotation ersetzt. Die Punkte unter dem Slider zeigt kiosk-rotation.js (Darstellung per ?dots=a|b|c|d).
  */
 ?>
 <!-- wp:group {"className":"is-style-tp-rotation","layout":{"type":"default"}} -->
@@ -37,3 +37,7 @@
 [kiosk_hinweise folien="1"]
 <!-- /wp:shortcode --></div>
 <!-- /wp:group -->
+
+<!-- wp:shortcode -->
+[kiosk_besucher]
+<!-- /wp:shortcode -->

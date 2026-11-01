@@ -1294,6 +1294,10 @@
 :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
 	height: 100%;
 }
+/* Besucher-Folie ([kiosk_besucher], kiosk-besucher.js) ersetzt während eines Besuchs die Rotation */
+:is(.tp-lock, .is-style-tp-lock).tp-lock--visitor :is(.tp-rotation, .is-style-tp-rotation) {
+	display: none;
+}
 /* Position in der Rotation, oben rechts im Kopf der Folie (unten steht der Fuß-Link) */
 .tp-rotation__dots {
 	position: absolute;

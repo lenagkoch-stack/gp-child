@@ -1,5 +1,21 @@
 <?php
 
+/*
+ * Standard-Varianten der Startseite (Gruppe "Kiosk: Startseite", siehe kiosk.css, kiosk-home.js):
+ * fit = Boxen nach Inhalt, link-head = Fuß-Link in der Kopfzeile, dark-head = alle Köpfe dunkelblau. Weitere: scale-90.
+ * Mit ?home=… an der Adresse ersetzt man sie zum Vergleichen (?home=none = keine).
+ */
+const GP_CHILD_HOME_DEFAULTS = array( 'fit', 'link-head', 'dark-head' );
+
+add_filter( 'render_block_core/group', function( $content, $block ) {
+    $classes = $block['attrs']['className'] ?? '';
+    if ( ! preg_match( '/(^|\s)(is-style-)?tp-home(\s|$)/', $classes ) ) {
+        return $content;
+    }
+    $add = implode( ' ', array_map( fn( $name ) => 'tp-home--' . $name, GP_CHILD_HOME_DEFAULTS ) );
+    return preg_replace( '/(<div class="[^"]*)"/', '$1 ' . $add . '"', $content, 1 );
+}, 10, 2 );
+
 add_action( 'wp_enqueue_scripts', function() {
 
     wp_enqueue_style(
@@ -26,6 +42,15 @@ add_action( 'wp_enqueue_scripts', function() {
     wp_enqueue_script(
         'gp-child-kiosk-rotation',
         get_stylesheet_directory_uri() . '/kiosk-rotation.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
+    // Startseite: Boxen mit Kartenliste nur so hoch wie ihre ersten Karten, der Rest geht an die übrigen
+    wp_enqueue_script(
+        'gp-child-kiosk-home',
+        get_stylesheet_directory_uri() . '/kiosk-home.js',
         array(),
         wp_get_theme()->get('Version'),
         true

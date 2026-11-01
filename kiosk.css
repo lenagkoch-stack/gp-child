@@ -312,7 +312,7 @@
 	margin: var(--tp-space-s) var(--tp-gutter) 0;
 	padding: 0 var(--tp-box-padding);
 	font-family: var(--tp-font-text);
-	font-size: var(--tp-label-size);
+	font-size: calc(0.8 * var(--tp-label-size)); /* kleiner als die Kicker, die dieselbe Größe nutzen */
 	line-height: 1.2;
 	color: var(--tp-color-muted);
 }
@@ -345,7 +345,10 @@
 	font-size: var(--tp-font-size-min);
 	color: var(--tp-color-ink);
 	background: transparent;
-	border-bottom: 1px solid var(--tp-color-line);
+}
+/* Trennlinie nur zwischen den Karten, nicht unter der letzten (auch wenn die Liste nur ganze Karten zeigt) */
+:is(.tp-card, .is-style-tp-card) + :is(.tp-card, .is-style-tp-card) {
+	border-top: 1px solid var(--tp-color-line);
 }
 .tp-cards--columns > :is(.tp-card, .is-style-tp-card) {
 	grid-template-columns: calc(var(--tp-card-aside-width) + var(--tp-card-gap)) minmax(0, 1fr) calc(var(--tp-card-room-width) + var(--tp-card-gap)) calc(var(--tp-card-action-width) + var(--tp-card-gap));
@@ -516,7 +519,7 @@
 	background: var(--tp-color-tint);
 }
 :is(.tp-box, .is-style-tp-box) :is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link) {
-	margin: var(--tp-space-s) var(--tp-box-padding) var(--tp-box-padding);
+	margin: var(--tp-space-s) var(--tp-box-padding) var(--tp-space-s);
 }
 :is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):is(:hover, :focus) {
 	color: var(--tp-color-band);
@@ -540,6 +543,16 @@
 .wp-block-button.is-style-tp-more {
 	width: 100%;
 	margin: 0;
+}
+/* Gesamtzahl („1 weitere heute“): nur mit tp-home--link-head sichtbar */
+.tp-more__total {
+	display: none;
+}
+.tp-home--link-head .tp-more__total {
+	display: inline;
+}
+.tp-home--link-head .tp-more:has(.tp-more__total) .tp-more__note {
+	display: none; /* in der Kopfzeile zählt die Gesamtzahl */
 }
 /* Zusatz ("· 3 weitere heute"): Grundtext statt Versalien */
 .tp-more__note {
@@ -630,8 +643,10 @@
 	flex: 1 1 auto;
 	border-radius: 0;
 }
+/* Gleiche Kopfhöhe wie die Köpfe der einzelnen Boxen (oben m, unten s), aber mittig:
+   der Abstand wird oben und unten gleich verteilt (überstimmt auch tp-band--dark) */
 .is-style-tp-columns :is(.tp-band, .is-style-tp-band) {
-	padding-bottom: var(--tp-space-m);
+	padding-block: calc((var(--tp-space-s) + var(--tp-space-m)) / 2);
 }
 
 /* Detailansicht: Bottom-Sheet als <dialog>, Optik wie das Raum-Panel im Raumplan
@@ -828,6 +843,93 @@
 }
 :is(.tp-home, .is-style-tp-home) :is(.tp-box, .is-style-tp-box) {
 	height: auto;
+}
+
+/* Varianten der Startseite: Klassen an der Gruppe (Editor: „Zusätzliche CSS-Klasse“), frei
+   kombinierbar. Zum Vergleichen genügt auch ?home=fit,scale-90,link-head an der Adresse
+   (kiosk-home.js setzt dann die Klassen). */
+
+/* tp-home--scale-90: Schrift um 0.9 statt 1.1 */
+.tp-home--scale-90 {
+	--tp-home-scale: 0.9;
+}
+
+/* tp-home--fit: Boxen mit Kartenliste nur so hoch wie ihre ersten Karten (kiosk-home.js); die
+   Spaltenreihe (Hinweise, Mensa) bekommt den übrigen Platz, mindestens --tp-home-columns-min */
+.tp-home--fit > .is-style-tp-columns,
+.tp-home--fit > .wp-block-group__inner-container > .is-style-tp-columns {
+	min-height: var(--tp-home-columns-min, 300px);
+}
+
+/* tp-home--dark-head: auch die Köpfe der einzelnen Boxen (Veranstaltungen, Vorlesungen) dunkelblau,
+   wie die der Spaltenreihe (Hinweise, Mensa); gleiche Kopfhöhe, Titel mittig */
+.tp-home--dark-head :is(.tp-box, .is-style-tp-box) {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	--tp-link-head-fg: var(--tp-color-on-band);
+	--tp-link-head-pad: 0px;
+}
+.tp-home--dark-head :is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band) {
+	padding-block: calc((var(--tp-space-s) + var(--tp-space-m)) / 2);
+}
+/* Spaltenbeschriftung („Uhrzeit · Veranstaltung …“) mit Abstand unter dem dunklen Kopf */
+.tp-home--dark-head :is(.tp-box, .is-style-tp-box) .tp-cards__columns {
+	padding-top: var(--tp-space-s);
+}
+
+/* tp-home--link-head: der Fuß-Link („37 weitere →“) steht rechts im Kopf der Box statt unten, die ganze Kopfzeile ist die Tippfläche;
+   nur Text und Pfeil, ohne Button-Fläche; der Text „Alle …“ entfällt nur, wenn ein Zähler („37 weitere“) da ist (bleibt für Screenreader); bei den Vorlesungen steht dort immer „n weitere heute“ (n = alle nach der ersten). Die Liste bekommt die ganze Box. */
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) {
+	position: relative;
+	padding-bottom: var(--tp-space-s);
+}
+.tp-home--link-head .is-style-tp-columns {
+	--tp-link-head-fg: var(--tp-color-on-band);
+	--tp-link-head-pad: 0px;
+}
+/* doppelte Klasse: überstimmt die Randregel für .tp-more in Boxen */
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more {
+	position: absolute;
+	inset: 0 0 auto; /* liegt über dem ganzen Kopf: die gesamte Kopfzeile ist die Tippfläche */
+	justify-content: flex-end;
+	flex-wrap: nowrap;
+	box-sizing: border-box;
+	width: auto;
+	height: calc(var(--tp-space-m) + var(--tp-space-s) + 1.1 * var(--tp-headline-md)); /* Höhe des Kopfes */
+	min-height: 48px;
+	margin: 0;
+	padding: var(--tp-link-head-pad, calc(var(--tp-space-m) - var(--tp-space-s))) var(--tp-box-padding) 0; /* oben: Titel mittig (heller Kopf hat oben mehr Abstand) */
+	border-radius: 0;
+	font-size: var(--tp-headline-s);
+	color: var(--tp-link-head-fg, var(--tp-color-band));
+	background: none; /* nur Text und Pfeil, kein Button */
+}
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:is(:hover, :focus, :active) {
+	color: var(--tp-link-head-fg, var(--tp-color-band));
+	background: none;
+}
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more::after {
+	margin-left: 0; /* Text und Pfeil bleiben rechts zusammen (der Link ist so breit wie der Kopf) */
+}
+/* Rückmeldung beim Tippen auf die Kopfzeile */
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:active {
+	background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:has(:is(.tp-more__note, .tp-more__total)) .tp-more__label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more :is(.tp-more__note, .tp-more__label, .tp-more__total) {
+	font-family: var(--tp-font-text);
+	font-size: inherit;
+	font-weight: 400;
+	text-transform: none;
+	margin-left: 0;
 }
 :is(.tp-home, .is-style-tp-home) > [hidden],
 :is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > [hidden] {

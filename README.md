@@ -10,6 +10,7 @@ Theme des Info-Terminals (HS Coburg, 1080 × 1920 px, Hochformat). Stil: Entwurf
 | `kiosk-editor.css` | Nur im Editor: Boxen ohne feste Höhe, damit man beim Bearbeiten alles sieht. |
 | `style.css` | Seitenlayout des Terminals: Bildschirmformat, Platz für die Navigationsleiste, Handy-Seiten (`/checkin/`), Raumplan-Höhe. |
 | `kiosk-nav.php` | **Navigationsleiste** unten: Liste der Ziele, Ziel von „Start“ und Ausgabe über `wp_footer`. Steht auf jeder Seite außer dem Sperrbildschirm und den Handy-Seiten. |
+| `kiosk-lock.js` | Sperrbildschirm: Tipp auf eine freie Fläche führt zu `/start/`. |
 | `kiosk-rotation.js` | Wechselt die Folien einer Rotation (Blockstil „Kiosk: Rotation“). |
 | `functions.php` | Lädt Stylesheets und Rotations-Skript, registriert Blockstile und Vorlagen. |
 | `block-patterns/` | Vorlagen für den Editor (Kategorie „Kiosk“). |
@@ -60,9 +61,11 @@ Die Teile einer Karte (`tp-card__aside`, `__body`, `__title`, `__text`) sind CSS
 - **Kiosk: Hinweise** – Box mit dunklem Kopf „Hinweise“ und zwei Hinweisen (Karten ohne Datumsfeld)
 - **Kiosk: Box mit Karten** – Box mit Kopf (Icon), zwei Beispielkarten und Fuß-Link
 - **Kiosk: Karte** – eine Karte (Datumsfeld, Überschrift, Text), z. B. für einen Hinweis; in eine Kartenliste einfügen
-- **Kiosk: Sperrbildschirm** – Mensa, Abfahrten, Stundenplan und Events im Wechsel, darunter je ein Button zu Mensa (`/mensa/`), Abfahrten (`/abfahrten/`), Stundenplan (`/stundenplan/`) und Events (`/events/`) sowie „Neu auf dem Campus“ (`/startseite-gast/`). Für die Seite „Sperrseite“ (Startseite der Website): Inhalt löschen, Vorlage einfügen
+- **Kiosk: Sperrbildschirm** – Logos, darunter Mensa, Abfahrten, Stundenplan und Events im Wechsel, die Box „Campus entdecken“ (`/welcome`), die Schnellzugriffe (Shortcode `[kiosk_schnellzugriffe]`, dieselben Ziele wie die Navigationsleiste ohne Start und Sprache, Liste in `kiosk-nav.php`) und der Hinweis „Tippe, um loszulegen“. Ein Tipp auf eine freie Fläche führt zu `/start/`. Für die Seite „Sperrseite“ (Startseite der Website): Inhalt löschen, Vorlage einfügen
 
 ### Sperrbildschirm einrichten
+
+**Einfacher:** In der Seite „Sperrseite“ nur einen Shortcode-Block mit `[kiosk_sperrbildschirm]` lassen. Dann kommt der Sperrbildschirm direkt aus `block-patterns/kiosk-sperrbildschirm.php`, Änderungen an der Datei gelten sofort (Seite neu laden). Die Schritte unten sind nur nötig, wenn der Sperrbildschirm im Editor bearbeitet werden soll.
 
 1. WP-Admin → *Seiten* → „Sperrseite“ bearbeiten (die Seite ist unter *Einstellungen → Lesen* als Startseite eingestellt).
 2. Alten Inhalt entfernen: in den Inhalt klicken, zweimal Cmd/Strg + A, dann Entf.
@@ -70,12 +73,16 @@ Die Teile einer Karte (`tp-card__aside`, `__body`, `__title`, `__text`) sind CSS
 4. **Aktualisieren** (bzw. Speichern).
 5. Prüfen: die Startseite im Browser öffnen, in den DevTools den Gerätemodus auf 1080 × 1920 stellen. Nach einem Theme-Update einmal hart neu laden (Cmd/Strg + Shift + R).
 
-Im Editor stehen die Folien untereinander; am Terminal wechseln sie. Den Aufbau zeigt die **Listenansicht** (Symbol mit drei Strichen oben links): Sperrbildschirm › Rotation › Boxen, darunter die Buttons.
+Im Editor stehen die Folien untereinander; am Terminal wechseln sie. Den Aufbau zeigt die **Listenansicht** (Symbol mit drei Strichen oben links): Sperrbildschirm › Rotation › Boxen, darunter „Campus entdecken“ und die Schnellzugriffe.
 
 - **Folie hinzufügen:** in der Listenansicht die Gruppe „Rotation“ wählen und den neuen Block *in* sie einfügen (z. B. Vorlage „Kiosk: Box mit Karten“ für eigene Hinweise, oder eine Gruppe „Kiosk: Box“ mit einem Shortcode-Block). Nur direkte Kinder der Rotation werden zu Folien.
 - **Reihenfolge ändern / entfernen:** Box in der Listenansicht verschieben bzw. löschen.
 - **Buttons:** Text direkt bearbeiten, Ziel über das Link-Symbol der Werkzeugleiste.
 - **Idle-Rückkehr:** Auf jeder Seite außer dem Sperrbildschirm erscheint nach `--tp-idle-timeout` (Standard `90s`) ohne Berührung der Hinweis „Gleich zurück zum Startbildschirm“ mit Countdown `--tp-idle-warning` (Standard `15s`); danach geht es zur Startseite, „Hier bleiben“ bricht ab. `--tp-idle-timeout: 0` schaltet es aus; auf der Handy-Seite Check-in (Raumplan im Modus `mobile`) erscheint es nie (Variablen in `kiosk.css`, Skript `kiosk-idle.js`).
+- **Slider-Punkte (Entwickeln):** Standard sind vier Segmente mit Füllstand (B). Per Adresse: `?dots=a` (größere Punkte), `?dots=c` (Icon-Buttons), `?dots=d` (beschriftete Reiter), `?dots=b` (Standard). Alle sind bedienbar. Beispiel-Links: `docs/sperrbildschirm-beispiellinks.md`.
+- **Uhr:** Zwischen den Logos stehen Uhrzeit und Datum (Berliner Zeit, vom Browser des Terminals, jede Minute aktualisiert; `kiosk-lock.js`, Stil `.tp-lock__clock` in `kiosk.css`).
+- **Begrüßung (Entwickeln):** Sie ist normalerweise ausgeblendet. `?welcome=1` blendet sie mit dem Text der Vorlage ein, `?welcome=Guten Morgen!` mit eigener Überschrift (nur Text), `?welcome=0` lässt sie aus. Das Skript ist `kiosk-lock.js`.
+- **Auf einer Folie bleiben (Entwickeln):** `?slide=2` an der Adresse hält die Rotation auf der 2. Folie an (von 1 an gezählt, auch ausgeblendete Folien zählen mit). Ohne gültige Nummer läuft sie wie sonst.
 - **Schriftgröße, Standzeit, Pause nach Berührung:** Variablen `--tp-lock-scale`, `--tp-rotation-interval` und `--tp-rotation-pause` in `kiosk.css` (nicht im Editor).
 
 Die Vorlagen liefern nur die Bausteine. Eigene Boxen (z. B. Hinweise) setzt man daraus zusammen; zusätzliche Blöcke in einer Karte, etwa ein Bild, landen in der Inhaltsspalte.

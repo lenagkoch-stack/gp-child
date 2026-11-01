@@ -57,3 +57,26 @@ add_action( 'wp_footer', function() {
 </nav>
     <?php
 } );
+
+/*
+ * Schnellzugriffe auf dem Sperrbildschirm: dieselben Ziele wie die Navigationsleiste (ohne Start und
+ * Sprache), damit die Liste nur an einer Stelle gepflegt wird. Einbinden mit [kiosk_schnellzugriffe].
+ * Aussehen: .tp-lock__quick in kiosk.css.
+ */
+add_shortcode( 'kiosk_schnellzugriffe', function() {
+    ob_start();
+    ?>
+<section class="tp-lock__quick" aria-label="Schnellzugriffe">
+    <h2 class="tp-lock__quick-title">Schnellzugriffe</h2>
+    <div class="tp-lock__quick-grid">
+        <?php foreach ( gp_child_kiosk_nav_items() as list( $href, $label, $icon, $label_en ) ) : ?>
+            <a class="tp-lock__quick-tile" href="<?php echo esc_url( $href ); ?>">
+                <span class="tp-nav__icon tp-icon--<?php echo esc_attr( $icon ); ?>" aria-hidden="true"></span>
+                <span data-en="<?php echo esc_attr( $label_en ); ?>"><?php echo esc_html( $label ); ?></span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</section>
+    <?php
+    return ob_get_clean();
+} );

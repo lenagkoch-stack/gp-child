@@ -65,6 +65,17 @@ add_action( 'wp_enqueue_scripts', function() {
         true
     );
 
+    // Sperrbildschirm: Tipp auf eine freie Fläche führt zur Startseite der Studierenden
+    if ( is_front_page() ) {
+        wp_enqueue_script(
+            'gp-child-kiosk-lock',
+            get_stylesheet_directory_uri() . '/kiosk-lock.js',
+            array(),
+            wp_get_theme()->get('Version'),
+            true
+        );
+        wp_localize_script( 'gp-child-kiosk-lock', 'gpKioskLock', array( 'start' => GP_CHILD_KIOSK_START ) );
+    }
 
 });
 
@@ -125,4 +136,17 @@ add_action( 'init', function() {
             'content'     => ob_get_clean(),
         ) );
     }
+} );
+
+/*
+ * Sperrbildschirm direkt aus der Vorlage: [kiosk_sperrbildschirm] in der Seite "Sperrseite" zeigt
+ * block-patterns/kiosk-sperrbildschirm.php. Änderungen an der Datei gelten sofort, die Vorlage muss
+ * nicht mehr neu in die Seite eingefügt werden.
+ */
+add_shortcode( 'kiosk_sperrbildschirm', function() {
+    ob_start();
+    include get_stylesheet_directory() . '/block-patterns/kiosk-sperrbildschirm.php';
+    // Shortcode-Blöcke kommen von do_blocks in <p> verpackt; das leere <p> daneben wäre im Flex-Layout
+    // ein eigener Eintrag mit Abstand
+    return do_shortcode( shortcode_unautop( do_blocks( ob_get_clean() ) ) );
 } );

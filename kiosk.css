@@ -88,7 +88,8 @@
 
 	/* Seiten */
 	--tp-page-gutter: 48px;  /* Abstand der Boxen zum Bildschirmrand (alle Seiten) */
-	--tp-nav-height: 160px;  /* Platz für die Navigationsleiste unten; Annahme, an die echte Leiste anpassen */
+	--tp-nav-height: 300px;  /* Navigationsleiste unten (Zurück + Sprache, zwei Reihen Ziele, Streifen); Seiten lassen den Platz frei */
+	--tp-cta-height: 160px;  /* Höhe der großen Buttons am Sperrbildschirm */
 	--tp-block-gap: 24px;
 	--tp-block-height: calc((1920px - var(--tp-nav-height) - 4 * var(--tp-block-gap)) / 3); /* = 554 px */
 
@@ -100,6 +101,10 @@
 	--tp-icon-kitchen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3'/%3E%3C/svg%3E");
 	--tp-icon-message: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9h8'/%3E%3Cpath d='M8 13h6'/%3E%3Cpath d='M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z'/%3E%3C/svg%3E");
 	--tp-icon-bus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M16 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M4 17h-2v-11a1 1 0 0 1 1 -1h14a5 7 0 0 1 5 7v5h-2m-4 0h-8'/%3E%3Cpath d='M16 5l1.5 7l4.5 0'/%3E%3Cpath d='M2 10l15 0'/%3E%3Cpath d='M7 5l0 5'/%3E%3Cpath d='M12 5l0 5'/%3E%3C/svg%3E");
+	--tp-icon-map: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0'/%3E%3Cpath d='M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z'/%3E%3C/svg%3E");
+	--tp-icon-users: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0'/%3E%3Cpath d='M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3Cpath d='M21 21v-2a4 4 0 0 0 -3 -3.85'/%3E%3C/svg%3E");
+	--tp-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
+	--tp-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l-2 0l9 -9l9 9l-2 0'/%3E%3Cpath d='M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7'/%3E%3Cpath d='M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6'/%3E%3C/svg%3E");
 }
 
 /* Bausteine ------------------------------------------------------------------
@@ -111,7 +116,7 @@
    tp-box            weiße Box mit fester Höhe (ein Drittel der Startseite)
    tp-band           Kopf einer Box: Icon + Titel, tp-band__kicker = Zusatz rechts (Datum);
                      hell (Standard) oder dunkel (tp-band--dark, in tp-columns automatisch)
-   tp-icon--…        Icon für Kopf oder Button: route, arrow, calendar, school, kitchen, message, bus
+   tp-icon--…        Icon für Kopf oder Button: route, arrow, calendar, school, kitchen, message, bus, map, users, alert, home
    tp-cards          Liste von Zeilen (Karten); in tp-box bzw. mit tp-cards--fit nur ganze Karten
                      tp-cards__heading = Zwischenüberschrift, tp-cards__empty = leer,
                      tp-cards__columns = Spaltenkopf über einer Liste mit tp-cards--columns
@@ -135,7 +140,9 @@
    tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
                      ausgeblendete (hidden) überspringt sie; nach einer Berührung und bei
                      offener Detailansicht pausiert sie (--tp-rotation-pause); kiosk-rotation.js
-   tp-cta            großer dunkler Button mit Pfeil (Sperrbildschirm) */
+   tp-cta            großer dunkler Button mit Pfeil (Sperrbildschirm)
+   tp-nav            Navigationsleiste unten auf jeder Seite außer dem Sperrbildschirm
+                     (kiosk-nav.php) */
 
 /* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
    er nicht, seine Kinder verhalten sich wie direkte Kinder. */
@@ -156,6 +163,10 @@
 .tp-icon--kitchen  { --tp-icon: var(--tp-icon-kitchen); }
 .tp-icon--message  { --tp-icon: var(--tp-icon-message); }
 .tp-icon--bus      { --tp-icon: var(--tp-icon-bus); }
+.tp-icon--map      { --tp-icon: var(--tp-icon-map); }
+.tp-icon--users    { --tp-icon: var(--tp-icon-users); }
+.tp-icon--alert    { --tp-icon: var(--tp-icon-alert); }
+.tp-icon--home     { --tp-icon: var(--tp-icon-home); }
 
 /* Box */
 .tp-box,
@@ -1072,7 +1083,7 @@
 	box-sizing: border-box;
 	width: 100%;
 	height: 100%;
-	min-height: var(--tp-nav-height); /* so hoch wie die Navigationsleiste der übrigen Seiten */
+	min-height: var(--tp-cta-height);
 	margin: 0;
 	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-space-m) var(--tp-space-m);
 	border: 0;
@@ -1110,4 +1121,133 @@
 .wp-block-button.is-style-tp-cta .wp-block-button__link:focus-visible {
 	outline: var(--tp-border-width) solid var(--tp-color-primary);
 	outline-offset: 3px;
+}
+
+/* Navigationsleiste -------------------------------------------------------------
+   Steht auf jeder Seite außer dem Sperrbildschirm und den Handy-Seiten ganz unten
+   (Ausgabe: kiosk-nav.php über wp_footer). Oben Start und Sprache, darunter die Ziele in
+   zwei Reihen, ganz unten ein Streifen. Die Seiten halten --tp-nav-height frei (style.css). */
+.tp-nav {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: var(--terminal-width, 1080px);
+	height: var(--tp-nav-height);
+	padding: var(--tp-space-s) var(--tp-page-gutter) calc(var(--tp-nav-stripe) + var(--tp-space-s));
+	background: var(--tp-color-ground);
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+}
+.tp-nav {
+	--tp-nav-stripe: 10px;
+}
+.tp-nav::after { /* Streifen unten, nur Zierde */
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: var(--tp-nav-stripe);
+	background: linear-gradient(90deg, var(--tp-color-primary) 0 66.6%, var(--tp-color-band) 66.6% 100%);
+}
+.tp-nav__top {
+	display: flex;
+	flex: 0 0 72px;
+	justify-content: space-between;
+	gap: var(--tp-space-s);
+}
+.tp-nav__back,
+.tp-nav__langs,
+.tp-nav__targets {
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+.tp-nav :is(a, button) {
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+	cursor: pointer;
+}
+.tp-nav :is(a, button):focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 2px;
+}
+.tp-nav__back {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	min-width: 240px;
+	padding: 0 var(--tp-space-m);
+	border: 0;
+	font: 700 var(--tp-font-size-min) / 1 var(--tp-font-headline);
+	color: var(--tp-color-ink);
+}
+.tp-nav__back:active {
+	background: var(--tp-color-tint);
+}
+.tp-nav__langs {
+	display: flex;
+	gap: 6px;
+	box-sizing: border-box;
+	width: 360px;
+	padding: 6px;
+}
+.tp-nav__lang {
+	flex: 1 1 0;
+	border: 0;
+	border-radius: var(--tp-radius-s);
+	font: 700 var(--tp-font-size-min) / 1 var(--tp-font-headline);
+	color: var(--tp-color-ink);
+	background: transparent;
+}
+.tp-nav__lang[aria-pressed="true"] {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.tp-nav__targets {
+	display: grid;
+	flex: 1 1 0;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-auto-rows: minmax(0, 1fr);
+	gap: 8px;
+	box-sizing: border-box;
+	min-height: 0;
+	padding: 8px;
+}
+.tp-nav__target {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 0 10px;
+	border-radius: var(--tp-radius-s);
+	font-weight: 700;
+	line-height: 1.1;
+	hyphens: manual;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+.tp-nav__target:active {
+	background: var(--tp-color-line);
+}
+.tp-nav__target[aria-current="page"] { /* aktuelle Seite */
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.tp-nav__icon {
+	flex: none;
+	width: 1.1em;
+	height: 1.1em;
+	background: currentColor;
+	-webkit-mask: var(--tp-icon) center / contain no-repeat;
+	mask: var(--tp-icon) center / contain no-repeat;
+}
+.tp-nav__target[aria-current="page"] .tp-nav__icon {
+	background: var(--tp-color-on-band-accent);
 }

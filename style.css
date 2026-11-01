@@ -203,3 +203,10 @@ body:has(:is(.tp-lock, .is-style-tp-lock)) :is(.site, .site-main, .inside-articl
   margin: 0;
   padding: 0;
 }
+
+/* Navigationsleiste (kiosk.css, Ausgabe: kiosk-nav.php): nicht auf dem Sperrbildschirm und
+   nicht auf den Handy-Seiten. Die Ausgabe lässt sie dort schon weg; das hier sichert Seiten
+   ab, auf denen der Block erst im Inhalt steht. */
+body:has(:is(.tp-lock, .is-style-tp-lock, floorplan-widget[mode="mobile"])) .tp-nav {
+  display: none;
+}

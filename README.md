@@ -9,6 +9,7 @@ Theme des Info-Terminals (HS Coburg, 1080 × 1920 px, Hochformat). Stil: Entwurf
 | `kiosk.css` | **Kiosk-Design-System:** Schriften, gemeinsame Variablen `--tp-*`, Typografie, Bausteine. Wird im Frontend und im Editor geladen. |
 | `kiosk-editor.css` | Nur im Editor: Boxen ohne feste Höhe, damit man beim Bearbeiten alles sieht. |
 | `style.css` | Seitenlayout des Terminals: Bildschirmformat, Platz für die Navigationsleiste, Handy-Seiten (`/checkin/`), Raumplan-Höhe. |
+| `kiosk-nav.php` | **Navigationsleiste** unten: Liste der Ziele, Ziel von „Start“ und Ausgabe über `wp_footer`. Steht auf jeder Seite außer dem Sperrbildschirm und den Handy-Seiten. |
 | `kiosk-rotation.js` | Wechselt die Folien einer Rotation (Blockstil „Kiosk: Rotation“). |
 | `functions.php` | Lädt Stylesheets und Rotations-Skript, registriert Blockstile und Vorlagen. |
 | `block-patterns/` | Vorlagen für den Editor (Kategorie „Kiosk“). |
@@ -26,7 +27,7 @@ Die `--tp-*`-Variablen in `kiosk.css` gelten für das ganze Terminal. Das Plugin
 - `--tp-box-padding`, `--tp-row-padding`, `--tp-card-gap` – Abstände in Box und Zeile
 - `--tp-card-aside-factor`, `--tp-card-room-factor`, `--tp-card-action-factor` – Spaltenbreiten (Zeitfeld, Raum, Routenplaner) in Vielfachen der Bedienschrift
 - `--tp-icon-*` – Icons (Tabler Icons, MIT) als Masken; `--tp-icon-size`
-- `--tp-home-scale`, `--tp-page-gutter`, `--tp-nav-height` – Startseite: Schriftgröße, Rand, frei gehaltener Platz für die Navigationsleiste
+- `--tp-home-scale`, `--tp-page-gutter`, `--tp-nav-height` – Startseite: Schriftgröße, Rand, Höhe der Navigationsleiste (300 px; alle Seiten halten den Platz frei). `--tp-cta-height` – Höhe der großen Buttons am Sperrbildschirm
 
 Alle Werte stehen in `:root` in `kiosk.css`; zum Verfeinern nach Feedback nur dort ändern.
 
@@ -47,6 +48,7 @@ Alle Werte stehen in `:root` in `kiosk.css`; zum Verfeinern nach Feedback nur do
 | `tp-lock` | Gruppe → „Kiosk: Sperrbildschirm“ | Startseite des Terminals: genau eine Bildschirmhöhe, scrollt nicht, keine Navigationsleiste. Schrift um `--tp-lock-scale` (Standard `2`) größer, Abstände wachsen halb so stark mit. Fuß-Links und Buttons bleiben so groß wie auf den Startseiten (man bedient sie aus der Nähe); die Buttons unten sind so hoch wie die Navigationsleiste (`--tp-nav-height`). Darin oben die Rotation, unten die Buttons. Die Komponenten verhalten sich wie auf den Startseiten: Karte → Detailansicht, Raum-Button → Weg im Raumplan, Fuß-Link → ganze Seite. Karten: schmaleres Zeitfeld, Nebentext so groß wie `--tp-headline-s`; der Raum-Button steht als kleines Schild neben dem Nebentext unter dem Titel, damit der Titel die volle Breite hat |
 | `tp-rotation` | Gruppe → „Kiosk: Rotation“ | Jedes direkte Kind ist eine Folie (Box mit Shortcode, eigene „Kiosk: Box mit Karten“, Bild …); sie wechseln alle `--tp-rotation-interval` (Standard `12s`) mit Überblendung, Punkte oben rechts zeigen die Position. Nach einer Berührung und solange eine Detailansicht offen ist, pausiert sie; weiter geht es `--tp-rotation-pause` (Standard `30s`) nach der letzten Berührung bzw. dem Schließen. Eine Box füllt die ganze Rotation. Folien mit `hidden` (Komponente ohne Inhalt, z. B. Mensa am Wochenende) werden übersprungen. Im Editor stehen die Folien untereinander |
 | `tp-header` | Gruppe → „Kiosk: Seitenkopf“ | Kopf einer Seite ohne Box: Logos (`tp-header__logos` mit zwei `tp-header__logo`), `tp-header__kicker`, `tp-header__title`, `tp-header__subtitle`. Größen über `--tp-header-logo-height` und `--tp-header-title-size`; in `tp-home`/`tp-lock` wächst er nicht mit |
+| `tp-nav` | – (kein Editor-Baustein) | Navigationsleiste: `tp-nav__top` (`__back` „Start“ → `/start/`, `__langs` mit zwei `__lang`), `tp-nav__targets` mit `__target` (Icon `tp-nav__icon` + Text). Die aktuelle Seite trägt `aria-current="page"` und ist dunkel. Ziele ändern: nur die Liste in `kiosk-nav.php`. Der Sprachumschalter hat noch keine Funktion (siehe todo.md, Mehrsprachigkeit) |
 | `tp-cta` | Button → „Kiosk: Großer Button“ | großer dunkler Button mit Pfeil; mehrere in einem Buttons-Block teilen sich die Breite und brechen um |
 
 Die Teile einer Karte (`tp-card__aside`, `__body`, `__title`, `__text`) sind CSS-Klassen. Am einfachsten fügt man Karten über die Vorlagen ein, die die Klassen schon gesetzt haben.

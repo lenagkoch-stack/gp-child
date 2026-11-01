@@ -40,7 +40,11 @@ add_action( 'wp_enqueue_scripts', function() {
         true
     );
 
+
 });
+
+// Navigationsleiste unten auf jeder Seite außer Sperrbildschirm und Handy-Seiten
+require_once get_stylesheet_directory() . '/kiosk-nav.php';
 
 /*
  * Editor: dieselben Bausteine wie im Frontend, damit Inhalte beim Bearbeiten so

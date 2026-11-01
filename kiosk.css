@@ -82,7 +82,7 @@
 	   ausgerechnet an der Liste (tp-cards), damit sie mit --tp-home-scale / --tp-lock-scale wachsen */
 	--tp-card-aside-factor: 4.4;
 	--tp-card-room-factor: 3.6;
-	--tp-card-action-factor: 8.6;
+	--tp-card-action-factor: 6;
 	--tp-card-action-size: 0.8em; /* Schrift im Routenplaner-Button, relativ zur Karte */
 	--tp-cta-font-size: var(--tp-font-size-min); /* große Buttons am Sperrbildschirm */
 

@@ -75,7 +75,8 @@ Die Teile einer Karte (`tp-card__aside`, `__body`, `__title`, `__text`) sind CSS
 
 Im Editor stehen die Folien untereinander; am Terminal wechseln sie. Den Aufbau zeigt die **Listenansicht** (Symbol mit drei Strichen oben links): Sperrbildschirm › Rotation › Boxen, darunter „Campus entdecken“ und die Schnellzugriffe.
 
-- **Folie hinzufügen:** in der Listenansicht die Gruppe „Rotation“ wählen und den neuen Block *in* sie einfügen (z. B. Vorlage „Kiosk: Box mit Karten“ für eigene Hinweise, oder eine Gruppe „Kiosk: Box“ mit einem Shortcode-Block). Nur direkte Kinder der Rotation werden zu Folien.
+- **Eigene Folien:** im WP-Admin unter „Terminal-Folien“ (Plugin hsc-kiosk, `includes/folien.php`). Die Vorlage hängt sie mit `[kiosk_folien]` hinter die festen Folien. Titel, Text und Beitragsbild wie bei den Kiosk-Events; Icon, „Zeigen ab/bis“ (Datum und Uhrzeit) und Reihenfolge im Kasten „Anzeige am Terminal“ unter dem Editor; Entwurf und „Vorschau“ möglich. Folien in der Rotation per Editor einzufügen geht nicht mehr, weil der Sperrbildschirm aus der Vorlagendatei kommt (Shortcode `[kiosk_sperrbildschirm]`). Nur direkte Kinder der Rotation werden zu Folien.
+
 - **Reihenfolge ändern / entfernen:** Box in der Listenansicht verschieben bzw. löschen.
 - **Buttons:** Text direkt bearbeiten, Ziel über das Link-Symbol der Werkzeugleiste.
 - **Idle-Rückkehr:** Auf jeder Seite außer dem Sperrbildschirm erscheint nach `--tp-idle-timeout` (Standard `90s`) ohne Berührung der Hinweis „Gleich zurück zum Startbildschirm“ mit Countdown `--tp-idle-warning` (Standard `15s`); danach geht es zur Startseite, „Hier bleiben“ bricht ab. `--tp-idle-timeout: 0` schaltet es aus; auf der Handy-Seite Check-in (Raumplan im Modus `mobile`) erscheint es nie (Variablen in `kiosk.css`, Skript `kiosk-idle.js`).

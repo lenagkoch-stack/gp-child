@@ -194,6 +194,129 @@
       hold();
     });
 
+    // Wischen: Die Folie folgt dem Finger (bzw. der Maus), die Nachbarfolie schiebt von der Seite nach. Ab SWIPE_START px
+    // vorwiegend waagerechter Bewegung wird gewischt, vorher ist es ein Tipp, der Karten und Links wie gewohnt auslöst.
+    // Nach einem Wisch wirkt es wie ein Tipp auf einen Punkt: die Rotation pausiert --tp-rotation-pause.
+    // Links wischen = nächste Folie, rechts = vorherige; am Ende geht es im Kreis weiter.
+    const SWIPE_START = 10; // px, ab hier gilt die Geste als Wisch
+    const SWIPE_SHARE = 0.2; // Anteil der Breite, ab dem losgelassen die Folie wechselt
+    const SWIPE_SPEED = 0.4; // px/ms: ein schneller Wisch wechselt auch über kürzere Strecke
+    const SWIPE_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 280;
+    let swipe = null; // laufende Geste
+    let swipeBusy = false; // Ausgleiten läuft: neue Geste erst danach
+    let swallowClick = false;
+
+    function slidePos(el, x, animate) {
+      el.style.visibility = "visible";
+      el.style.opacity = "1";
+      el.style.transition = animate ? "transform " + SWIPE_MS + "ms ease" : "none";
+      el.style.transform = "translateX(" + x + "px)";
+    }
+
+    function slideReset(el) {
+      for (const p of ["visibility", "opacity", "transition", "transform"]) el.style.removeProperty(p);
+    }
+
+    function neighbour(direction) {
+      const shown = slidesOf(root).filter((s) => !off(s));
+      const i = shown.indexOf(active);
+      if (shown.length < 2 || i < 0) return null;
+      return shown[(i + direction + shown.length) % shown.length];
+    }
+
+    function swipeEnd(commit) {
+      const { other, width, dir } = swipe;
+      const current = active;
+      swipe = null;
+      swipeBusy = true;
+      touchedAt = Date.now();
+      hold();
+      const done = () => {
+        if (commit && other) {
+          // Alte Folie unsichtbar halten, bis die Klassen umgeschaltet sind (sonst blendet sie über der neuen aus)
+          current.style.cssText = "opacity: 0; visibility: hidden; transition: none";
+          other.style.transition = "none";
+          other.style.transform = "";
+          show(other);
+          schedule(POLL);
+        } else {
+          slideReset(current);
+          if (other) slideReset(other);
+          schedule(POLL);
+        }
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            slideReset(current);
+            if (other) slideReset(other);
+            root.classList.remove("tp-rotation--dragging");
+            swipeBusy = false;
+          })
+        );
+      };
+      if (other) {
+        slidePos(current, commit ? -dir * width : 0, true);
+        slidePos(other, commit ? 0 : dir * width, true);
+      } else slidePos(current, 0, true);
+      if (SWIPE_MS) setTimeout(done, SWIPE_MS);
+      else done();
+    }
+
+    root.addEventListener("pointerdown", (event) => {
+      if (swipeBusy || swipe || (event.pointerType === "mouse" && event.button !== 0)) return;
+      if (event.target.closest(".tp-rotation__dots, dialog") || !active || document.querySelector("dialog[open]")) return;
+      swipe = { id: event.pointerId, x: event.clientX, y: event.clientY, t: event.timeStamp, dx: 0, dir: 0, other: null, moving: false, width: root.clientWidth };
+    });
+
+    root.addEventListener("pointermove", (event) => {
+      if (!swipe || event.pointerId !== swipe.id) return;
+      const dx = event.clientX - swipe.x;
+      const dy = event.clientY - swipe.y;
+      if (!swipe.moving) {
+        if (Math.abs(dx) < SWIPE_START && Math.abs(dy) < SWIPE_START) return;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          swipe = null; // senkrechte Geste: kein Wisch
+          return;
+        }
+        swipe.moving = true;
+        root.classList.add("tp-rotation--dragging");
+        try {
+          root.setPointerCapture(event.pointerId); // erst jetzt: davor muss der Klick auf die Karte ankommen
+        } catch (e) {}
+      }
+      // dir: -1 = nach links gezogen, die nächste Folie kommt von rechts
+      const dir = dx < 0 ? 1 : -1;
+      if (dir !== swipe.dir) {
+        if (swipe.other) slideReset(swipe.other);
+        swipe.dir = dir;
+        swipe.other = neighbour(dir);
+      }
+      swipe.dx = dx;
+      slidePos(active, dx, false);
+      if (swipe.other) slidePos(swipe.other, dx + dir * swipe.width, false);
+    });
+
+    function swipeRelease(event, cancelled) {
+      if (!swipe || event.pointerId !== swipe.id) return;
+      if (!swipe.moving) {
+        swipe = null;
+        return;
+      }
+      swallowClick = true;
+      setTimeout(() => (swallowClick = false), 0);
+      const speed = Math.abs(swipe.dx) / Math.max(1, event.timeStamp - swipe.t);
+      const far = Math.abs(swipe.dx) > swipe.width * SWIPE_SHARE || (speed > SWIPE_SPEED && Math.abs(swipe.dx) > 30);
+      swipeEnd(!cancelled && far && Boolean(swipe.other));
+    }
+    root.addEventListener("pointerup", (event) => swipeRelease(event, false));
+    root.addEventListener("pointercancel", (event) => swipeRelease(event, true));
+    // Nach einem Wisch kein Klick auf die Karte darunter; native Bild-/Link-Drags der Maus verhindern
+    root.addEventListener("click", (event) => {
+      if (!swallowClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
+    root.addEventListener("dragstart", (event) => event.preventDefault());
+
     // Inhalte der Folien erscheinen erst, wenn die Komponenten geladen sind: dann Icon und Titel der Punkte nachziehen
     let signature = "";
     const sign = () => slidesOf(root).map((s) => Object.values(slideInfo(s)).join("|")).join("#");

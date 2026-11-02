@@ -1299,6 +1299,16 @@
 	visibility: visible;
 	transition: opacity 0.6s ease;
 }
+/* Wischen (kiosk-rotation.js): senkrechtes Scrollen bleibt dem Browser, waagerecht gehört der Rotation.
+   Beim Ziehen schiebt die Nachbarfolie von der Seite herein und darf nicht über die Rotation hinausragen. */
+:is(.tp-rotation, .is-style-tp-rotation) {
+	touch-action: pan-y;
+}
+:is(.tp-rotation, .is-style-tp-rotation).tp-rotation--dragging {
+	overflow-x: clip;
+	user-select: none;
+	-webkit-user-select: none;
+}
 @media (prefers-reduced-motion: reduce) {
 	:is(.tp-rotation, .is-style-tp-rotation) * {
 		transition: none !important;

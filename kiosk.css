@@ -1185,17 +1185,6 @@
 	border-radius: 50%;
 	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E") center / 30px 30px no-repeat;
 }
-.tp-lock__count { /* "3 VON 20" rechts neben dem Titel der Folie, gefüllt von kiosk-lock.js; Optik wie das Datum der Unterseiten */
-	margin-left: auto;
-	font-family: var(--tp-font-text);
-	font-size: 24px;
-	font-weight: 900;
-	letter-spacing: var(--tp-kicker-spacing);
-	line-height: 1.2;
-	text-transform: uppercase;
-	white-space: nowrap;
-	color: var(--tp-color-band);
-}
 :is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) {
 	position: relative;
 }
@@ -1847,16 +1836,17 @@
 	mask: var(--tp-icon) center / contain no-repeat;
 }
 
-/* Sperrbildschirm: i-Icon auf jeder Karte, die beim Tippen die Detailansicht (tp-sheet) öffnet
+/* i-Icon auf jeder Karte (Sperrbildschirm und Unterseiten, nicht auf der Startseite tp-home), die beim Tippen die Detailansicht (tp-sheet) öffnet
    (Mensa, ÖPNV, Events, Hinweise), damit man sieht, dass man sie antippen kann. Nur Zierde.
    Die Karte lässt rechts Platz für das Icon frei, nichts liegt darunter. */
-:is(.tp-lock, .is-style-tp-lock) :is(.km-meal:not(.km-meal--page), .km-row, .ka-dep, .ke-event, .kh--compact .kh-card) {
+:is(.km-meal, .km-row, .ka-dep, .ke-event, .kh--compact .kh-card):not(:is(.tp-home, .is-style-tp-home) *) {
 	--tp-info-size: 1.2em;
+	--tp-info-space: calc(1.7 * var(--tp-font-size-min)); /* Icon + Abstand, in Schriftgröße der Karte (font-size-min) */
 	position: relative;
 	box-sizing: border-box;
-	padding-right: calc(var(--tp-info-size) + 0.5em);
+	padding-right: var(--tp-info-space);
 }
-:is(.tp-lock, .is-style-tp-lock) :is(.km-meal:not(.km-meal--page), .km-row, .ka-dep, .ke-event, .kh--compact .kh-card)::after {
+:is(.km-meal, .km-row, .ka-dep, .ke-event, .kh--compact .kh-card):not(:is(.tp-home, .is-style-tp-home) *)::after {
 	content: "";
 	position: absolute;
 	top: 50%;
@@ -1864,8 +1854,13 @@
 	width: var(--tp-info-size);
 	height: var(--tp-info-size);
 	transform: translateY(-50%);
-	background: #1f6fd1; /* Blau, 5:1 auf Weiß */
+	background: var(--tp-color-band); /* dunkles Blau wie die dunklen CTAs */
 	-webkit-mask: var(--tp-icon-info) center / contain no-repeat;
 	mask: var(--tp-icon-info) center / contain no-repeat;
 	pointer-events: none;
+}
+/* Spaltenkopf der Events-Seite (nicht Stundenplan: dort gibt es kein Icon): die Karten lassen rechts Platz für das i-Icon, der Kopf rückt gleich weit ein,
+   damit die Beschriftungen wieder mittig über ihren Spalten stehen. */
+.ke:not(.ke--compact) .ke-columns:not(:is(.tp-home, .is-style-tp-home) *) {
+	padding-right: calc(var(--tp-box-padding) + 1.7 * var(--tp-font-size-min));
 }

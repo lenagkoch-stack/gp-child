@@ -37,32 +37,6 @@
     tick();
   }
 
-  // „3 von 8“ rechts neben dem Titel der Folie, wenn die Liste mehr Einträge hat, als hineinpassen (nur Text, kein Link).
-  // Wie die Komponenten zählt es die Karten, die rechts oder unten aus der Liste herausfallen
-  function updateCounts() {
-    for (const list of lock.querySelectorAll("ul.tp-cards--fit")) {
-      const band = list.parentElement.querySelector(":scope > .tp-band");
-      if (!band) continue;
-      const box = list.getBoundingClientRect();
-      const items = [...list.children];
-      let shown = 0;
-      if (box.width > 0) {
-        for (const li of items) {
-          const r = li.getBoundingClientRect();
-          if (r.width > 0 && r.left < box.right - 1 && r.bottom <= box.bottom + 1) shown++;
-        }
-      }
-      let count = band.querySelector(":scope > .tp-lock__count");
-      const text = box.width > 0 && shown > 0 && shown < items.length ? shown + " von " + items.length : "";
-      if (!text && !count) continue;
-      if (!count) {
-        count = document.createElement("span");
-        count.className = "tp-lock__count";
-        band.append(count);
-      }
-      if (count.textContent !== text) count.textContent = text;
-    }
-  }
   // Die Listen verteilen den freien Platz gleichmäßig über, zwischen und unter die Karten (space-evenly). Damit die Trennlinie genau
   // in der Mitte der Lücke sitzt, steht die Lücke als --tp-list-gap an der Liste (kiosk.css zeichnet die Linie)
   function updateGaps() {
@@ -88,13 +62,10 @@
   const scheduleCounts = () => {
     cancelAnimationFrame(countFrame);
     countFrame = requestAnimationFrame(() => {
-      updateCounts();
       updateGaps();
     });
   };
-  new MutationObserver((records) => {
-    if (records.some((r) => !r.target.closest || !r.target.closest(".tp-lock__count"))) scheduleCounts();
-  }).observe(lock, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  new MutationObserver(scheduleCounts).observe(lock, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   addEventListener("resize", scheduleCounts);
   addEventListener("load", scheduleCounts);
   document.fonts && document.fonts.ready.then(scheduleCounts);

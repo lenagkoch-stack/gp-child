@@ -41,6 +41,8 @@
 	--tp-color-muted: #56606c;      /* Nebentext, 6:1 auf Weiß */
 	--tp-color-line: color-mix(in srgb, var(--tp-color-ink) 14%, transparent); /* Trennlinien */
 	--tp-color-tint: #e6eef8;       /* helle Buttons (Fuß-Link) */
+	--tp-color-active: #c3d5ea;     /* Zustandsbuttons (Seite, Sprache, aktuelle Seite): gewählt = dunklerer Ton + Balken unten */
+	--tp-active-bar: 8px;           /* Dicke des Balkens am gewählten Zustandsbutton */
 	--tp-color-aside: #edf1f6;      /* Zeitfeld */
 	--tp-color-band: #1c3553;       /* dunkle Bänder und Buttons (Routenplaner, Kopf der Halbbreiten-Boxen) */
 	--tp-color-on-band: var(--tp-color-paper);         /* 12:1 */
@@ -1733,7 +1735,7 @@
 	display: flex;
 	gap: 6px;
 	box-sizing: border-box;
-	width: 360px;
+	width: 420px;
 	padding: 6px;
 }
 .tp-nav__langs--small { /* DE/EN am Sperrbildschirm: kompakt, in der Kopfzeile der Schnellzugriffe */
@@ -1745,6 +1747,7 @@
 }
 .tp-nav__langs--small .tp-nav__lang {
 	font-size: 22px;
+	--tp-active-bar: 5px;
 }
 .tp-nav__lang {
 	display: flex;
@@ -1755,11 +1758,11 @@
 	border-radius: var(--tp-radius-s);
 	font: 700 28px / 1 var(--tp-font-headline);
 	color: var(--tp-color-ink);
-	background: transparent;
+	background: var(--tp-color-tint);
 }
-.tp-nav__lang:is([aria-pressed="true"], [aria-current="page"]) {
-	color: var(--tp-color-on-band);
-	background: var(--tp-color-band);
+.tp-nav__lang:is([aria-pressed="true"], [aria-current="page"]) { /* gewählt: dunklerer Ton + Balken unten, nie gefülltes Navy (das sind Aktionen) */
+	background: var(--tp-color-active);
+	box-shadow: inset 0 calc(-1 * var(--tp-active-bar)) 0 var(--tp-color-band);
 }
 .tp-nav__targets {
 	display: grid;
@@ -1790,9 +1793,9 @@
 .tp-nav__target:active {
 	background: var(--tp-color-line);
 }
-.tp-nav__target[aria-current="page"] { /* aktuelle Seite */
-	color: var(--tp-color-on-band);
-	background: var(--tp-color-band);
+.tp-nav__target[aria-current="page"] { /* aktuelle Seite: wie die Zustandsbuttons */
+	background: var(--tp-color-active);
+	box-shadow: inset 0 calc(-1 * var(--tp-active-bar)) 0 var(--tp-color-band);
 }
 .tp-nav__icon {
 	flex: none;
@@ -1801,9 +1804,6 @@
 	background: currentColor;
 	-webkit-mask: var(--tp-icon) center / contain no-repeat;
 	mask: var(--tp-icon) center / contain no-repeat;
-}
-.tp-nav__target[aria-current="page"] .tp-nav__icon {
-	background: var(--tp-color-on-band-accent);
 }
 
 /* Sperrbildschirm: i-Icon auf jeder Karte, die beim Tippen die Detailansicht (tp-sheet) öffnet

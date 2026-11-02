@@ -62,7 +62,7 @@ Die Teile einer Karte (`tp-card__aside`, `__body`, `__title`, `__text`) sind CSS
 - **Kiosk: Hinweise** – Box mit dunklem Kopf „Hinweise“ und zwei Hinweisen (Karten ohne Datumsfeld)
 - **Kiosk: Box mit Karten** – Box mit Kopf (Icon), zwei Beispielkarten und Fuß-Link
 - **Kiosk: Karte** – eine Karte (Datumsfeld, Überschrift, Text), z. B. für einen Hinweis; in eine Kartenliste einfügen
-- **Kiosk: Sperrbildschirm** – Logos, darunter Mensa, Abfahrten, Stundenplan und Events im Wechsel, die Box „Campus entdecken“ (`/welcome`), die Schnellzugriffe (Shortcode `[kiosk_schnellzugriffe]`, dieselben Ziele wie die Navigationsleiste ohne Start und Sprache, Liste in `kiosk-nav.php`) und der Hinweis „Tippe, um loszulegen“. Ein Tipp auf eine freie Fläche führt zu `/start/`. Für die Seite „Sperrseite“ (Startseite der Website): Inhalt löschen, Vorlage einfügen
+- **Kiosk: Sperrbildschirm** – Logos, darunter Mensa, Abfahrten, Stundenplan und Events im Wechsel, die Box „Campus entdecken“ (`/welcome`), die Schnellzugriffe (Shortcode `[kiosk_schnellzugriffe]`, dieselben Ziele wie die Navigationsleiste ohne Start und Sprache, Liste in `kiosk-nav.php`) und der Hinweis „Tippe, um loszulegen“ (mit kleiner Hand in Textfarbe, die alle ca. 3,6 s kurz tippt, orangener Ring an der Fingerspitze; reine CSS-Animation an `.tp-lock__hint`, bei „Bewegung reduzieren“ statisch). Ein Tipp auf eine freie Fläche führt zu `/start/`. Für die Seite „Sperrseite“ (Startseite der Website): Inhalt löschen, Vorlage einfügen
 
 ### Sperrbildschirm einrichten
 

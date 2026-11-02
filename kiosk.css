@@ -1,0 +1,1918 @@
+/* Kiosk-Design-System -----------------------------------------------------------
+   Schriften, gemeinsame Variablen (--tp-*) und Bausteine des Terminals.
+   Wird im Frontend und im Editor geladen (functions.php). Seitenlayout: style.css.
+   Stil: Entwurf „Startseite intern“ (weiße Boxen mit Zeilen, runde Ecken, Dunkelblau/Orange).
+   Präfix: tp- */
+
+/* Schriften --------------------------------------------------------------- */
+@font-face { font-family: "Montserrat"; font-weight: 400; font-style: normal; font-display: swap;
+	src: url("fonts/montserrat-v15-latin-regular.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-weight: 700; font-style: normal; font-display: swap;
+	src: url("fonts/montserrat-v15-latin-700.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 300; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-300.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 400; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-regular.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 700; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-700.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-weight: 900; font-style: normal; font-display: swap;
+	src: url("fonts/nunito-v16-latin-900.woff2") format("woff2"); }
+
+/* Design-Tokens ---------------------------------------------------------------
+   Gemeinsamer Satz für das ganze Terminal: Theme, Plugin hsc-kiosk und Raumplan
+   (floorplan-widget) lesen diese Variablen direkt. Der Raumplan hat für jede einen
+   eigenen Standardwert. */
+:root {
+	--tp-color-primary: #ff582e;
+	--tp-color-primary-active: #e64f29;   /* gedrückt */
+	/* Schrift auf Orange, zweistufig:
+	   - large: große, fette Schrift (ab 24 px bzw. 19 px fett: Buttons, aktive Etage).
+	     Hell geht nur hier, Weiß auf Orange hat 3,1:1.
+	   - normal: jede Größe (Zeitfeld „jetzt“, Zähler, Hinweise); dunkel, 6:1. */
+	--tp-color-on-primary-large: var(--tp-color-paper); /* hell; dunkel: var(--tp-color-ink) */
+	--tp-color-on-primary: var(--tp-color-ink);
+	--tp-color-danger: #dc3545;     /* Fehlermeldungen */
+
+	/* Flächen */
+	--tp-color-ink: #14243a;        /* Schrift */
+	--tp-color-ink-active: #2b4769; /* dunkle Buttons gedrückt */
+	--tp-color-ground: #eceef0;     /* Grund unter den Boxen */
+	--tp-color-paper: #ffffff;      /* Boxen */
+	--tp-color-muted: #56606c;      /* Nebentext, 6:1 auf Weiß */
+	--tp-color-line: color-mix(in srgb, var(--tp-color-ink) 14%, transparent); /* Trennlinien */
+	--tp-color-tint: #e6eef8;       /* helle Buttons (Fuß-Link) */
+	--tp-color-active: #c3d5ea;     /* Zustandsbuttons (Seite, Sprache, aktuelle Seite): gewählt = dunklerer Ton + Balken unten */
+	--tp-active-bar: 8px;           /* Dicke des Balkens am gewählten Zustandsbutton */
+	--tp-color-aside: #edf1f6;      /* Zeitfeld */
+	--tp-color-band: #1c3553;       /* dunkle Bänder und Buttons (Routenplaner, Kopf der Halbbreiten-Boxen) */
+	--tp-color-on-band: var(--tp-color-paper);         /* 12:1 */
+	--tp-color-on-band-accent: var(--tp-color-primary); /* Hinweise im Band; 4:1, nur große bzw. fette Schrift */
+
+	--tp-slant: 0px;                /* Höhe der Diagonalen an Bändern, 0 = gerade (Raumplan liest sie auch) */
+	--tp-gutter: 24px;              /* Innenabstand von Sheet und Raumplan-Panel */
+	--tp-headline-transform: none;  /* Überschriften und große Buttons: none oder uppercase */
+	--tp-pill-radius: 6px;          /* Status-Schilder und Filter */
+
+	--tp-font-headline: "Montserrat", sans-serif;
+	--tp-font-text: "Nunito", sans-serif;
+
+	/* Schriftgrößen (Display 1080 x 1920 px).
+	   Referenz Lesbarkeit aus Entfernung: ganzer Raum 170 px, Raummitte 80 px.
+	   Bedientext nach EN 301 549: 38 px für Elemente ab 1,05 m Höhe, an der
+	   Unterkante (0,92 m) 42 px; eingestellt sind derzeit 30 px. */
+	--tp-font-size-min: 30px;      /* Bedientext */
+	--tp-headline-md: 40px;        /* Überschriften (Kopf einer Box) */
+	--tp-headline-s: 24px;         /* nur für nicht nötigen Text */
+	--tp-label-size: 20px;         /* Spaltenköpfe, Kicker */
+	--tp-kicker-spacing: 0.15em;   /* Laufweite der Kicker in Versalien */
+
+	--tp-space-s: 12px;
+	--tp-space-m: 24px;
+	--tp-space-l: 48px;
+
+	--tp-radius: 8px;        /* Boxen, Sheet */
+	--tp-radius-s: 6px;      /* Buttons, Zeitfeld */
+	--tp-border-width: 3px;
+	--tp-touch-target: 64px; /* DIN 18040-1: mind. 48 – 60 px */
+	--tp-icon-size: 1.1em;   /* Icons in Köpfen und Buttons */
+
+	/* Box und Zeilen */
+	--tp-box-padding: 28px;  /* Innenabstand der Boxen links/rechts/unten */
+	--tp-row-padding: 10px;  /* Abstand über und unter einer Zeile (Karte) */
+	--tp-card-gap: 24px;     /* Abstand zwischen den Spalten einer Karte */
+	/* Spaltenbreiten der Karten mit Spaltenkopf (Stundenplan, Events) in Vielfachen der Bedienschrift;
+	   ausgerechnet an der Liste (tp-cards), damit sie mit --tp-home-scale / --tp-lock-scale wachsen */
+	--tp-card-aside-factor: 4.4;
+	--tp-card-room-factor: 3.6;
+	--tp-card-action-factor: 6;
+	--tp-card-action-size: 0.8em; /* Schrift im Routenplaner-Button, relativ zur Karte */
+	--tp-cta-font-size: var(--tp-font-size-min); /* große Buttons am Sperrbildschirm */
+
+	/* Seiten */
+	--tp-page-gutter: 48px;  /* Abstand der Boxen zum Bildschirmrand (alle Seiten) */
+	--tp-nav-height: 300px;  /* Navigationsleiste unten (Zurück + Sprache, zwei Reihen Ziele, Streifen); Seiten lassen den Platz frei */
+	--tp-cta-height: 160px;  /* Höhe der großen Buttons am Sperrbildschirm */
+	--tp-block-gap: 24px;
+	--tp-block-height: calc((1920px - var(--tp-nav-height) - 4 * var(--tp-block-gap)) / 3); /* = 554 px */
+
+	/* Icons (Tabler Icons, MIT), als Maske: die Farbe kommt aus background */
+	--tp-icon-route: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z'/%3E%3Cpath d='M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5'/%3E%3C/svg%3E");
+	--tp-icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E");
+	--tp-icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z'/%3E%3Cpath d='M16 3v4'/%3E%3Cpath d='M8 3v4'/%3E%3Cpath d='M4 11h16'/%3E%3C/svg%3E");
+	--tp-icon-school: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 9l-10 -4l-10 4l10 4l10 -4v6'/%3E%3Cpath d='M6 10.6v5.4a6 3 0 0 0 12 0v-5.4'/%3E%3C/svg%3E");
+	--tp-icon-kitchen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3'/%3E%3C/svg%3E");
+	--tp-icon-message: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9h8'/%3E%3Cpath d='M8 13h6'/%3E%3Cpath d='M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z'/%3E%3C/svg%3E");
+	--tp-icon-bus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M16 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0'/%3E%3Cpath d='M4 17h-2v-11a1 1 0 0 1 1 -1h14a5 7 0 0 1 5 7v5h-2m-4 0h-8'/%3E%3Cpath d='M16 5l1.5 7l4.5 0'/%3E%3Cpath d='M2 10l15 0'/%3E%3Cpath d='M7 5l0 5'/%3E%3Cpath d='M12 5l0 5'/%3E%3C/svg%3E");
+	--tp-icon-map: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0'/%3E%3Cpath d='M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z'/%3E%3C/svg%3E");
+	--tp-icon-users: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0'/%3E%3Cpath d='M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3Cpath d='M21 21v-2a4 4 0 0 0 -3 -3.85'/%3E%3C/svg%3E");
+	--tp-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
+	--tp-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l-2 0l9 -9l9 9l-2 0'/%3E%3Cpath d='M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7'/%3E%3Cpath d='M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6'/%3E%3C/svg%3E");
+	--tp-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0'/%3E%3Cpath d='M12 9h.01'/%3E%3Cpath d='M11 12h1v4h1'/%3E%3C/svg%3E");
+}
+
+/* Bausteine ------------------------------------------------------------------
+   Gemeinsam für die Komponenten des Plugins hsc-kiosk (Stundenplan, Events, Mensa)
+   und für Inhalte aus dem Editor. Jeder Baustein hat eine Klasse tp-…; wo er im
+   Editor als Blockstil wählbar ist (functions.php), gilt auch is-style-tp-….
+   Vorlagen zum Einfügen: block-patterns/.
+
+   tp-box            weiße Box mit fester Höhe (ein Drittel der Startseite)
+   tp-band           Kopf einer Box: Icon + Titel, tp-band__kicker = Zusatz rechts (Datum);
+                     hell (Standard) oder dunkel (tp-band--dark, in tp-columns automatisch)
+   tp-icon--…        Icon für Kopf oder Button: route, arrow, calendar, school, kitchen, message, bus, map, users, alert, home
+   tp-cards          Liste von Zeilen (Karten); in tp-box bzw. mit tp-cards--fit nur ganze Karten
+                     tp-cards__heading = Zwischenüberschrift (tp-cards__badge = Marke „Heute“), tp-cards__empty = leer,
+                     tp-cards__columns = Spaltenkopf über einer Liste mit tp-cards--columns
+   tp-card           Zeile: tp-card__aside (Zeit-/Datumsfeld) | tp-card__body
+                     (tp-card__title, tp-card__meta, tp-card__text) | tp-card__room | tp-card__action
+                     Varianten: tp-card--highlight (Feld orange), tp-card--muted
+                     im Feld: tp-card__live („jetzt“, oben), tp-card__date (Tag), tp-card__until („bis …“)
+                     tp-card__action--guide = Button „Routenplaner“ (Text in tp-card__action-label)
+   tp-more           Fuß-Link mit Pfeil; tp-more__note = Zusatz, tp-more--alert mit
+                     tp-more__alert = dunkle Variante mit Hinweis
+   tp-status         Statuszeile unter einer Liste (Stand der Daten), --error = Fehler
+   tp-sheet          Detailansicht als Bottom-Sheet (<dialog>), Optik wie das
+                     Raum-Panel im Raumplan: __header (__kicker, __title, __meta),
+                     __body (__media, __text, __action), __footer (__qr, __close)
+   tp-columns        Spalten-Block: Boxen nebeneinander in einer weißen Fläche, Köpfe dunkel
+   tp-home           Startseite: Boxen teilen sich die Bildschirmhöhe über der Navigationsleiste,
+                     Schrift um --tp-home-scale größer
+   tp-header         Seitenkopf: Logos links/rechts, Kicker, Titel, Untertitel; ohne Box
+   tp-lock           Sperrbildschirm: ganze Bildschirmhöhe, Schrift um --tp-lock-scale größer,
+                     Rotation oben, Buttons (tp-cta) unten
+   tp-rotation       zeigt ihre Kinder (Folien) nacheinander, alle --tp-rotation-interval;
+                     ausgeblendete (hidden) überspringt sie; nach einer Berührung und bei
+                     offener Detailansicht pausiert sie (--tp-rotation-pause); kiosk-rotation.js
+   tp-cta            großer dunkler Button mit Pfeil (Sperrbildschirm)
+   tp-nav            Navigationsleiste unten auf jeder Seite außer dem Sperrbildschirm
+                     (kiosk-nav.php) */
+
+/* GeneratePress legt in Gruppen einen inneren Container an; für die Bausteine zählt
+   er nicht, seine Kinder verhalten sich wie direkte Kinder. */
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container {
+	display: contents;
+}
+:is(.tp-box, .is-style-tp-box, .tp-cards, .is-style-tp-cards, .tp-card, .is-style-tp-card, .tp-card__body, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > *,
+:is(.tp-box, .is-style-tp-box, .tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock, .tp-rotation, .is-style-tp-rotation) > * {
+	max-width: none;
+	margin: 0;
+}
+
+/* Icons -------------------------------------------------------------------- */
+.tp-icon--route    { --tp-icon: var(--tp-icon-route); }
+.tp-icon--arrow    { --tp-icon: var(--tp-icon-arrow); }
+.tp-icon--calendar { --tp-icon: var(--tp-icon-calendar); }
+.tp-icon--school   { --tp-icon: var(--tp-icon-school); }
+.tp-icon--kitchen  { --tp-icon: var(--tp-icon-kitchen); }
+.tp-icon--message  { --tp-icon: var(--tp-icon-message); }
+.tp-icon--bus      { --tp-icon: var(--tp-icon-bus); }
+.tp-icon--map      { --tp-icon: var(--tp-icon-map); }
+.tp-icon--users    { --tp-icon: var(--tp-icon-users); }
+.tp-icon--alert    { --tp-icon: var(--tp-icon-alert); }
+.tp-icon--home     { --tp-icon: var(--tp-icon-home); }
+.tp-icon--info     { --tp-icon: var(--tp-icon-info); }
+
+/* Box */
+.tp-box,
+.is-style-tp-box {
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	height: var(--tp-block-height);
+	padding: 0;
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+	overflow: hidden;
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band, .tp-more, .wp-block-buttons) {
+	flex: none;
+}
+:is(.tp-box, .is-style-tp-box) .wp-block-buttons {
+	margin-top: auto; /* Fuß-Link bleibt unten, auch bei wenig Inhalt */
+}
+
+/* Kopf einer Box: Icon, Titel, Zusatz rechts. Hell (Standard) oder dunkel; die Farben kommen
+   aus --tp-band-bg / --tp-band-fg, damit ein Container (tp-columns) sie umstellen kann. */
+.tp-band,
+.is-style-tp-band {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--tp-space-s) var(--tp-space-m);
+	margin: 0;
+	padding: var(--tp-space-m) var(--tp-box-padding) var(--tp-space-s);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.1;
+	text-transform: var(--tp-headline-transform);
+	color: var(--tp-band-fg, var(--tp-color-ink));
+	background: var(--tp-band-bg, transparent);
+}
+.tp-band--dark,
+:is(.tp-band, .is-style-tp-band).tp-band--dark {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	padding-bottom: var(--tp-space-m);
+}
+/* Icon nur mit einer Klasse tp-icon--… (Editor: „Zusätzliche CSS-Klassen“, Komponenten im Markup) */
+:is(.tp-band, .is-style-tp-band)[class*="tp-icon--"]::before {
+	content: "";
+	flex: none;
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--tp-icon) center / contain no-repeat;
+	mask: var(--tp-icon) center / contain no-repeat;
+}
+.tp-band__kicker {
+	margin-left: auto;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 400;
+	line-height: 1.2;
+	text-transform: none;
+	color: var(--tp-band-kicker, var(--tp-color-muted));
+}
+
+/* Spaltenbreiten der Karten, aus der Bedienschrift an dieser Stelle */
+:is(.tp-cards, .is-style-tp-cards, .tp-cards__columns, .tp-card, .is-style-tp-card) {
+	--tp-card-aside-width: calc(var(--tp-card-aside-factor) * var(--tp-font-size-min));
+	--tp-card-room-width: calc(var(--tp-card-room-factor) * var(--tp-font-size-min));
+	--tp-card-action-width: calc(var(--tp-card-action-factor) * var(--tp-font-size-min));
+}
+
+/* Kartenliste: Zeilen mit Trennlinie in einer weißen Fläche */
+.tp-cards,
+.is-style-tp-cards {
+	display: flex;
+	flex-direction: column;
+	margin: var(--tp-space-s) var(--tp-gutter);
+	padding: 0 var(--tp-box-padding);
+	list-style: none;
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+/* In der Box ist die Box selbst die Fläche */
+:is(.tp-box, .is-style-tp-box) :is(.tp-cards, .is-style-tp-cards) {
+	margin: 0;
+	border-radius: 0;
+}
+/* Nur ganze Karten: Was nicht mehr in die Höhe passt, bricht per column wrap in eine
+   zweite Spalte um, die rechts außerhalb abgeschnitten wird. Komponenten des Plugins
+   zählen diese Karten für ihren Fuß-Link. */
+:is(.tp-box, .is-style-tp-box) :is(.tp-cards, .is-style-tp-cards),
+.tp-cards--fit {
+	flex: 1 1 auto;
+	flex-flow: column wrap;
+	column-gap: calc(2 * var(--tp-box-padding));
+	min-height: 0;
+	overflow: hidden;
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-card, .is-style-tp-card),
+.tp-cards--fit > :is(.tp-card, .is-style-tp-card) {
+	flex: none;
+	width: 100%;
+}
+.tp-cards__heading {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: var(--tp-kicker-spacing);
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-band);
+}
+/* „Heute“ als orange Marke vor dem Datum (tp-cards__badge im tp-cards__heading) */
+.tp-cards__badge {
+	padding: 0.15em 0.7em;
+	border-radius: var(--tp-radius-s);
+	color: var(--tp-color-on-primary);
+	background: var(--tp-color-primary);
+}
+.tp-cards__empty {
+	margin: var(--tp-space-s) var(--tp-gutter);
+	padding: var(--tp-space-l) var(--tp-box-padding);
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	color: var(--tp-color-muted);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+:is(.tp-box, .is-style-tp-box) .tp-cards__empty {
+	margin: 0;
+}
+
+/* Spaltenkopf über einer Liste mit festen Spalten (tp-cards--columns): gleiche Spalten wie die Karten */
+.tp-cards__columns {
+	--tp-card-columns: calc(var(--tp-card-aside-width) + var(--tp-card-gap)) minmax(0, 1fr) calc(var(--tp-card-room-width) + var(--tp-card-gap)) calc(var(--tp-card-action-width) + var(--tp-card-gap));
+	display: grid;
+	grid-template-columns: var(--tp-card-columns);
+	margin: var(--tp-space-s) var(--tp-gutter) 0;
+	padding: 0 var(--tp-box-padding);
+	font-family: var(--tp-font-text);
+	font-size: calc(0.8 * var(--tp-label-size)); /* kleiner als die Kicker, die dieselbe Größe nutzen */
+	line-height: 1.2;
+	color: var(--tp-color-muted);
+}
+:is(.tp-box, .is-style-tp-box) .tp-cards__columns {
+	margin: 0;
+}
+/* Auf den Unterseiten (Stundenplan, Events) etwas größer als in den Boxen der Startseite */
+:is(.ke, .oe):not(.ke--compact, .oe--compact) .tp-cards__columns {
+	font-size: calc(0.95 * var(--tp-label-size));
+}
+/* Beschriftung mittig zwischen Kopf und erster Karte: oben und unten der halbe Zeilenabstand; die
+   erste Karte verzichtet dafür auf ihren oberen Abstand (die Gesamthöhe bleibt gleich).
+   Nur in der Box: auf den Seiten liegt der Kopf außerhalb der weißen Fläche, die erste Karte
+   behält ihren Abstand. */
+:is(.tp-box, .is-style-tp-box) .tp-cards__columns {
+	padding-block: calc(var(--tp-row-padding) / 2);
+}
+:is(.tp-box, .is-style-tp-box) .tp-cards__columns + :is(.tp-cards, .is-style-tp-cards) > :is(.tp-card, .is-style-tp-card):first-child {
+	padding-top: 0;
+}
+.tp-cards__columns > :nth-child(1) {
+	padding-right: var(--tp-card-gap);
+	text-align: center;
+}
+.tp-cards__columns > :nth-child(n+3) {
+	padding-left: var(--tp-card-gap);
+	text-align: center;
+}
+
+/* Karte (Zeile): Feld | Inhalt | Raum | Aktion. Weitere Blöcke aus dem Editor (z. B. ein Bild)
+   landen in der Inhaltsspalte. Leere Spalten fallen weg; die Abstände hängen deshalb an den
+   Teilen selbst, nicht am Raster. */
+.tp-card,
+.is-style-tp-card {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: stretch;
+	min-height: 3em;
+	margin: 0;
+	padding: var(--tp-row-padding) 0;
+	hyphens: auto; /* lange Wörter (Gerichte, Titel) trennen statt abschneiden */
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	color: var(--tp-color-ink);
+	background: transparent;
+}
+/* Trennlinie nur zwischen den Karten, nicht unter der letzten (auch wenn die Liste nur ganze Karten zeigt) */
+:is(.tp-card, .is-style-tp-card) + :is(.tp-card, .is-style-tp-card) {
+	border-top: 1px solid var(--tp-color-line);
+}
+.tp-cards--columns > :is(.tp-card, .is-style-tp-card) {
+	grid-template-columns: calc(var(--tp-card-aside-width) + var(--tp-card-gap)) minmax(0, 1fr) calc(var(--tp-card-room-width) + var(--tp-card-gap)) calc(var(--tp-card-action-width) + var(--tp-card-gap));
+}
+:is(.tp-card, .is-style-tp-card) > :not(.wp-block-group__inner-container),
+:is(.tp-card, .is-style-tp-card) > .wp-block-group__inner-container > * {
+	grid-column: 2;
+}
+/* Zeit- bzw. Datumsfeld: „jetzt“ oben, Uhrzeit groß, „bis …“ darunter */
+:is(.tp-card, .is-style-tp-card) .tp-card__aside {
+	grid-column: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: var(--tp-card-aside-width);
+	margin: 0 var(--tp-card-gap) 0 0;
+	padding: var(--tp-space-s) var(--tp-space-s);
+	font-family: var(--tp-font-headline);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.1;
+	text-align: center;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-aside);
+	border-radius: var(--tp-radius-s);
+}
+.tp-card--highlight .tp-card__aside {
+	color: var(--tp-color-on-primary);
+	background: var(--tp-color-primary);
+}
+.tp-card--muted .tp-card__aside {
+	font-size: var(--tp-headline-s);
+	color: var(--tp-color-muted);
+}
+/* Tag über der Uhrzeit (Listen über mehrere Tage) */
+.tp-card__date {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	white-space: nowrap;
+}
+/* „bis 11:00“ */
+.tp-card__until {
+	margin-top: 4px;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 400;
+	white-space: nowrap;
+}
+/* „jetzt“: oben im orangen Feld (tp-card--highlight) */
+.tp-card__live {
+	order: -1;
+	margin-bottom: 2px;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	line-height: 1.1;
+}
+.tp-card__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 6px;
+	min-width: 0;
+	margin: 0;
+	padding: 4px 0; /* den Abstand zur Trennlinie hält die Karte (--tp-row-padding) */
+}
+.tp-card__title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: 1em;
+	font-weight: 700;
+	line-height: 1.2;
+	text-transform: none;
+	color: var(--tp-color-ink);
+	overflow-wrap: anywhere;
+}
+.tp-card__meta,
+.tp-card__text {
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	line-height: 1.25;
+	color: var(--tp-color-muted);
+}
+/* Raum: eigene Spalte, groß und fett */
+:is(.tp-card, .is-style-tp-card) .tp-card__room {
+	grid-column: 3;
+	align-self: center;
+	box-sizing: border-box;
+	min-width: var(--tp-card-room-width);
+	margin: 0 0 0 var(--tp-card-gap);
+	font-family: var(--tp-font-headline);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+	white-space: nowrap;
+	color: var(--tp-color-ink);
+}
+/* Aktion rechts: dunkler Button (z. B. Routenplaner). Derselbe Button steht als
+   tp-sheet__action in der Detailansicht. */
+:is(.tp-card, .is-style-tp-card) .tp-card__action,
+.tp-sheet__action {
+	grid-column: 4;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	min-height: var(--tp-touch-target);
+	margin: 0 0 0 var(--tp-card-gap);
+	padding: 0 var(--tp-space-m);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-card-action-size);
+	font-weight: 700;
+	white-space: nowrap;
+	text-decoration: none;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	border-radius: var(--tp-radius-s);
+}
+.tp-cards--columns :is(.tp-card, .is-style-tp-card) .tp-card__action {
+	width: var(--tp-card-action-width);
+}
+:is(.tp-card, .is-style-tp-card) .tp-card__action:is(:hover, :focus),
+.tp-sheet__action:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+}
+:is(.tp-card, .is-style-tp-card) .tp-card__action:active,
+.tp-sheet__action:active {
+	background: var(--tp-color-ink-active);
+}
+/* Routenplaner: Icon vor dem Text */
+:is(.tp-card__action--guide, .tp-sheet__action--guide)::before {
+	content: "";
+	flex: none;
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--tp-icon-route) center / contain no-repeat;
+	mask: var(--tp-icon-route) center / contain no-repeat;
+}
+
+/* Fuß-Link (auch als Blockstil "Kiosk: Fuß-Link" für einen Button): heller Button über die volle Breite unten */
+.tp-more,
+.wp-block-button.is-style-tp-more .wp-block-button__link {
+	display: flex;
+	align-self: stretch;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0 var(--tp-space-s);
+	box-sizing: border-box;
+	min-height: var(--tp-touch-target);
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) var(--tp-box-padding);
+	padding: var(--tp-space-s) var(--tp-space-m);
+	border: 0;
+	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-font-size-min);
+	font-weight: 700;
+	line-height: 1.2;
+	text-align: left;
+	text-transform: var(--tp-headline-transform);
+	text-decoration: none;
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+}
+:is(.tp-box, .is-style-tp-box) :is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link) {
+	margin: var(--tp-space-s) var(--tp-box-padding) var(--tp-space-s);
+}
+:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):is(:hover, :focus) {
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+}
+:is(.tp-more, .wp-block-button.is-style-tp-more .wp-block-button__link):active {
+	background: color-mix(in srgb, var(--tp-color-band) 15%, var(--tp-color-tint));
+}
+.tp-more::after,
+.wp-block-button.is-style-tp-more .wp-block-button__link::after {
+	content: "";
+	flex: none;
+	margin-left: auto; /* Pfeil rechtsbündig, Text links */
+	width: var(--tp-icon-size);
+	height: var(--tp-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--tp-icon-arrow) center / contain no-repeat;
+	mask: var(--tp-icon-arrow) center / contain no-repeat;
+}
+.wp-block-buttons:has(> .is-style-tp-more),
+.wp-block-button.is-style-tp-more {
+	width: 100%;
+	margin: 0;
+}
+/* Gesamtzahl („1 weitere heute“): nur mit tp-home--link-head sichtbar */
+.tp-more__total {
+	display: none;
+}
+.tp-home--link-head .tp-more__total {
+	display: inline;
+}
+.tp-home--link-head .tp-more:has(.tp-more__total) .tp-more__note {
+	display: none; /* in der Kopfzeile zählt die Gesamtzahl */
+}
+/* Zusatz ("· 3 weitere heute"): Grundtext statt Versalien */
+.tp-more__note {
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	font-weight: 400;
+	text-transform: none;
+	margin-left: auto; /* Zusatz rechts, direkt vor dem Pfeil */
+}
+/* Mit Zusatz übernimmt dieser den Restplatz, der Pfeil schließt direkt an */
+.tp-more:has(> .tp-more__note)::after,
+.wp-block-button__link:has(> .tp-more__note)::after {
+	margin-left: 0;
+}
+.tp-more--alert .tp-more__label::before {
+	content: "· ";
+}
+/* Dunkle Variante mit Hinweis, Punkt pulsiert */
+.tp-more--alert,
+.tp-more--alert:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.tp-more--alert:active {
+	background: var(--tp-color-ink-active);
+}
+.tp-more__alert {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	color: var(--tp-color-on-band-accent);
+}
+.tp-more__alert::before {
+	content: "";
+	flex: none;
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: currentColor;
+	animation: tp-pulse 2s infinite;
+}
+@keyframes tp-pulse {
+	0%   { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 70%, transparent); }
+	70%  { box-shadow: 0 0 0 10px transparent; }
+	100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.tp-more__alert::before { animation: none; }
+}
+
+/* Statuszeile (Stand der Daten) */
+.tp-status {
+	margin: var(--tp-space-m) calc(var(--tp-gutter) + var(--tp-box-padding)) 0;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-headline-s);
+	color: var(--tp-color-muted);
+}
+.tp-status--error {
+	color: var(--tp-color-danger);
+}
+
+/* Boxen nebeneinander (Blockstil "Kiosk: Boxen nebeneinander" für einen Spalten-Block):
+   eine weiße Fläche, Spalten durch eine Linie getrennt, Köpfe dunkel */
+.wp-block-columns.is-style-tp-columns {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	align-items: stretch;
+	gap: 0;
+	margin: 0;
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+	overflow: hidden;
+}
+.is-style-tp-columns > .wp-block-column {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+}
+.is-style-tp-columns > .wp-block-column + .wp-block-column {
+	border-left: 2px solid var(--tp-color-line);
+}
+.is-style-tp-columns > .wp-block-column > * {
+	margin: 0;
+}
+.is-style-tp-columns :is(.tp-box, .is-style-tp-box) {
+	flex: 1 1 auto;
+	border-radius: 0;
+}
+/* Gleiche Kopfhöhe wie die Köpfe der einzelnen Boxen (oben m, unten s), aber mittig:
+   der Abstand wird oben und unten gleich verteilt (überstimmt auch tp-band--dark) */
+.is-style-tp-columns :is(.tp-band, .is-style-tp-band) {
+	padding-block: calc((var(--tp-space-s) + var(--tp-space-m)) / 2);
+}
+
+/* Detailansicht: Bottom-Sheet als <dialog>, Optik wie das Raum-Panel im Raumplan
+   (Kopf, scrollender Inhalt, Knöpfe am unteren Rand). Öffnen/Schließen macht die
+   Komponente (showModal, Tippen auf den Hintergrund, Esc). */
+.tp-sheet {
+	position: fixed;
+	inset: auto 0 0;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--tp-color-ink);
+	background: transparent;
+	overflow: visible;
+}
+.tp-sheet::backdrop {
+	background: color-mix(in srgb, var(--tp-color-ink) 55%, transparent);
+}
+.tp-sheet__panel {
+	display: flex;
+	flex-direction: column;
+	max-height: 85vh;
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius) var(--tp-radius) 0 0;
+	box-shadow: 0 -6px 24px rgb(0 0 0 / 0.18);
+	overflow: hidden;
+}
+/* Kopf wie ein dunkles tp-band: Unterzeile (Datum) über dem Titel */
+.tp-sheet__header {
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter)) calc(var(--tp-space-m) + var(--tp-slant));
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--tp-slant)), 0 100%);
+}
+.tp-sheet__kicker {
+	order: -1;
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	font-weight: 900;
+	letter-spacing: var(--tp-kicker-spacing);
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-on-band-accent);
+}
+.tp-sheet__title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-md);
+	font-weight: 700;
+	line-height: 1.15;
+	text-transform: none; /* lange Titel bleiben lesbar */
+	color: inherit;
+	overflow-wrap: anywhere;
+}
+.tp-sheet__meta {
+	margin: 0;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+}
+.tp-sheet__body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-m);
+	min-height: 0;
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter));
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.tp-sheet__media {
+	display: block;
+	width: 100%;
+	max-height: 30vh;
+	object-fit: cover;
+	border-radius: var(--tp-radius-s);
+}
+.tp-sheet__text {
+	margin: 0;
+	line-height: 1.4;
+	white-space: pre-line; /* Absätze aus dem Text */
+}
+.tp-sheet .tp-sheet__action {
+	align-self: flex-start;
+	margin: 0;
+	font-size: inherit;
+}
+.tp-sheet__footer {
+	flex: none;
+	display: flex;
+	align-items: flex-end;
+	gap: var(--tp-space-m);
+	padding: var(--tp-space-m) calc(2 * var(--tp-gutter));
+	border-top: 1px solid var(--tp-color-line);
+}
+.tp-sheet__qr {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-m);
+	margin: 0;
+}
+.tp-sheet__qr svg {
+	flex: none;
+	width: 200px;
+	height: 200px;
+}
+.tp-sheet__qr-caption {
+	max-width: 12em;
+	font-size: var(--tp-headline-s);
+	line-height: 1.3;
+	color: var(--tp-color-muted);
+}
+.tp-sheet__close {
+	min-height: var(--tp-touch-target);
+	margin-left: auto;
+	padding: 0 var(--tp-space-l);
+	border: 0;
+	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-font-size-min);
+	font-weight: 700;
+	text-transform: var(--tp-headline-transform);
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+	cursor: pointer;
+}
+.tp-sheet__close:is(:hover, :focus) {
+	color: var(--tp-color-band);
+	background: var(--tp-color-tint);
+}
+.tp-sheet__close:active {
+	background: color-mix(in srgb, var(--tp-color-band) 15%, var(--tp-color-tint));
+}
+
+/* Idle-Hinweis (kiosk-idle.js): normales tp-sheet; die Zeiten stehen hier, 0 = Funktion aus */
+:root {
+	--tp-idle-timeout: 30s; /* Inaktivität bis zum Hinweis */
+	--tp-idle-warning: 15s; /* Countdown im Hinweis bis zurück zum Sperrbildschirm */
+}
+.tp-idle__countdown {
+	font-weight: 700;
+}
+
+/* Fokus sichtbar (Tastatur/Servicebetrieb) */
+:is(.tp-card, .is-style-tp-card) .tp-card__action:focus-visible,
+.tp-sheet__action:focus-visible,
+.tp-sheet__close:focus-visible,
+.tp-more:focus-visible,
+.wp-block-button.is-style-tp-more .wp-block-button__link:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}
+
+/* Startseite -------------------------------------------------------------------
+   Gruppe "Kiosk: Startseite": die Boxen teilen sich die Bildschirmhöhe über der
+   Navigationsleiste (--tp-nav-height bleibt frei), nichts scrollt (style.css). Jedes
+   direkte Kind wächst mit --tp-home-grow (Standard 1). Die Schrift wächst um
+   --tp-home-scale, Abstände halb so stark. */
+:root {
+	--tp-home-scale: 1.1;
+}
+.tp-home,
+.is-style-tp-home {
+	--tp-font-size-min: calc(30px * var(--tp-home-scale));
+	--tp-headline-md: calc(40px * var(--tp-home-scale));
+	--tp-headline-s: calc(24px * var(--tp-home-scale));
+	--tp-label-size: calc(20px * var(--tp-home-scale));
+	--tp-box-padding: calc(28px * (1 + var(--tp-home-scale)) / 2);
+	--tp-space-s: calc(12px * (1 + var(--tp-home-scale)) / 2);
+	--tp-space-m: calc(24px * (1 + var(--tp-home-scale)) / 2);
+	--tp-home-gap: 16px; /* Abstand zwischen den Boxen, enger als auf den Unterseiten: mehr Höhe für die Inhalte */
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-home-gap);
+	box-sizing: border-box;
+	height: calc(var(--terminal-height, 1920px) - var(--tp-nav-height));
+	margin: 0;
+	padding: var(--tp-home-gap) var(--tp-page-gutter) 0; /* unten kein Rand: darunter folgt schon der Innenabstand der Navigationsleiste; der Platz gehört den Boxen (Mensa: 3 Gerichte) */
+	overflow: hidden;
+	background: var(--tp-color-ground);
+}
+:is(.tp-home, .is-style-tp-home) > :not(.wp-block-group__inner-container),
+:is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > * {
+	flex: var(--tp-home-grow, 1) 1 0;
+	min-height: 0;
+}
+:is(.tp-home, .is-style-tp-home) :is(.tp-box, .is-style-tp-box) {
+	height: auto;
+}
+
+/* Varianten der Startseite: Klassen an der Gruppe (Editor: „Zusätzliche CSS-Klasse“), frei
+   kombinierbar. Zum Vergleichen genügt auch ?home=fit,scale-90,link-head an der Adresse
+   (kiosk-home.js setzt dann die Klassen). */
+
+/* tp-home--scale-90: Schrift um 0.9 statt 1.1 */
+.tp-home--scale-90 {
+	--tp-home-scale: 0.9;
+}
+
+/* tp-home--fit: Boxen mit Kartenliste nur so hoch wie ihre ersten Karten (kiosk-home.js); die
+   Spaltenreihe (Hinweise, Mensa) bekommt den übrigen Platz, mindestens --tp-home-columns-min */
+.tp-home--fit > .is-style-tp-columns,
+.tp-home--fit > .wp-block-group__inner-container > .is-style-tp-columns {
+	min-height: var(--tp-home-columns-min, 300px);
+}
+
+/* tp-home--dark-head: auch die Köpfe der einzelnen Boxen (Veranstaltungen, Vorlesungen) dunkelblau,
+   wie die der Spaltenreihe (Hinweise, Mensa); gleiche Kopfhöhe, Titel mittig */
+.tp-home--dark-head :is(.tp-box, .is-style-tp-box) {
+	--tp-band-bg: var(--tp-color-band);
+	--tp-band-fg: var(--tp-color-on-band);
+	--tp-band-kicker: color-mix(in srgb, var(--tp-color-on-band) 80%, transparent);
+	--tp-link-head-fg: var(--tp-color-on-band);
+	--tp-link-head-pad: 0px;
+}
+.tp-home--dark-head :is(.tp-box, .is-style-tp-box) :is(.tp-band, .is-style-tp-band) {
+	padding-block: calc((var(--tp-space-s) + var(--tp-space-m)) / 2);
+}
+/* tp-home--link-head: der Fuß-Link („37 weitere →“) steht rechts im Kopf der Box statt unten, die ganze Kopfzeile ist die Tippfläche;
+   nur Text und Pfeil, ohne Button-Fläche; der Text „Alle …“ entfällt nur, wenn ein Zähler („37 weitere“) da ist (bleibt für Screenreader); bei den Vorlesungen steht dort immer „n weitere heute“ (n = alle nach der ersten). Die Liste bekommt die ganze Box. */
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) {
+	position: relative;
+	padding-bottom: var(--tp-space-s);
+}
+.tp-home--link-head .is-style-tp-columns {
+	--tp-link-head-fg: var(--tp-color-on-band);
+	--tp-link-head-pad: 0px;
+}
+/* doppelte Klasse: überstimmt die Randregel für .tp-more in Boxen */
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more {
+	position: absolute;
+	inset: 0 0 auto; /* liegt über dem ganzen Kopf: die gesamte Kopfzeile ist die Tippfläche */
+	justify-content: flex-end;
+	flex-wrap: nowrap;
+	column-gap: calc(var(--tp-space-s) / 2); /* Text und Pfeil enger */
+	box-sizing: border-box;
+	width: auto;
+	height: calc(var(--tp-space-m) + var(--tp-space-s) + 1.1 * var(--tp-headline-md)); /* Höhe des Kopfes */
+	min-height: 48px;
+	margin: 0;
+	padding: var(--tp-link-head-pad, calc(var(--tp-space-m) - var(--tp-space-s))) calc(var(--tp-box-padding) * 0.55) 0 0; /* oben: Titel mittig (heller Kopf hat oben mehr Abstand); rechts knapper als der Boxrand, damit der Link in schmalen Köpfen (Spalten) nicht an den Titel stößt */
+	border-radius: 0;
+	font-size: var(--tp-headline-s);
+	color: var(--tp-link-head-fg, var(--tp-color-band));
+	background: none; /* nur Text und Pfeil, kein Button */
+}
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:is(:hover, :focus, :active) {
+	color: var(--tp-link-head-fg, var(--tp-color-band));
+	background: none;
+}
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more::after {
+	margin-left: 0; /* Text und Pfeil bleiben rechts zusammen (der Link ist so breit wie der Kopf) */
+}
+/* Rückmeldung beim Tippen auf die Kopfzeile */
+.tp-home--link-head.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:active {
+	background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more:has(:is(.tp-more__note, .tp-more__total)) .tp-more__label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+.tp-home--link-head :is(.tp-box, .is-style-tp-box) .tp-more :is(.tp-more__note, .tp-more__label, .tp-more__total) {
+	font-family: var(--tp-font-text);
+	font-size: inherit;
+	font-weight: 400;
+	text-transform: none;
+	margin-left: 0;
+}
+:is(.tp-home, .is-style-tp-home) > [hidden],
+:is(.tp-home, .is-style-tp-home) > .wp-block-group__inner-container > [hidden] {
+	display: none;
+}
+
+/* Seitenkopf -------------------------------------------------------------------
+   Gruppe "Kiosk: Seitenkopf" (Vorlage kiosk-kopf.php): Logos links/rechts, darunter
+   Kicker, Titel und Untertitel direkt auf dem Grund, ohne Box. In tp-home und
+   tp-lock behält er seine Höhe, die Boxen teilen sich den Rest. */
+:root {
+	--tp-header-logo-height: 64px;
+	--tp-header-title-size: 72px;
+}
+.tp-header,
+.is-style-tp-header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	padding: 0;
+	background: transparent;
+}
+:is(.tp-header, .is-style-tp-header) > .wp-block-group__inner-container {
+	display: contents;
+}
+:is(.tp-header, .is-style-tp-header) > *,
+:is(.tp-header, .is-style-tp-header) > .wp-block-group__inner-container > * {
+	max-width: none;
+	margin: 0;
+}
+:is(.tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock) > :is(.tp-header, .is-style-tp-header),
+:is(.tp-home, .is-style-tp-home, .tp-lock, .is-style-tp-lock) > .wp-block-group__inner-container > :is(.tp-header, .is-style-tp-header) {
+	flex: 0 0 auto;
+}
+.tp-header__logos {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: var(--tp-space-m); /* margin würde von der Regel für Kinder des Kopfes überschrieben */
+}
+.tp-header__logos > .wp-block-group__inner-container {
+	display: contents;
+}
+.tp-header__logos .wp-block-image {
+	margin: 0;
+}
+.tp-header__logo img {
+	display: block;
+	width: auto;
+	height: var(--tp-header-logo-height);
+}
+.tp-header__logo--lcc img {
+	height: calc(var(--tp-header-logo-height) * 0.9);
+}
+.tp-header__kicker {
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-headline-s);
+	font-weight: 700;
+	letter-spacing: var(--tp-kicker-spacing);
+	text-transform: uppercase;
+	line-height: 1.2;
+	color: var(--tp-color-band);
+}
+.tp-header__title {
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-header-title-size);
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--tp-color-ink);
+}
+.tp-header__subtitle {
+	font-size: var(--tp-font-size-min);
+	line-height: 1.3;
+	color: var(--tp-color-muted);
+}
+
+/* Sperrbildschirm --------------------------------------------------------------
+   Startseite des Terminals: rotierende Infos, aus der Ferne lesbar, darunter
+   Buttons zu den Seiten. Passt genau auf den Bildschirm, nichts scrollt
+   (Seitenlayout: style.css). Die Schrift wächst um --tp-lock-scale; Abstände wachsen
+   halb so stark mit. Die Grundwerte stehen hier noch einmal, weil sich Variablen aus
+   :root nicht skalieren lassen. */
+:root {
+	--tp-lock-scale: 2;
+	--tp-rotation-interval: 12s; /* Standzeit je Folie */
+	--tp-rotation-pause: 30s;    /* Pause nach der letzten Berührung bzw. offenen Detailansicht */
+}
+/* Die Skala wird überall dort neu eingerechnet, wo sie sich ändern kann: im Rahmen und in
+   den Bedienteilen darin. Fuß-Links und Buttons bedient man aus der Nähe, sie bleiben so
+   groß wie auf den Startseiten (Skala 1). */
+:is(.tp-lock, .is-style-tp-lock),
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-font-size-min: calc(30px * var(--tp-lock-scale));
+	--tp-headline-md: calc(40px * var(--tp-lock-scale));
+	--tp-headline-s: calc(24px * var(--tp-lock-scale));
+	--tp-gutter: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-box-padding: calc(28px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-s: calc(12px * (1 + var(--tp-lock-scale)) / 2);
+	--tp-space-m: calc(24px * (1 + var(--tp-lock-scale)) / 2);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-more, .wp-block-buttons) {
+	--tp-lock-scale: 1;
+}
+.tp-lock,
+.is-style-tp-lock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-block-gap);
+	box-sizing: border-box;
+	height: var(--terminal-height, 1920px);
+	margin: 0;
+	padding: var(--tp-block-gap) var(--tp-page-gutter);
+	overflow: hidden;
+	background: var(--tp-color-ground);
+}
+.tp-lock,
+.is-style-tp-lock {
+	position: relative;
+	gap: 20px; /* zwischen Slider, "Campus entdecken" und Schnellzugriffen */
+	padding-top: 28px;
+	padding-bottom: 30px; /* Platz für den Streifen */
+}
+:is(.tp-lock, .is-style-tp-lock)::after { /* Streifen unten wie in der Navigationsleiste, nur Zierde */
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 10px;
+	background: linear-gradient(90deg, var(--tp-color-primary) 0 66.6%, var(--tp-color-band) 66.6% 100%);
+}
+
+/* "Campus entdecken", Schnellzugriffe und Hinweis: feste Größen (px), weil die Skala
+   der Rotation hier nicht gelten soll. Nur die Schnellzugriffe sind klein, man bedient sie aus der Nähe. */
+:is(.tp-lock, .is-style-tp-lock) .tp-header__logos,
+.tp-header__logos--clock { /* Kopf mit Uhr (kiosk-clock.js): auf jeder Seite außer den Handy-Seiten, Logos klein wie am Sperrbildschirm */
+	--tp-header-logo-height: 56px;
+	flex: 0 0 auto;
+	margin-bottom: 8px; /* plus gap: 28 px von der Kopfzeile bis zum Slider */
+	padding-bottom: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); /* Uhr genau in der Mitte: gleich breite Seiten, auch wenn ein Logo breiter ist (1fr allein wüchse mit dem Logo) */
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-header__logos .tp-header__logo--hsc,
+.tp-header__logos--clock .tp-header__logo--hsc {
+	justify-self: end;
+}
+.tp-lock__clock { /* Uhrzeit und Datum, gefüllt von kiosk-lock.js */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	text-align: center;
+	color: var(--tp-color-ink);
+}
+.tp-lock__clock-time {
+	font-family: var(--tp-font-headline);
+	font-size: 52px;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums; /* Ziffern gleich breit, die Zeit springt nicht */
+}
+.tp-lock__clock-date { /* wie das Datum über den Listen der Unterseiten (.tp-cards__heading) */
+	font-family: var(--tp-font-text);
+	font-size: 24px;
+	font-weight: 900;
+	letter-spacing: var(--tp-kicker-spacing);
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--tp-color-band);
+}
+.tp-lock__welcome { /* aus, bis kiosk-lock.js sie per ?welcome=… einblendet (is-shown) */
+	display: none;
+	flex: 0 0 auto;
+	flex-direction: column;
+	gap: 4px;
+	box-sizing: border-box;
+	padding: 8px 28px 10px;
+	border-radius: var(--tp-radius);
+	background: var(--tp-color-paper);
+}
+.tp-lock__welcome.is-shown {
+	display: flex;
+}
+.tp-lock__welcome > .wp-block-group__inner-container {
+	display: contents;
+}
+.tp-lock__welcome .tp-header__kicker {
+	font-size: 20px;
+}
+.tp-lock__welcome .tp-header__title {
+	font-size: 38px;
+}
+.tp-lock__discover {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	box-sizing: border-box;
+	padding: 8px 28px;
+	border-radius: var(--tp-radius);
+	text-decoration: none;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	-webkit-tap-highlight-color: transparent;
+}
+.tp-lock__discover:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+}
+.tp-lock__discover:active {
+	background: var(--tp-color-ink-active);
+}
+.tp-lock__discover:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}
+.tp-lock__discover-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.tp-lock__discover strong {
+	font-family: var(--tp-font-headline);
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+.tp-lock__discover-text > span {
+	font-size: 20px;
+	line-height: 1.25;
+}
+.tp-lock__discover::after { /* Pfeil im Kreis (weißer Pfeil, wie --tp-icon-arrow) */
+	content: "";
+	flex: none;
+	box-sizing: border-box;
+	width: 48px;
+	height: 48px;
+	border: 3px solid currentColor;
+	border-radius: 50%;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E") center / 30px 30px no-repeat;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) {
+	position: relative;
+}
+.tp-lock__quick {
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	gap: 8px;
+	box-sizing: border-box;
+	padding: 10px 24px 12px;
+	border-radius: var(--tp-radius);
+	background: var(--tp-color-paper);
+}
+.tp-lock__quick-head {
+	display: flex;
+	align-items: center; /* Überschrift und Schalter auf einer Höhe */
+	justify-content: space-between;
+	gap: 16px;
+}
+.tp-lock__quick-title {
+	margin: 0;
+	font-family: var(--tp-font-headline);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--tp-color-ink);
+}
+.tp-lock__quick-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px; /* wie in der Navigationsleiste */
+}
+.tp-lock__quick-tile { /* wie .tp-nav__target der Unterseiten (helle Kachel), Schrift wie die Zustandsbuttons (Montserrat fett), dazu ein feiner Rand; Icon in einer Zeile über dem Text */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	text-align: center;
+	box-sizing: border-box;
+	min-width: 0;
+	min-height: 88px;
+	padding: 6px 8px;
+	border: 2px solid color-mix(in srgb, var(--tp-color-band) 28%, transparent); /* feiner, weicher Rand */
+	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-headline);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.1;
+	text-decoration: none;
+	hyphens: manual;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+	-webkit-tap-highlight-color: transparent;
+}
+.tp-lock__quick-tile:active {
+	background: var(--tp-color-line);
+}
+.tp-lock__quick-tile:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 2px;
+}
+.tp-lock__quick-tile .tp-nav__icon {
+	width: 1.5em;
+	height: 1.5em;
+}
+.tp-lock__hint {
+	flex: 0 0 auto;
+	margin: 0;
+	font-size: 26px;
+	line-height: 1.2;
+	text-align: center;
+	color: var(--tp-color-muted);
+	/* Touch-Hinweis: Hand in Textfarbe (::before, tippt kurz) mit orangem Ring
+	   an der Fingerspitze (::after). Reine CSS-Animation, kein Markup nötig. */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.tp-lock__hint::before {
+	content: "";
+	order: -1;
+	flex: none;
+	width: 40px;
+	height: 40px;
+	margin-right: 16px;
+	background: currentColor;
+	-webkit-mask: var(--tp-hint-hand) center / contain no-repeat;
+	mask: var(--tp-hint-hand) center / contain no-repeat;
+	transform-origin: 50% 90%;
+	animation: tp-hint-tap 3.6s ease-in-out infinite;
+}
+.tp-lock__hint::after {
+	content: "";
+	order: -2;
+	flex: none;
+	width: 14px;
+	height: 14px;
+	margin-right: -14px;       /* belegt keinen Platz */
+	translate: 11px -11px;     /* Fingerspitze der Hand */
+	box-sizing: border-box;
+	border: 3px solid var(--tp-color-primary);
+	border-radius: 50%;
+	opacity: 0;
+	animation: tp-hint-ring 3.6s ease-out infinite;
+}
+:root {
+	--tp-hint-hand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 14a8 8 0 0 1-8 8'/%3E%3Cpath d='M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2'/%3E%3Cpath d='M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1'/%3E%3Cpath d='M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10'/%3E%3Cpath d='M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'/%3E%3C/svg%3E");
+}
+@keyframes tp-hint-tap {
+	0%, 55%, 100% { transform: translateY(0) scale(1); }
+	64% { transform: translateY(4px) scale(.95); }
+	74% { transform: translateY(0) scale(1); }
+}
+@keyframes tp-hint-ring {
+	0%, 62% { transform: scale(.6); opacity: 0; }
+	66% { opacity: .8; }
+	92%, 100% { transform: scale(2.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.tp-lock__hint::before,
+	.tp-lock__hint::after { animation: none; }
+}
+
+/* Rotation: alle Folien liegen übereinander in einer Zelle; nur die aktive ist zu
+   sehen. Die übrigen bleiben im Layout (visibility statt display: none), damit die
+   Komponenten auch verdeckt nur ganze Karten zeigen und richtig zählen. */
+.tp-rotation,
+.is-style-tp-rotation {
+	position: relative;
+	display: grid;
+	grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > :not(.wp-block-group__inner-container, .tp-rotation__dots),
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > * {
+	grid-area: 1 / 1;
+	min-height: 0;
+	margin: 0;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+:is(.tp-rotation, .is-style-tp-rotation) > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation) > .wp-block-group__inner-container > .is-active,
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > :first-child:not(.wp-block-group__inner-container),
+:is(.tp-rotation, .is-style-tp-rotation):not(.tp-rotation--ready) > .wp-block-group__inner-container > :first-child {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.6s ease;
+}
+/* Wischen (kiosk-rotation.js): senkrechtes Scrollen bleibt dem Browser, waagerecht gehört der Rotation.
+   Beim Ziehen schiebt die Nachbarfolie von der Seite herein und darf nicht über die Rotation hinausragen. */
+:is(.tp-rotation, .is-style-tp-rotation) {
+	touch-action: pan-y;
+}
+:is(.tp-rotation, .is-style-tp-rotation).tp-rotation--dragging {
+	overflow-x: clip;
+	user-select: none;
+	-webkit-user-select: none;
+}
+@media (prefers-reduced-motion: reduce) {
+	:is(.tp-rotation, .is-style-tp-rotation) * {
+		transition: none !important;
+	}
+}
+/* Enger Kartenabstand auf allen Folien des Sliders (Schrift bleibt), damit mehr Karten passen */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
+	--tp-row-padding: 8px;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card) {
+	min-height: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__body {
+	gap: 2px;
+	padding-block: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__aside { /* Zeitfeld bestimmt sonst die Kartenhöhe */
+	padding-block: 6px;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__until {
+	margin-top: 0;
+}
+/* Die Liste füllt die ganze Folie: übrige Höhe unter den ganzen Karten wird gleichmäßig verteilt,
+   auch über der ersten und unter der letzten Karte (bei zwei Karten sitzen sie so nicht an den Rändern) */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-cards--fit, .km-rows, .kh-list) {
+	justify-content: space-evenly;
+}
+/* Trennlinie genau in der Mitte der Lücke zwischen zwei Karten: statt des Randes oben an der Karte
+   zeichnet ein Strich eine halbe Lücke darüber (--tp-list-gap setzt kiosk-lock.js) */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card, .km-row) + :is(.tp-card, .is-style-tp-card, .km-row) {
+	position: relative;
+	border-top: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card, .km-row) + :is(.tp-card, .is-style-tp-card, .km-row)::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: calc(-0.5 * var(--tp-list-gap, 0px));
+	height: 1px;
+	background: var(--tp-color-line);
+	pointer-events: none;
+}
+/* Abstand unter der Überschrift jeder Folie */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
+	--tp-slide-head-gap: 28px;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) + :not(.tp-more, .wp-block-buttons) {
+	margin-top: var(--tp-slide-head-gap);
+}
+/* Unter der letzten Karte derselbe Abstand bis zum Ende der Folie wie unter der Überschrift */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-cards--fit, .km-rows, .kh-list) {
+	padding-bottom: var(--tp-slide-head-gap);
+}
+/* Events und Vorlesungen: Tagestitel und Spaltenkopf sind am Sperrbildschirm ausgeblendet, der Abstand
+   gehört deshalb an die Liste dahinter */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-cards__columns + :is(.tp-cards, .is-style-tp-cards) {
+	margin-top: var(--tp-slide-head-gap);
+}
+/* Titel höchstens zwei Zeilen, Nebentext eine (volle Texte in der Detailansicht) */
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .oe-event__title {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .oe-event__meta {
+	-webkit-line-clamp: 1;
+	line-clamp: 1;
+}
+/* Eine Box als Folie füllt die ganze Rotation statt ein Drittel der Startseite */
+:is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
+	height: 100%;
+}
+/* Besucher-Folie ([kiosk_besucher], kiosk-besucher.js) ersetzt während eines Besuchs die Rotation */
+:is(.tp-lock, .is-style-tp-lock).tp-lock--visitor :is(.tp-rotation, .is-style-tp-rotation) {
+	display: none;
+}
+/* Position in der Rotation, oben rechts im Kopf der Folie (unten steht der Fuß-Link) */
+.tp-rotation__dots {
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
+	top: calc(var(--tp-space-m) / 2 - var(--tp-space-s) / 2);
+	right: var(--tp-box-padding);
+	display: flex;
+	justify-content: center;
+	gap: var(--tp-space-s);
+}
+.tp-rotation__dot {
+	position: relative;
+	box-sizing: border-box;
+	width: var(--tp-space-s);
+	height: var(--tp-space-s);
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	background: color-mix(in srgb, var(--tp-band-fg, var(--tp-color-ink)) 25%, transparent);
+	transition: background 0.6s ease;
+}
+.tp-rotation__dot::after { /* größere Tippfläche als der Punkt */
+	content: "";
+	position: absolute;
+	inset: -16px -10px;
+}
+.tp-rotation__dot:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 4px;
+}
+.tp-rotation__dot.is-active {
+	background: var(--tp-color-primary);
+}
+/* Beschriftung der Punkte (Titel der Folie): nur für Screenreader, in Variante D sichtbar */
+.tp-rotation__label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/* Sperrbildschirm: die Punkte sind Buttons in einer eigenen Zeile unter der Karte, zwischen Slider und
+   "Campus entdecken". Die Tippfläche ist größer als die sichtbare Form (::after).
+   Standard (B): vier Segmente mit Füllstand, der zeigt, wann die nächste Folie kommt.
+   Andere Varianten über die Adresse (kiosk-lock.js, Klasse am Sperrbildschirm): ?dots=a (größere Punkte),
+   ?dots=c (Icon-Buttons), ?dots=d (beschriftete Reiter); ?dots=b ist der Standard. */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
+	grid-template-rows: minmax(0, 1fr) auto;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) > .tp-rotation__dots {
+	position: static;
+	grid-area: 2 / 1;
+	justify-self: center;
+	display: flex;
+	width: 72%;
+	gap: 12px;
+	margin: 14px 0 -4px; /* etwas Luft zur Karte; unten rückt die Leiste näher an "Campus entdecken" */
+	pointer-events: auto;
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot { /* B */
+	flex: 1 1 0;
+	width: auto;
+	height: 14px;
+	border-radius: 7px;
+	background: color-mix(in srgb, var(--tp-color-ink) 25%, transparent);
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot::after {
+	inset: -22px -6px;
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot::before { /* Füllstand: füllt sich in der Standzeit der Folie */
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0;
+	border-radius: inherit;
+	background: var(--tp-color-primary);
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot.is-active::before {
+	animation: tp-dot-fill var(--tp-rotation-interval, 12s) linear forwards;
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation--held .tp-rotation__dot.is-active::before {
+	width: 100%;
+	animation: none; /* die Folie steht still (Berührung, Punkt, Detailansicht): Segment bleibt voll */
+}
+@keyframes tp-dot-fill {
+	to { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+	:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot.is-active::before {
+		width: 100%;
+		animation: none;
+	}
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-rotation__dot.is-active {
+	background: color-mix(in srgb, var(--tp-color-ink) 25%, transparent);
+}
+
+/* A: größere Punkte, Tippfläche etwa 52 x 64 px */
+:is(.tp-lock, .is-style-tp-lock).tp-dots--a :is(.tp-rotation, .is-style-tp-rotation) > .tp-rotation__dots {
+	width: auto;
+	gap: 20px;
+	margin: 4px 0 -8px;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--a .tp-rotation__dot {
+	flex: none;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--a .tp-rotation__dot::after {
+	inset: -18px -12px;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--a .tp-rotation__dot::before {
+	display: none;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--a .tp-rotation__dot.is-active {
+	background: var(--tp-color-primary);
+}
+
+/* C: runde Icon-Buttons (Icon der Folie), 64 px */
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c :is(.tp-rotation, .is-style-tp-rotation) > .tp-rotation__dots {
+	width: auto;
+	gap: 14px;
+	margin: 20px 0 0; /* Abstand zur Karte wie der zu "Campus entdecken" (Abstand der Blöcke) */
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c .tp-rotation__dot {
+	flex: none;
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c .tp-rotation__dot::after {
+	inset: -4px;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c .tp-rotation__dot::before {
+	inset: 16px;
+	width: auto;
+	border-radius: 0;
+	background: currentColor;
+	-webkit-mask: var(--tp-icon) center / contain no-repeat;
+	mask: var(--tp-icon) center / contain no-repeat;
+	animation: none;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c .tp-rotation__dot.is-active {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--c .tp-rotation__dot.is-active::before {
+	width: auto;
+	animation: none;
+}
+
+/* D: beschriftete Reiter in der Breite der Karte, Titel der Folie */
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d :is(.tp-rotation, .is-style-tp-rotation) > .tp-rotation__dots {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	width: 100%;
+	gap: 8px;
+	margin: 8px 0 0;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d .tp-rotation__dot {
+	height: 64px;
+	padding: 0 8px;
+	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-text);
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d .tp-rotation__dot::after {
+	inset: -4px;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d .tp-rotation__dot::before {
+	display: none;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d .tp-rotation__label {
+	position: static;
+	width: auto;
+	height: auto;
+	overflow: hidden;
+	clip-path: none;
+	text-overflow: ellipsis;
+}
+:is(.tp-lock, .is-style-tp-lock).tp-dots--d .tp-rotation__dot.is-active {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+/* Icon im Kopf der Folie in der Größe wie sonst (1,1 em des Titels), aus der Ferne gut zu erkennen */
+:is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) {
+	--tp-icon-size: 1.1em;
+}
+
+/* Bei großer Schrift ließen Raum und Routenplaner rechts dem Titel kaum Breite (eine Silbe je
+   Zeile). Daher bekommt der Titel die volle Breite neben dem Zeitfeld, darunter steht der
+   Nebentext in voller Breite (bis zu zwei Zeilen), darunter Raum links und der Button „Route“ rechts. Der Inhaltsblock löst sich
+   dazu auf (display: contents), seine Teile liegen direkt im Raster der Karte. Nur Karten mit
+   Raum; die übrigen (Mensa, Events ohne Raum) bleiben wie sie sind. Ohne Spaltenkopf. */
+:is(.tp-lock, .is-style-tp-lock) .tp-cards__columns {
+	display: none;
+}
+:is(.tp-lock, .is-style-tp-lock) .tp-cards--columns > :is(.tp-card, .is-style-tp-card) {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	grid-template-rows: 1fr auto auto auto 1fr;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__aside {
+	grid-row: 1 / -1;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__body {
+	display: contents;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) .tp-card__title {
+	grid-column: 2 / -1;
+	grid-row: 2;
+	padding-top: 4px; /* knapp, damit drei Karten in die Folie passen */
+	line-height: 1.1;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):has(> :is(.tp-card__room, .tp-card__action)) :is(.tp-card__meta, .tp-card__text) {
+	grid-column: 2 / -1;
+	grid-row: 3;
+	align-self: center;
+	min-width: 0;
+	padding-bottom: 6px;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__room {
+	grid-column: 2;
+	grid-row: 4;
+	justify-self: start;
+	min-width: 0;
+	margin-left: 0;
+	padding-bottom: 6px;
+	font-size: var(--tp-headline-s);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card) > .tp-card__action {
+	grid-column: 3 / -1;
+	grid-row: 4;
+	justify-self: end;
+	width: auto;
+	min-height: 0;
+	margin: 0 0 6px;
+	padding: 0.2em 0.7em;
+	font-size: var(--tp-headline-s);
+}
+/* Ohne Nebentext rückt der Raum unter den Titel nach links */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-card, .is-style-tp-card):not(:has(:is(.tp-card__meta, .tp-card__text))) > .tp-card__room {
+	grid-column: 2;
+	grid-row: 3;
+	justify-self: start;
+	margin-left: 0;
+}
+
+/* Großer Button (Blockstil "Kiosk: Großer Button"); mehrere in einem
+   Buttons-Block teilen sich die Breite und brechen bei Bedarf um */
+.wp-block-buttons:has(> .is-style-tp-cta) {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	gap: var(--tp-block-gap);
+	margin: 0;
+	padding: 0;
+}
+.wp-block-button.is-style-tp-cta {
+	flex: 1 1 28%;
+	min-width: 0;
+	margin: 0;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link {
+	display: flex;
+	align-items: center;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	min-height: var(--tp-cta-height);
+	margin: 0;
+	padding: calc(var(--tp-space-m) + var(--tp-slant)) var(--tp-space-m) var(--tp-space-m);
+	border: 0;
+	border-radius: var(--tp-radius);
+	font-family: var(--tp-font-headline);
+	font-size: var(--tp-cta-font-size);
+	font-weight: 700;
+	line-height: 1.1;
+	text-align: left;
+	text-transform: var(--tp-headline-transform);
+	text-decoration: none;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+	clip-path: polygon(0 var(--tp-slant), 100% 0, 100% 100%, 0 100%);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:is(:hover, :focus) {
+	color: var(--tp-color-on-band);
+	background: var(--tp-color-band);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:active {
+	background: var(--tp-color-ink-active);
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link::after { /* Pfeil wie am Fuß-Link */
+	content: "";
+	flex: none;
+	width: 1.2em;
+	height: 1.2em;
+	margin-left: auto;
+	background: var(--tp-color-on-band-accent);
+	-webkit-mask: var(--tp-icon-arrow) center / contain no-repeat;
+	mask: var(--tp-icon-arrow) center / contain no-repeat;
+}
+.wp-block-button.is-style-tp-cta .wp-block-button__link:focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 3px;
+}
+
+/* Navigationsleiste -------------------------------------------------------------
+   Steht auf jeder Seite außer dem Sperrbildschirm und den Handy-Seiten ganz unten
+   (Ausgabe: kiosk-nav.php über wp_footer). Oben Start und Sprache, darunter die Ziele in
+   zwei Reihen, ganz unten ein Streifen. Die Seiten halten --tp-nav-height frei (style.css). */
+.tp-nav {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+	gap: var(--tp-space-s);
+	box-sizing: border-box;
+	width: var(--terminal-width, 1080px);
+	height: var(--tp-nav-height);
+	padding: var(--tp-space-s) var(--tp-page-gutter) calc(var(--tp-nav-stripe) + var(--tp-space-s));
+	background: var(--tp-color-ground);
+	font-family: var(--tp-font-text);
+	font-size: var(--tp-font-size-min);
+}
+.tp-nav {
+	--tp-nav-stripe: 10px;
+}
+.tp-nav::after { /* Streifen unten, nur Zierde */
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: var(--tp-nav-stripe);
+	background: linear-gradient(90deg, var(--tp-color-primary) 0 66.6%, var(--tp-color-band) 66.6% 100%);
+}
+.tp-nav__top {
+	display: flex;
+	flex: 0 0 72px;
+	justify-content: space-between;
+	gap: var(--tp-space-s);
+}
+.tp-nav__langs,
+.tp-nav__targets {
+	background: var(--tp-color-paper);
+	border-radius: var(--tp-radius);
+}
+.tp-nav :is(a, button) {
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+	cursor: pointer;
+}
+.tp-nav :is(a, button):focus-visible {
+	outline: var(--tp-border-width) solid var(--tp-color-primary);
+	outline-offset: 2px;
+}
+.tp-nav__langs {
+	border: 1px solid color-mix(in srgb, var(--tp-color-band) 28%, transparent); /* ganz feiner Rand, setzt die Schalter ab */
+	display: flex;
+	gap: 6px;
+	box-sizing: border-box;
+	width: 420px;
+	padding: 6px;
+}
+.tp-nav__langs--small { /* DE/EN am Sperrbildschirm: kompakt, in der Kopfzeile der Schnellzugriffe */
+	width: 270px;
+	height: 52px;
+	padding: 4px;
+	gap: 4px;
+	margin-left: auto; /* rechts, mittig zur Zeile der Überschrift */
+}
+.tp-nav__langs--small .tp-nav__lang {
+	font-size: 22px;
+	--tp-active-bar: 5px;
+}
+.tp-nav__lang {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1 1 0;
+	border: 0;
+	border-radius: var(--tp-radius-s);
+	font: 700 28px / 1 var(--tp-font-headline);
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+.tp-nav__lang:is(:hover, :focus, :active) { /* GeneratePress färbt button:hover/:focus sonst weiß auf dunkelgrau (nach dem Tippen bleibt der Fokus) */
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+.tp-nav__lang:is([aria-pressed="true"], [aria-current="page"]) { /* gewählt: dunklerer Ton + Balken unten, nie gefülltes Navy (das sind Aktionen) */
+	color: var(--tp-color-ink);
+	background: var(--tp-color-active);
+	box-shadow: inset 0 calc(-1 * var(--tp-active-bar)) 0 var(--tp-color-band);
+}
+.tp-nav__targets {
+	display: grid;
+	flex: 1 1 0;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-auto-rows: minmax(0, 1fr);
+	gap: 8px;
+	box-sizing: border-box;
+	min-height: 0;
+	padding: 8px;
+}
+.tp-nav__target {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 0 10px;
+	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-headline); /* wie Zustandsbuttons und Schnellzugriffe */
+	font-size: 25px; /* Montserrat ist breiter als Nunito: sonst passt "Vorlesungen" nicht in die Kachel */
+	font-weight: 700;
+	line-height: 1.1;
+	hyphens: manual;
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
+.tp-nav__target:is(:hover, :focus, :active) { /* Linkfarbe des Eltern-Themes (a:hover) nicht übernehmen */
+	color: var(--tp-color-ink);
+}
+.tp-nav__target:active {
+	background: var(--tp-color-line);
+}
+.tp-nav__target[aria-current="page"] { /* aktuelle Seite: wie die Zustandsbuttons */
+	background: var(--tp-color-active);
+	box-shadow: inset 0 calc(-1 * var(--tp-active-bar)) 0 var(--tp-color-band);
+}
+.tp-nav__icon {
+	flex: none;
+	width: 1.1em;
+	height: 1.1em;
+	background: currentColor;
+	-webkit-mask: var(--tp-icon) center / contain no-repeat;
+	mask: var(--tp-icon) center / contain no-repeat;
+}
+
+/* i-Icon auf jeder Karte (Sperrbildschirm und Unterseiten, nicht auf der Startseite tp-home), die beim Tippen die Detailansicht (tp-sheet) öffnet
+   (Mensa, ÖPNV, Events, Hinweise), damit man sieht, dass man sie antippen kann. Nur Zierde.
+   Die Karte lässt rechts Platz für das Icon frei, nichts liegt darunter. */
+:is(.km-meal, .km-row, .ka-dep, .ke-event, .kh--compact .kh-card):not(:is(.tp-home, .is-style-tp-home) *) {
+	--tp-info-size: 1.2em;
+	--tp-info-space: calc(1.7 * var(--tp-font-size-min)); /* Icon + Abstand, in Schriftgröße der Karte (font-size-min) */
+	position: relative;
+	box-sizing: border-box;
+	padding-right: var(--tp-info-space);
+}
+:is(.km-meal, .km-row, .ka-dep, .ke-event, .kh--compact .kh-card):not(:is(.tp-home, .is-style-tp-home) *)::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: var(--tp-info-size);
+	height: var(--tp-info-size);
+	transform: translateY(-50%);
+	background: var(--tp-color-band); /* dunkles Blau wie die dunklen CTAs */
+	-webkit-mask: var(--tp-icon-info) center / contain no-repeat;
+	mask: var(--tp-icon-info) center / contain no-repeat;
+	pointer-events: none;
+}
+/* Spaltenkopf der Events-Seite (nicht Stundenplan: dort gibt es kein Icon): die Karten lassen rechts Platz für das i-Icon, der Kopf rückt gleich weit ein,
+   damit die Beschriftungen wieder mittig über ihren Spalten stehen. */
+.ke:not(.ke--compact) .ke-columns:not(:is(.tp-home, .is-style-tp-home) *) {
+	padding-right: calc(var(--tp-box-padding) + 1.7 * var(--tp-font-size-min));
+}

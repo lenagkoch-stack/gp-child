@@ -1,5 +1,257 @@
 /*
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.0
+Version: 1.7
 */
+
+/* ==========================================================================
+   Seitenlayout des Terminals (1080 x 1920 px, Hochformat).
+   Schriften, Variablen und Bausteine (tp-box, tp-card, …): kiosk.css
+   ========================================================================== */
+
+/* Terminal ----------------------------------------------------------------- */
+:root {
+  --terminal-height: 1920px;
+  --terminal-width: 1080px;
+}
+
+/* Feste Bildschirmgröße. Lange Seiten (z. B. /stundenplan/) scrollen senkrecht,
+   ohne Gummiband-Effekt und ohne "Ziehen zum Aktualisieren". Unten bleibt Platz
+   für die globale Navigationsleiste, damit der letzte Eintrag nicht dahinter liegt;
+   Seiten, die genau passen (Startseite, Raumplan), scrollen nicht. */
+html, body {
+  width: var(--terminal-width);
+  height: var(--terminal-height);
+  margin: 0;
+}
+html {
+  overflow: hidden;
+}
+body {
+  box-sizing: border-box;
+  padding-bottom: var(--tp-nav-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+}
+
+/* Grund der ganzen Seite: GeneratePress färbt Body, Inhaltsbereich und Artikel selbst
+   (weiß bzw. Customizer-Farbe); hier immer --tp-color-ground */
+html,
+body,
+:root body .site,
+:root body .site-content,
+:root body .content-area,
+:root body .site-main,
+:root body .inside-article,
+:root body .entry-content {
+  background: var(--tp-color-ground);
+}
+
+/* Kopf- und Fußzeile von WordPress (Seitentitel, Logo, "Built with …") ausblenden */
+.site-header,
+.site-footer {
+  display: none;
+}
+
+/* Seitentitel von WordPress (Beitragskopf mit h1.entry-title) ausblenden: jede Seite
+   beginnt mit dem Seitenkopf (Vorlage "Kiosk: Seitenkopf"). */
+.entry-header,
+.page-header {
+	display: none;
+}
+
+/* Inhalt über die volle Breite, ohne die Abstände von GeneratePress */
+/* (":root body" davor: GeneratePress setzt bei "separate-containers" Rand, Padding und Farbe mit höherer Spezifität) */
+:root body .site-content,
+:root body .grid-container,
+:root body .site-main,
+:root body .inside-article {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Seitenränder: jede Seite hält links/rechts --tp-page-gutter Abstand zum Bildschirmrand
+   und --tp-block-gap zwischen den Blöcken. Startseite, Sperrbildschirm und Handy-Seiten
+   setzen unten ihr eigenes Padding (spezifischer) und bleiben unberührt. */
+:root body .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tp-block-gap);
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--tp-block-gap) var(--tp-page-gutter);
+}
+.entry-content > * {
+  max-width: none;
+  margin: 0;
+}
+/* Komponenten des Plugins (hsc-kiosk) auf Seiten: Der Seitenrand kommt von .entry-content,
+   ihr eigener Einzug (--tp-gutter) entfällt, damit sie mit dem Seitenkopf fluchten. Ihr
+   Kopfband wiederholt den Seitentitel und entfällt, wenn ein Seitenkopf darüber steht. */
+.entry-content > :is(.km, .ke, .oe, .ka) {
+  --tp-gutter: 0px;
+}
+.entry-content > :is(.tp-header, .is-style-tp-header) ~ :is(.km, .ke, .oe, .ka) > :is(.km-section, .ke-section, .ka-section) > :is(.km-heading, .ke-heading, .ka-heading) {
+  display: none;
+}
+
+/* Die Köpfe der übrigen Abschnitte (Vorlesungen, Kommende Termine, Abfahrten) sitzen ohne
+   eigenen Einzug auf dem Seitenrand */
+.entry-content > :is(.km, .ke, .oe, .ka) :is(.tp-band, .is-style-tp-band):not(.tp-band--dark) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Mensa: der Button „Weg zur Mensa“ gilt für die ganze Seite und steht deshalb oben, bündig
+   mit dem Seitenkopf und mit demselben Abstand zu den Tagen wie die Blöcke untereinander. */
+.entry-content > .km .km-guide {
+  margin: 0 0 var(--tp-block-gap);
+}
+
+/* Der Raumplan füllt den Platz unter dem Seitenkopf bis zur Navigationsleiste; Karte und
+   Bedienfeld sitzen als Boxen auf dem Grund, mit dem Seitenrand wie die Boxen der anderen Seiten. */
+body:has(floorplan-widget:not([mode="mobile"])) .entry-content {
+  height: calc(var(--terminal-height) - var(--tp-nav-height));
+  overflow: hidden;
+}
+/* Der Shortcode setzt die Höhe am Container (inline); flex-basis 0 geht vor */
+.entry-content > div:has(> floorplan-widget:not([mode="mobile"])) {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* Raumplan (floorplan-widget) ---------------------------------------------
+   Das Aussehen liest das Widget aus den --tp-* Variablen in kiosk.css, siehe
+   floorplan-widget/README.md, Abschnitt "Theming". Hier steht nur die Höhe (Terminal: Rest der
+   Seite, siehe oben). */
+floorplan-widget[mode="mobile"] {
+  height: 100%; /* füllt den Container des Shortcodes (height="100dvh") */
+}
+
+/* Handy-Seiten (Raumplan mit mode="mobile", z. B. /checkin/ nach dem Scan des
+   Tür-QR-Codes): nicht auf das Terminalformat festlegen. Das Widget füllt den
+   ganzen Bildschirm; WordPress-Titel, Fußzeile und Abstände entfallen. */
+html:has(floorplan-widget[mode="mobile"]),
+html:has(floorplan-widget[mode="mobile"]) body {
+  width: auto;
+  height: 100%;
+}
+html:has(floorplan-widget[mode="mobile"]) body {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+body:has(floorplan-widget[mode="mobile"]) :is(.entry-header, .site-footer) {
+  display: none;
+}
+body:has(floorplan-widget[mode="mobile"]) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
+}
+
+/* Seitenkopf der Handy-Seite wie auf den anderen Seiten (Logos, Kicker, Titel), nur kleiner
+   für das Handy; darunter füllt der Raumplan den Rest des Bildschirms. Das Widget hat am Handy
+   keine eigene Titelleiste. */
+body:has(floorplan-widget[mode="mobile"]) .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100dvh;
+  padding: var(--tp-space-s) var(--tp-space-s) 0;
+  box-sizing: border-box;
+  --tp-header-logo-height: 36px;
+  --tp-font-size-min: 16px;
+}
+body:has(floorplan-widget[mode="mobile"]) .entry-content > :is(.tp-header, .is-style-tp-header) {
+  flex: 0 0 auto;
+  padding: 0 var(--tp-space-s) var(--tp-space-s);
+  gap: 4px;
+}
+body:has(floorplan-widget[mode="mobile"]) .tp-header__logos {
+  padding-bottom: var(--tp-space-s);
+}
+/* Am Handy reichen die Logos; Kicker und Untertitel entfallen, der Titel bleibt für Screenreader */
+body:has(floorplan-widget[mode="mobile"]) :is(.tp-header__kicker, .tp-header__subtitle) {
+  display: none;
+}
+body:has(floorplan-widget[mode="mobile"]) .tp-header__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+body:has(floorplan-widget[mode="mobile"]) .entry-content > div:has(> floorplan-widget[mode="mobile"]) {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--tp-radius) var(--tp-radius) 0 0;
+}
+
+/* Stundenplan ([kiosk_stundenplan]) ---------------------------------------
+   Das Aussehen kommt aus den Bausteinen in kiosk.css (tp-band, tp-card, …).
+   Seite, die nur aus dem Stundenplan besteht: WordPress-Titel weglassen,
+   das Kopfband ist die Überschrift. */
+.inside-article:has(> .entry-content > .oe:only-child) > .entry-header {
+  display: none;
+}
+
+/* Startseite (Gruppe "Kiosk: Startseite", kiosk.css) -------------------------
+   Füllt den Bildschirm über der Navigationsleiste: kein Scrollen, kein
+   WordPress-Titel, keine Abstände um den Inhalt. Unten bleibt --tp-nav-height frei. */
+html:has(:is(.tp-home, .is-style-tp-home)) body {
+  overflow: hidden;
+  background: var(--tp-color-ground);
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-header {
+  display: none;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
+}
+
+/* Seitenkopf über der Startseite: der Kopf steht vor der Gruppe (nicht darin). Der Inhalt
+   bleibt so hoch wie der Bildschirm über der Navigationsleiste; die Startseite nimmt den
+   Platz unter dem Kopf. */
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: calc(var(--terminal-height) - var(--tp-nav-height));
+  overflow: hidden;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content > :is(.tp-header, .is-style-tp-header) {
+  flex: 0 0 auto;
+  padding: var(--tp-block-gap) var(--tp-page-gutter) 0;
+}
+body:has(:is(.tp-home, .is-style-tp-home)) .entry-content > :is(.tp-home, .is-style-tp-home) {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+}
+
+/* Sperrbildschirm (Gruppe "Kiosk: Sperrbildschirm", kiosk.css) ---------------
+   Füllt genau den Bildschirm: kein Scrollen, keine Navigationsleiste, kein
+   WordPress-Titel und keine Abstände um den Inhalt. */
+html:has(:is(.tp-lock, .is-style-tp-lock)) body {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+body:has(:is(.tp-lock, .is-style-tp-lock)) .entry-header {
+  display: none;
+}
+body:has(:is(.tp-lock, .is-style-tp-lock)) :is(.site, .site-main, .inside-article, .entry-content) {
+  margin: 0;
+  padding: 0;
+}
+
+/* Navigationsleiste (kiosk.css, Ausgabe: kiosk-nav.php): nicht auf dem Sperrbildschirm und
+   nicht auf den Handy-Seiten. Die Ausgabe lässt sie dort schon weg; das hier sichert Seiten
+   ab, auf denen der Block erst im Inhalt steht. */
+body:has(:is(.tp-lock, .is-style-tp-lock, floorplan-widget[mode="mobile"])) .tp-nav {
+  display: none;
+}

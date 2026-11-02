@@ -1,0 +1,62 @@
+/* Sperrbildschirm (Blockstil "Kiosk: Sperrbildschirm", kiosk.css): ein Tipp auf eine freie Fläche
+   führt zur Startseite der Studierenden. Links, Buttons, die Rotation (ihre Karten öffnen die
+   Detailansicht) und offene Detailansichten (<dialog>) behalten ihr eigenes Verhalten. */
+(function () {
+  "use strict";
+
+  const lock = document.querySelector(".tp-lock, .is-style-tp-lock");
+  if (!lock || !window.gpKioskLock) return;
+
+  // Begrüßung (Entwickeln): normalerweise aus; ?welcome=1 blendet sie mit dem Text der Vorlage ein,
+  // ?welcome=Text mit eigener Überschrift, ?welcome=0 lässt sie aus
+  const welcome = lock.querySelector(".tp-lock__welcome");
+  const value = (new URLSearchParams(location.search).get("welcome") || "").trim();
+  if (welcome && value && !/^(0|off|aus|false)$/i.test(value)) {
+    if (value !== "1") welcome.querySelector(".tp-header__title").textContent = value;
+    welcome.classList.add("is-shown");
+  }
+
+  // Darstellung der Slider-Punkte (Entwickeln): ?dots=a (größere Punkte), c (Icon-Buttons), d (beschriftete Reiter);
+  // ohne Parameter bzw. ?dots=b die Segmente mit Füllstand (kiosk.css)
+  const dotsVariant = (new URLSearchParams(location.search).get("dots") || "").toLowerCase();
+  if (/^[acd]$/.test(dotsVariant)) lock.classList.add("tp-dots--" + dotsVariant);
+
+  // Die Listen verteilen den freien Platz gleichmäßig über, zwischen und unter die Karten (space-evenly). Damit die Trennlinie genau
+  // in der Mitte der Lücke sitzt, steht die Lücke als --tp-list-gap an der Liste (kiosk.css zeichnet die Linie)
+  function updateGaps() {
+    for (const list of lock.querySelectorAll("ul.tp-cards--fit, ul.km-rows, ul.kh-list")) {
+      const box = list.getBoundingClientRect();
+      let gap = 0;
+      if (box.width > 0) {
+        const first = [...list.children]
+          .map((li) => li.getBoundingClientRect())
+          .filter((r) => r.width > 0 && r.left < box.left + box.width / 2);
+        if (first.length > 1) {
+          const used = first.reduce((sum, r) => sum + r.height, 0);
+          const style = getComputedStyle(list);
+          const inner = box.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+          gap = Math.max(0, (inner - used) / (first.length + 1));
+        }
+      }
+      const value = gap.toFixed(1) + "px";
+      if (list.style.getPropertyValue("--tp-list-gap") !== value) list.style.setProperty("--tp-list-gap", value);
+    }
+  }
+  let countFrame = 0;
+  const scheduleCounts = () => {
+    cancelAnimationFrame(countFrame);
+    countFrame = requestAnimationFrame(() => {
+      updateGaps();
+    });
+  };
+  new MutationObserver(scheduleCounts).observe(lock, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  addEventListener("resize", scheduleCounts);
+  addEventListener("load", scheduleCounts);
+  document.fonts && document.fonts.ready.then(scheduleCounts);
+  scheduleCounts();
+
+  lock.addEventListener("click", (event) => {
+    if (event.target.closest("a, button, dialog, .tp-rotation, .is-style-tp-rotation")) return;
+    location.href = window.gpKioskLock.start;
+  });
+})();

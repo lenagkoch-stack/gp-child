@@ -105,6 +105,7 @@
 	--tp-icon-users: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0'/%3E%3Cpath d='M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3Cpath d='M21 21v-2a4 4 0 0 0 -3 -3.85'/%3E%3C/svg%3E");
 	--tp-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
 	--tp-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l-2 0l9 -9l9 9l-2 0'/%3E%3Cpath d='M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7'/%3E%3Cpath d='M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6'/%3E%3C/svg%3E");
+	--tp-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0'/%3E%3Cpath d='M12 9h.01'/%3E%3Cpath d='M11 12h1v4h1'/%3E%3C/svg%3E");
 }
 
 /* Bausteine ------------------------------------------------------------------
@@ -167,6 +168,7 @@
 .tp-icon--users    { --tp-icon: var(--tp-icon-users); }
 .tp-icon--alert    { --tp-icon: var(--tp-icon-alert); }
 .tp-icon--home     { --tp-icon: var(--tp-icon-home); }
+.tp-icon--info     { --tp-icon: var(--tp-icon-info); }
 
 /* Box */
 .tp-box,
@@ -806,7 +808,7 @@
 
 /* Idle-Hinweis (kiosk-idle.js): normales tp-sheet; die Zeiten stehen hier, 0 = Funktion aus */
 :root {
-	--tp-idle-timeout: 90s; /* Inaktivität bis zum Hinweis */
+	--tp-idle-timeout: 30s; /* Inaktivität bis zum Hinweis */
 	--tp-idle-warning: 15s; /* Countdown im Hinweis bis zurück zum Sperrbildschirm */
 }
 .tp-idle__countdown {
@@ -1116,7 +1118,7 @@
 	flex-direction: column;
 	gap: 4px;
 	box-sizing: border-box;
-	padding: 14px 28px 18px;
+	padding: 8px 28px 10px;
 	border-radius: var(--tp-radius);
 	background: var(--tp-color-paper);
 }
@@ -1130,7 +1132,7 @@
 	font-size: 20px;
 }
 .tp-lock__welcome .tp-header__title {
-	font-size: 44px;
+	font-size: 38px;
 }
 .tp-lock__discover {
 	display: flex;
@@ -1139,7 +1141,7 @@
 	justify-content: space-between;
 	gap: 24px;
 	box-sizing: border-box;
-	padding: 14px 28px;
+	padding: 8px 28px;
 	border-radius: var(--tp-radius);
 	text-decoration: none;
 	color: var(--tp-color-on-band);
@@ -1163,23 +1165,23 @@
 }
 .tp-lock__discover strong {
 	font-family: var(--tp-font-headline);
-	font-size: 34px;
+	font-size: 30px;
 	font-weight: 700;
 	line-height: 1.1;
 }
 .tp-lock__discover-text > span {
-	font-size: 22px;
+	font-size: 20px;
 	line-height: 1.25;
 }
 .tp-lock__discover::after { /* Pfeil im Kreis (weißer Pfeil, wie --tp-icon-arrow) */
 	content: "";
 	flex: none;
 	box-sizing: border-box;
-	width: 56px;
-	height: 56px;
+	width: 48px;
+	height: 48px;
 	border: 3px solid currentColor;
 	border-radius: 50%;
-	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E") center / 36px 36px no-repeat;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 18l6 -6'/%3E%3Cpath d='M13 6l6 6'/%3E%3C/svg%3E") center / 30px 30px no-repeat;
 }
 .tp-lock__count { /* "3 VON 20" rechts neben dem Titel der Folie, gefüllt von kiosk-lock.js; Optik wie das Datum der Unterseiten */
 	margin-left: auto;
@@ -1199,16 +1201,22 @@
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;
-	gap: 12px;
+	gap: 8px;
 	box-sizing: border-box;
-	padding: 16px 24px 20px;
+	padding: 10px 24px 12px;
 	border-radius: var(--tp-radius);
 	background: var(--tp-color-paper);
+}
+.tp-lock__quick-head {
+	display: flex;
+	align-items: center; /* Überschrift und Schalter auf einer Höhe */
+	justify-content: space-between;
+	gap: 16px;
 }
 .tp-lock__quick-title {
 	margin: 0;
 	font-family: var(--tp-font-headline);
-	font-size: 26px;
+	font-size: 22px;
 	font-weight: 700;
 	line-height: 1.1;
 	color: var(--tp-color-ink);
@@ -1218,7 +1226,7 @@
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 8px; /* wie in der Navigationsleiste */
 }
-.tp-lock__quick-tile { /* wie .tp-nav__target der Unterseiten (helle Kachel, Nunito fett), dazu ein feiner Rand; Icon in einer Zeile über dem Text */
+.tp-lock__quick-tile { /* wie .tp-nav__target der Unterseiten (helle Kachel), Schrift wie die Zustandsbuttons (Montserrat fett), dazu ein feiner Rand; Icon in einer Zeile über dem Text */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1227,12 +1235,12 @@
 	text-align: center;
 	box-sizing: border-box;
 	min-width: 0;
-	min-height: 112px;
-	padding: 10px 8px;
+	min-height: 88px;
+	padding: 6px 8px;
 	border: 2px solid color-mix(in srgb, var(--tp-color-band) 28%, transparent); /* feiner, weicher Rand */
 	border-radius: var(--tp-radius-s);
-	font-family: var(--tp-font-text);
-	font-size: 26px;
+	font-family: var(--tp-font-headline);
+	font-size: 22px;
 	font-weight: 700;
 	line-height: 1.1;
 	text-decoration: none;
@@ -1295,6 +1303,36 @@
 	:is(.tp-rotation, .is-style-tp-rotation) * {
 		transition: none !important;
 	}
+}
+/* Mehr Abstand zwischen den Karten im Slider (Schrift bleibt) */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
+	--tp-row-padding: 64px;
+}
+/* Vorlesungen-Folie: enger gesetzt, damit drei Vorlesungen auf einmal passen */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .oe--compact {
+	--tp-row-padding: 8px;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact :is(.tp-card, .is-style-tp-card) {
+	min-height: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__body {
+	gap: 2px;
+	padding-block: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__aside { /* Zeitfeld bestimmt sonst die Kartenhöhe */
+	padding-block: 6px;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__until {
+	margin-top: 0;
+}
+/* Titel höchstens zwei Zeilen, Nebentext eine (volle Texte in der Detailansicht) */
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .oe-event__title {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+:is(.tp-lock, .is-style-tp-lock) .oe--compact .oe-event__meta {
+	-webkit-line-clamp: 1;
+	line-clamp: 1;
 }
 /* Eine Box als Folie füllt die ganze Rotation statt ein Drittel der Startseite */
 :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-box, .is-style-tp-box) {
@@ -1666,7 +1704,6 @@
 	justify-content: space-between;
 	gap: var(--tp-space-s);
 }
-.tp-nav__back,
 .tp-nav__langs,
 .tp-nav__targets {
 	background: var(--tp-color-paper);
@@ -1681,36 +1718,36 @@
 	outline: var(--tp-border-width) solid var(--tp-color-primary);
 	outline-offset: 2px;
 }
-.tp-nav__back {
-	display: flex;
-	align-items: center;
-	gap: var(--tp-space-s);
-	box-sizing: border-box;
-	min-width: 240px;
-	padding: 0 var(--tp-space-m);
-	border: 0;
-	font: 700 var(--tp-font-size-min) / 1 var(--tp-font-headline);
-	color: var(--tp-color-ink);
-}
-.tp-nav__back:active {
-	background: var(--tp-color-tint);
-}
 .tp-nav__langs {
+	border: 1px solid color-mix(in srgb, var(--tp-color-band) 28%, transparent); /* ganz feiner Rand, setzt die Schalter ab */
 	display: flex;
 	gap: 6px;
 	box-sizing: border-box;
 	width: 360px;
 	padding: 6px;
 }
+.tp-nav__langs--small { /* DE/EN am Sperrbildschirm: kompakt, in der Kopfzeile der Schnellzugriffe */
+	width: 270px;
+	height: 52px;
+	padding: 4px;
+	gap: 4px;
+	margin-left: auto; /* rechts, mittig zur Zeile der Überschrift */
+}
+.tp-nav__langs--small .tp-nav__lang {
+	font-size: 22px;
+}
 .tp-nav__lang {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	flex: 1 1 0;
 	border: 0;
 	border-radius: var(--tp-radius-s);
-	font: 700 var(--tp-font-size-min) / 1 var(--tp-font-headline);
+	font: 700 28px / 1 var(--tp-font-headline);
 	color: var(--tp-color-ink);
 	background: transparent;
 }
-.tp-nav__lang[aria-pressed="true"] {
+.tp-nav__lang:is([aria-pressed="true"], [aria-current="page"]) {
 	color: var(--tp-color-on-band);
 	background: var(--tp-color-band);
 }
@@ -1732,6 +1769,8 @@
 	min-width: 0;
 	padding: 0 10px;
 	border-radius: var(--tp-radius-s);
+	font-family: var(--tp-font-headline); /* wie Zustandsbuttons und Schnellzugriffe */
+	font-size: 25px; /* Montserrat ist breiter als Nunito: sonst passt "Vorlesungen" nicht in die Kachel */
 	font-weight: 700;
 	line-height: 1.1;
 	hyphens: manual;
@@ -1755,4 +1794,27 @@
 }
 .tp-nav__target[aria-current="page"] .tp-nav__icon {
 	background: var(--tp-color-on-band-accent);
+}
+
+/* Sperrbildschirm: i-Icon auf jeder Karte, die beim Tippen die Detailansicht (tp-sheet) öffnet
+   (Mensa, ÖPNV, Events, Hinweise), damit man sieht, dass man sie antippen kann. Nur Zierde.
+   Die Karte lässt rechts Platz für das Icon frei, nichts liegt darunter. */
+:is(.tp-lock, .is-style-tp-lock) :is(.km-meal:not(.km-meal--page), .km-row, .ka-dep, .ke-event, .kh--compact .kh-card) {
+	--tp-info-size: 1.2em;
+	position: relative;
+	box-sizing: border-box;
+	padding-right: calc(var(--tp-info-size) + 0.5em);
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.km-meal:not(.km-meal--page), .km-row, .ka-dep, .ke-event, .kh--compact .kh-card)::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: var(--tp-info-size);
+	height: var(--tp-info-size);
+	transform: translateY(-50%);
+	background: #1f6fd1; /* Blau, 5:1 auf Weiß */
+	-webkit-mask: var(--tp-icon-info) center / contain no-repeat;
+	mask: var(--tp-icon-info) center / contain no-repeat;
+	pointer-events: none;
 }

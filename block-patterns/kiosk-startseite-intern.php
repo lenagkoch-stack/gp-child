@@ -1,13 +1,13 @@
 <?php
 /**
  * Title: Kiosk: Startseite intern
- * Description: Startseite für Studierende und Mitarbeitende: Veranstaltungen, daneben Hinweise und Mensa, darunter die Vorlesungen. Füllt den Bildschirm über der Navigationsleiste; leere Boxen (z. B. keine Vorlesungen mehr) verschwinden, die übrigen wachsen.
+ * Description: Startseite für Studierende und Mitarbeitende: Vorlesungen, daneben Hinweise und Mensa, darunter die Veranstaltungen. Füllt den Bildschirm über der Navigationsleiste; leere Boxen (z. B. keine Veranstaltungen mehr) verschwinden, die übrigen wachsen.
  */
 ?>
 <!-- wp:group {"className":"is-style-tp-home","layout":{"type":"default"}} -->
 <div class="wp-block-group is-style-tp-home"><!-- wp:group {"className":"is-style-tp-box","layout":{"type":"default"}} -->
 <div class="wp-block-group is-style-tp-box"><!-- wp:shortcode -->
-[kiosk_events compact="1" more_url="/events/"]
+[kiosk_stundenplan compact="1" more_url="/stundenplan/"]
 <!-- /wp:shortcode --></div>
 <!-- /wp:group -->
 
@@ -33,7 +33,7 @@
 
 <!-- wp:group {"className":"is-style-tp-box","layout":{"type":"default"}} -->
 <div class="wp-block-group is-style-tp-box"><!-- wp:shortcode -->
-[kiosk_stundenplan compact="1" more_url="/stundenplan/"]
+[kiosk_events compact="1" more_url="/events/"]
 <!-- /wp:shortcode --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->

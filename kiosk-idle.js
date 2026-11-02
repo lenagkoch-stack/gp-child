@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  const DEFAULT_TIMEOUT = 90;
+  const DEFAULT_TIMEOUT = 30;
   const DEFAULT_WARNING = 15;
   const TICK = 1000;
   const ACTIVITY = ["pointerdown", "pointermove", "touchstart", "keydown", "wheel"];

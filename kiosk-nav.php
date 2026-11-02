@@ -8,7 +8,7 @@
  * tauscht sie gegen den deutschen Text. Gleiches Muster für andere feste Texte im Theme.
  */
 
-// Ziel von "Start": die Startseite der Studierenden (nicht der Sperrbildschirm)
+// Ziel von "Übersicht": die Startseite der Studierenden. "Start" führt zum Sperrbildschirm (Startseite der Website).
 const GP_CHILD_KIOSK_START = '/start/';
 
 function gp_child_kiosk_nav_items() {
@@ -38,9 +38,10 @@ add_action( 'wp_footer', function() {
     ?>
 <nav class="tp-nav" aria-label="Hauptnavigation">
     <div class="tp-nav__top">
-        <a class="tp-nav__back" href="<?php echo esc_url( GP_CHILD_KIOSK_START ); ?>">
-            <span class="tp-nav__icon tp-icon--home" aria-hidden="true"></span>Start
-        </a>
+        <div class="tp-nav__pages tp-nav__langs" role="group" aria-label="Seite">
+            <a class="tp-nav__lang" href="<?php echo esc_url( home_url( '/' ) ); ?>" data-en="Home">Start</a>
+            <a class="tp-nav__lang" href="<?php echo esc_url( GP_CHILD_KIOSK_START ); ?>" data-en="Overview"<?php echo untrailingslashit( GP_CHILD_KIOSK_START ) === $current ? ' aria-current="page"' : ''; ?>>Übersicht</a>
+        </div>
         <div class="tp-nav__langs" role="group" aria-label="Sprache">
             <button type="button" class="tp-nav__lang" lang="de" data-lang="de" aria-pressed="true">Deutsch</button>
             <button type="button" class="tp-nav__lang" lang="en" data-lang="en" aria-pressed="false">English</button>
@@ -67,7 +68,13 @@ add_shortcode( 'kiosk_schnellzugriffe', function() {
     ob_start();
     ?>
 <section class="tp-lock__quick" aria-label="Schnellzugriffe">
-    <h2 class="tp-lock__quick-title">Schnellzugriffe</h2>
+    <div class="tp-lock__quick-head">
+        <h2 class="tp-lock__quick-title" data-en="Quick access">Schnellzugriffe</h2>
+        <div class="tp-nav__langs tp-nav__langs--small" role="group" aria-label="Sprache">
+            <button type="button" class="tp-nav__lang" lang="de" data-lang="de" aria-pressed="true">Deutsch</button>
+            <button type="button" class="tp-nav__lang" lang="en" data-lang="en" aria-pressed="false">English</button>
+        </div>
+    </div>
     <div class="tp-lock__quick-grid">
         <?php foreach ( gp_child_kiosk_nav_items() as list( $href, $label, $icon, $label_en ) ) : ?>
             <a class="tp-lock__quick-tile" href="<?php echo esc_url( $href ); ?>">

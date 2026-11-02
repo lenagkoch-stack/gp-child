@@ -63,10 +63,34 @@
       if (count.textContent !== text) count.textContent = text;
     }
   }
+  // Die Listen verteilen den freien Platz zwischen die Karten (space-between). Damit die Trennlinie genau
+  // in der Mitte der Lücke sitzt, steht die Lücke als --tp-list-gap an der Liste (kiosk.css zeichnet die Linie)
+  function updateGaps() {
+    for (const list of lock.querySelectorAll("ul.tp-cards--fit, ul.km-rows, ul.kh-list")) {
+      const box = list.getBoundingClientRect();
+      let gap = 0;
+      if (box.width > 0) {
+        const first = [...list.children]
+          .map((li) => li.getBoundingClientRect())
+          .filter((r) => r.width > 0 && r.left < box.left + box.width / 2);
+        if (first.length > 1) {
+          const used = first.reduce((sum, r) => sum + r.height, 0);
+          const style = getComputedStyle(list);
+          const inner = box.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+          gap = Math.max(0, (inner - used) / (first.length - 1));
+        }
+      }
+      const value = gap.toFixed(1) + "px";
+      if (list.style.getPropertyValue("--tp-list-gap") !== value) list.style.setProperty("--tp-list-gap", value);
+    }
+  }
   let countFrame = 0;
   const scheduleCounts = () => {
     cancelAnimationFrame(countFrame);
-    countFrame = requestAnimationFrame(updateCounts);
+    countFrame = requestAnimationFrame(() => {
+      updateCounts();
+      updateGaps();
+    });
   };
   new MutationObserver((records) => {
     if (records.some((r) => !r.target.closest || !r.target.closest(".tp-lock__count"))) scheduleCounts();

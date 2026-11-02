@@ -1316,26 +1316,59 @@
 		transition: none !important;
 	}
 }
-/* Mehr Abstand zwischen den Karten im Slider (Schrift bleibt) */
+/* Enger Kartenabstand auf allen Folien des Sliders (Schrift bleibt), damit mehr Karten passen */
 :is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
-	--tp-row-padding: 64px;
-}
-/* Vorlesungen-Folie: enger gesetzt, damit drei Vorlesungen auf einmal passen */
-:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .oe--compact {
 	--tp-row-padding: 8px;
 }
-:is(.tp-lock, .is-style-tp-lock) .oe--compact :is(.tp-card, .is-style-tp-card) {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card) {
 	min-height: 0;
 }
-:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__body {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__body {
 	gap: 2px;
 	padding-block: 0;
 }
-:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__aside { /* Zeitfeld bestimmt sonst die Kartenhöhe */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__aside { /* Zeitfeld bestimmt sonst die Kartenhöhe */
 	padding-block: 6px;
 }
-:is(.tp-lock, .is-style-tp-lock) .oe--compact .tp-card__until {
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__until {
 	margin-top: 0;
+}
+/* Die Liste füllt die ganze Folie: übrige Höhe unter den ganzen Karten wird gleichmäßig zwischen die
+   Karten verteilt (die erste Karte oben, die letzte unten) */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-cards--fit, .km-rows, .kh-list) {
+	justify-content: space-between;
+}
+/* Trennlinie genau in der Mitte der Lücke zwischen zwei Karten: statt des Randes oben an der Karte
+   zeichnet ein Strich eine halbe Lücke darüber (--tp-list-gap setzt kiosk-lock.js) */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card, .km-row) + :is(.tp-card, .is-style-tp-card, .km-row) {
+	position: relative;
+	border-top: 0;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-card, .is-style-tp-card, .km-row) + :is(.tp-card, .is-style-tp-card, .km-row)::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: calc(-0.5 * var(--tp-list-gap, 0px));
+	height: 1px;
+	background: var(--tp-color-line);
+	pointer-events: none;
+}
+/* Abstand unter der Überschrift jeder Folie */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) {
+	--tp-slide-head-gap: 28px;
+}
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-band, .is-style-tp-band) + :not(.tp-more, .wp-block-buttons) {
+	margin-top: var(--tp-slide-head-gap);
+}
+/* Unter der letzten Karte derselbe Abstand bis zum Ende der Folie wie unter der Überschrift */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-cards--fit, .km-rows, .kh-list) {
+	padding-bottom: var(--tp-slide-head-gap);
+}
+/* Events und Vorlesungen: Tagestitel und Spaltenkopf sind am Sperrbildschirm ausgeblendet, der Abstand
+   gehört deshalb an die Liste dahinter */
+:is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-cards__columns + :is(.tp-cards, .is-style-tp-cards) {
+	margin-top: var(--tp-slide-head-gap);
 }
 /* Titel höchstens zwei Zeilen, Nebentext eine (volle Texte in der Detailansicht) */
 :is(.tp-lock, .is-style-tp-lock) .oe--compact .oe-event__title {

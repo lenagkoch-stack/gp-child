@@ -6,7 +6,8 @@
 ?>
 <!-- wp:group {"className":"is-style-tp-rotation","layout":{"type":"default"}} -->
 <div class="wp-block-group is-style-tp-rotation"><!-- wp:html -->
-<div class="wp-block-group is-style-tp-box" data-lock-times="11:30-12:30" data-lock-hide="13:00-24:00">
+<!-- <div class="wp-block-group is-style-tp-box" data-lock-times="11:30-12:30" data-lock-hide="13:00-24:00"> -->
+<div class="wp-block-group is-style-tp-box" data-lock-times="11:30-12:30">
 [kiosk_mensa compact="1" exclude="dessert" max="3" split="1"]
 </div>
 <!-- /wp:html -->

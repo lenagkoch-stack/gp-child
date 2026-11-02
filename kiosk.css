@@ -1760,7 +1760,12 @@
 	color: var(--tp-color-ink);
 	background: var(--tp-color-tint);
 }
+.tp-nav__lang:is(:hover, :focus, :active) { /* GeneratePress färbt button:hover/:focus sonst weiß auf dunkelgrau (nach dem Tippen bleibt der Fokus) */
+	color: var(--tp-color-ink);
+	background: var(--tp-color-tint);
+}
 .tp-nav__lang:is([aria-pressed="true"], [aria-current="page"]) { /* gewählt: dunklerer Ton + Balken unten, nie gefülltes Navy (das sind Aktionen) */
+	color: var(--tp-color-ink);
 	background: var(--tp-color-active);
 	box-shadow: inset 0 calc(-1 * var(--tp-active-bar)) 0 var(--tp-color-band);
 }
@@ -1789,6 +1794,9 @@
 	hyphens: manual;
 	color: var(--tp-color-ink);
 	background: var(--tp-color-tint);
+}
+.tp-nav__target:is(:hover, :focus, :active) { /* Linkfarbe des Eltern-Themes (a:hover) nicht übernehmen */
+	color: var(--tp-color-ink);
 }
 .tp-nav__target:active {
 	background: var(--tp-color-line);

@@ -11,6 +11,12 @@
 // Ziel von "Übersicht": die Startseite der Studierenden. "Start" führt zum Sperrbildschirm (Startseite der Website).
 const GP_CHILD_KIOSK_START = '/start/';
 
+// Handy-Seiten (QR-Ziel, Raumplan im Modus "mobile") haben weder Leiste noch Uhr im Kopf
+function gp_child_kiosk_is_mobile_page() {
+    $post = get_post();
+    return $post && false !== strpos( $post->post_content, 'mode="mobile"' );
+}
+
 function gp_child_kiosk_nav_items() {
     return array(
         array( '/stundenplan/',    'Vorlesungen',                    'school',   'Lectures' ),
@@ -28,9 +34,7 @@ add_action( 'wp_footer', function() {
     if ( is_front_page() || is_admin() ) {
         return;
     }
-    // Handy-Seiten (QR-Ziel, Raumplan im Modus "mobile") haben keine Leiste
-    $post = get_post();
-    if ( $post && false !== strpos( $post->post_content, 'mode="mobile"' ) ) {
+    if ( gp_child_kiosk_is_mobile_page() ) {
         return;
     }
 

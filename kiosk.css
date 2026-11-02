@@ -844,13 +844,14 @@
 	--tp-box-padding: calc(28px * (1 + var(--tp-home-scale)) / 2);
 	--tp-space-s: calc(12px * (1 + var(--tp-home-scale)) / 2);
 	--tp-space-m: calc(24px * (1 + var(--tp-home-scale)) / 2);
+	--tp-home-gap: 16px; /* Abstand zwischen den Boxen, enger als auf den Unterseiten: mehr Höhe für die Inhalte */
 	display: flex;
 	flex-direction: column;
-	gap: var(--tp-block-gap);
+	gap: var(--tp-home-gap);
 	box-sizing: border-box;
 	height: calc(var(--terminal-height, 1920px) - var(--tp-nav-height));
 	margin: 0;
-	padding: var(--tp-block-gap) var(--tp-page-gutter);
+	padding: var(--tp-home-gap) var(--tp-page-gutter) 0; /* unten kein Rand: darunter folgt schon der Innenabstand der Navigationsleiste; der Platz gehört den Boxen (Mensa: 3 Gerichte) */
 	overflow: hidden;
 	background: var(--tp-color-ground);
 }
@@ -1079,7 +1080,8 @@
 
 /* "Campus entdecken", Schnellzugriffe und Hinweis: feste Größen (px), weil die Skala
    der Rotation hier nicht gelten soll. Nur die Schnellzugriffe sind klein, man bedient sie aus der Nähe. */
-:is(.tp-lock, .is-style-tp-lock) .tp-header__logos {
+:is(.tp-lock, .is-style-tp-lock) .tp-header__logos,
+.tp-header__logos--clock { /* Kopf mit Uhr (kiosk-clock.js): auf jeder Seite außer den Handy-Seiten, Logos klein wie am Sperrbildschirm */
 	--tp-header-logo-height: 56px;
 	flex: 0 0 auto;
 	margin-bottom: 8px; /* plus gap: 28 px von der Kopfzeile bis zum Slider */
@@ -1087,7 +1089,8 @@
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); /* Uhr genau in der Mitte: gleich breite Seiten, auch wenn ein Logo breiter ist (1fr allein wüchse mit dem Logo) */
 }
-:is(.tp-lock, .is-style-tp-lock) .tp-header__logos .tp-header__logo--hsc {
+:is(.tp-lock, .is-style-tp-lock) .tp-header__logos .tp-header__logo--hsc,
+.tp-header__logos--clock .tp-header__logo--hsc {
 	justify-self: end;
 }
 .tp-lock__clock { /* Uhrzeit und Datum, gefüllt von kiosk-lock.js */

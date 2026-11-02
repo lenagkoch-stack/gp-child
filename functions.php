@@ -65,6 +65,17 @@ add_action( 'wp_enqueue_scripts', function() {
         true
     );
 
+    // Uhrzeit und Datum zwischen den Logos des Seitenkopfs (Sperrbildschirm und alle Seiten außer den Handy-Seiten)
+    if ( ! gp_child_kiosk_is_mobile_page() ) {
+        wp_enqueue_script(
+            'gp-child-kiosk-clock',
+            get_stylesheet_directory_uri() . '/kiosk-clock.js',
+            array(),
+            wp_get_theme()->get('Version'),
+            true
+        );
+    }
+
     // Sperrbildschirm: Tipp auf eine freie Fläche führt zur Startseite der Studierenden
     if ( is_front_page() ) {
         wp_enqueue_script(

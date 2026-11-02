@@ -21,22 +21,6 @@
   const dotsVariant = (new URLSearchParams(location.search).get("dots") || "").toLowerCase();
   if (/^[acd]$/.test(dotsVariant)) lock.classList.add("tp-dots--" + dotsVariant);
 
-  // Uhrzeit und Datum zwischen den Logos; die Zeit kommt vom Browser des Terminals, immer in Berliner Zeit.
-  // Aktualisiert wird zur vollen Minute
-  const clock = lock.querySelector(".tp-lock__clock");
-  if (clock) {
-    const timeFormat = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", hour: "2-digit", minute: "2-digit", hour12: false });
-    const dateFormat = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", weekday: "long", day: "numeric", month: "long" });
-    const tick = () => {
-      const now = new Date();
-      clock.querySelector(".tp-lock__clock-time").textContent = timeFormat.format(now);
-      clock.querySelector(".tp-lock__clock-time").setAttribute("datetime", timeFormat.format(now));
-      clock.querySelector(".tp-lock__clock-date").textContent = dateFormat.format(now);
-      setTimeout(tick, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 50);
-    };
-    tick();
-  }
-
   // Die Listen verteilen den freien Platz gleichmäßig über, zwischen und unter die Karten (space-evenly). Damit die Trennlinie genau
   // in der Mitte der Lücke sitzt, steht die Lücke als --tp-list-gap an der Liste (kiosk.css zeichnet die Linie)
   function updateGaps() {

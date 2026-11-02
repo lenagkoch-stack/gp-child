@@ -1333,10 +1333,10 @@
 :is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) .tp-card__until {
 	margin-top: 0;
 }
-/* Die Liste füllt die ganze Folie: übrige Höhe unter den ganzen Karten wird gleichmäßig zwischen die
-   Karten verteilt (die erste Karte oben, die letzte unten) */
+/* Die Liste füllt die ganze Folie: übrige Höhe unter den ganzen Karten wird gleichmäßig verteilt,
+   auch über der ersten und unter der letzten Karte (bei zwei Karten sitzen sie so nicht an den Rändern) */
 :is(.tp-lock, .is-style-tp-lock) :is(.tp-rotation, .is-style-tp-rotation) :is(.tp-cards--fit, .km-rows, .kh-list) {
-	justify-content: space-between;
+	justify-content: space-evenly;
 }
 /* Trennlinie genau in der Mitte der Lücke zwischen zwei Karten: statt des Randes oben an der Karte
    zeichnet ein Strich eine halbe Lücke darüber (--tp-list-gap setzt kiosk-lock.js) */
